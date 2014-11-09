@@ -14,8 +14,12 @@ import org.nextrtc.signalingserver.api.NextRTCEvent;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
+import org.nextrtc.signalingserver.eventbus.EventBusSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,7 +28,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestBus.class, T1.class, T2.class, T3.class })
+@ContextConfiguration(classes = { Config.class, T1.class, T2.class, T3.class })
 public class EventBusTest {
 	
 	@Autowired
@@ -125,4 +129,15 @@ class T3 implements NextRTCHandler {
 	public void handleEvent(NextRTCEvent event) {
 		this.event = event;
 	}
+}
+
+@Configuration
+@ComponentScan(basePackageClasses = EventBusSetup.class)
+class Config {
+
+	@Bean(name = "nextRTCEventBus")
+	public EventBus eventBus() {
+		return new EventBus();
+	}
+
 }
