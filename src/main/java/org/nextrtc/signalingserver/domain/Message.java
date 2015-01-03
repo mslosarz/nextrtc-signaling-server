@@ -13,7 +13,7 @@ import com.google.gson.annotations.Expose;
 public class Message {
 
 	/**
-	 * Use Message.createWith(...) instead of new Message()
+	 * Use Message.create(...) instead of new Message()
 	 */
 	@Deprecated
 	public Message() {
@@ -34,4 +34,40 @@ public class Message {
 	@Expose
 	private Map<String, String> parameters = Maps.newHashMap();
 
+	public static MessageBuilder create() {
+		return new MessageBuilder();
+	}
+
+	public static class MessageBuilder {
+		private Message instance = new Message();
+
+		public MessageBuilder withFrom(String from) {
+			instance.from = from;
+			return this;
+		}
+
+		public MessageBuilder withTo(String to) {
+			instance.to = to;
+			return this;
+		}
+
+		public MessageBuilder withSignal(String signal) {
+			instance.signal = signal;
+			return this;
+		}
+
+		public MessageBuilder withContent(String content) {
+			instance.content = content;
+			return this;
+		}
+
+		public MessageBuilder withParameter(String key, String value) {
+			instance.parameters.put(key, value);
+			return this;
+		}
+
+		public Message build() {
+			return instance;
+		}
+	}
 }
