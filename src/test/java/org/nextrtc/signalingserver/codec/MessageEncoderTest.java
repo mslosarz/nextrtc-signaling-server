@@ -19,8 +19,8 @@ public class MessageEncoderTest {
 	public void shouldEncodeObject() throws EncodeException {
 		// given
 		Message message = create()//
-				.withFrom("A")//
-				.withTo("B")//
+				.from("A")//
+				.to("B")//
 				.withContent("con")//
 				.withSignal("sig")//
 				.withParameter("param1", "noga")//
@@ -42,8 +42,8 @@ public class MessageEncoderTest {
 	public void shouldEncodeObjectWithNullValues() throws EncodeException {
 		// given
 		Message message = create()//
-				.withFrom(null)//
-				.withTo(null)//
+				.from(null)//
+				.to(null)//
 				.build();
 
 		// when

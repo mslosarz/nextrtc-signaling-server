@@ -41,12 +41,12 @@ public class Message {
 	public static class MessageBuilder {
 		private Message instance = new Message();
 
-		public MessageBuilder withFrom(String from) {
+		public MessageBuilder from(String from) {
 			instance.from = from;
 			return this;
 		}
 
-		public MessageBuilder withTo(String to) {
+		public MessageBuilder to(String to) {
 			instance.to = to;
 			return this;
 		}
