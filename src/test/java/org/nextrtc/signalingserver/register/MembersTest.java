@@ -14,7 +14,7 @@ import org.nextrtc.signalingserver.domain.Member;
 
 import com.google.common.base.Optional;
 
-public class MemberRegisterTest {
+public class MembersTest {
 
 	private Members members = new Members();
 
@@ -37,6 +37,17 @@ public class MemberRegisterTest {
 
 		// when
 		Optional<Member> findBy = members.findBy("not existing one");
+
+		// then
+		assertThat(findBy.isPresent(), is(false));
+	}
+
+	@Test
+	public void shouldWorkWhenMemberIsNull() throws Exception {
+		// given
+
+		// when
+		Optional<Member> findBy = members.findBy(null);
 
 		// then
 		assertThat(findBy.isPresent(), is(false));

@@ -7,12 +7,12 @@ public class SignalingException extends RuntimeException {
 	private String errorCode;
 
 	public SignalingException(Exceptions exception) {
-		super(exception.name());
+		super(exception.getErrorCode() + ": " + exception.name());
 		this.errorCode = exception.getErrorCode();
 	}
 
 	public SignalingException(Exceptions exception, Throwable t) {
-		super(exception.name(), t);
+		super(exception.getErrorCode() + ": " + exception.name(), t);
 		this.errorCode = exception.getErrorCode();
 	}
 

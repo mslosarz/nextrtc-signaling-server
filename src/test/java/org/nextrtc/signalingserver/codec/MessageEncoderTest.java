@@ -21,9 +21,9 @@ public class MessageEncoderTest {
 		Message message = create()//
 				.from("A")//
 				.to("B")//
-				.withContent("con")//
-				.withSignal("sig")//
-				.withParameter("param1", "noga")//
+				.content("con")//
+				.signal("sig")//
+				.parameter("param1", "noga")//
 				.build();
 
 		// when

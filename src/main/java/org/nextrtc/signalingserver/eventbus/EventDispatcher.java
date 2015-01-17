@@ -29,7 +29,7 @@ public class EventDispatcher {
 	@AllowConcurrentEvents
 	public void handle(NextRTCEvent event) {
 		Collection<Object> listeners = getNextRTCEventListeners();
-		for(Object listener : listeners){
+		for (Object listener : listeners) {
 			if (isNextRTCHandler(listener) && supportsCurrentEvent(listener, event)) {
 				((NextRTCHandler) listener).handleEvent(event);
 			}
@@ -41,8 +41,7 @@ public class EventDispatcher {
 	}
 
 	private boolean supportsCurrentEvent(Object listener, NextRTCEvent event) {
-		NextRTCEvents[] supportedEvents = getSupportedEvents(listener);
-		for (NextRTCEvents supportedEvent : supportedEvents) {
+		for (NextRTCEvents supportedEvent : getSupportedEvents(listener)) {
 			if (isSupporting(event, supportedEvent)) {
 				return true;
 			}

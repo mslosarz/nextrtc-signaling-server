@@ -1,5 +1,20 @@
 package org.nextrtc.signalingserver.api.annotation;
 
-public enum NextRTCEvents {
-	SESSION_STARTED, SESSION_CLOSED;
+import org.nextrtc.signalingserver.api.NextRTCEvent;
+import org.nextrtc.signalingserver.domain.InternalMessage;
+
+public enum NextRTCEvents implements NextRTCEvent {
+	SESSION_STARTED, //
+	SESSION_CLOSED, //
+	UNEXPECTED_SITUATION, //
+	CONVERSATION_CREATED, //
+	;
+
+	public NextRTCEvents getType() {
+		return this;
+	}
+
+	public NextRTCEvent basedOn(InternalMessage message) {
+		return this;
+	}
 }

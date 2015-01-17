@@ -2,12 +2,13 @@ package org.nextrtc.signalingserver.domain;
 
 import javax.websocket.Session;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.ToString;
+import lombok.experimental.Builder;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-@Getter
+@Data
+@Builder
+@ToString
 public class Member {
 
 	private String id;
@@ -18,22 +19,8 @@ public class Member {
 		this.id = session.getId();
 	}
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder()//
-				.append(id)//
-				.toHashCode();
+	Member(String id, Session session) {
+		this.id = session.getId();
+		this.session = session;
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Member)) {
-			return false;
-		}
-		Member other = (Member) obj;
-		return new EqualsBuilder()//
-				.append(id, other.id)//
-				.isEquals();
-	}
-
 }

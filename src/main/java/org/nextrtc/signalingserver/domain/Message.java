@@ -11,7 +11,6 @@ import com.google.gson.annotations.Expose;
 
 @Getter
 public class Message {
-
 	/**
 	 * Use Message.create(...) instead of new Message()
 	 */
@@ -51,17 +50,17 @@ public class Message {
 			return this;
 		}
 
-		public MessageBuilder withSignal(String signal) {
+		public MessageBuilder signal(String signal) {
 			instance.signal = signal;
 			return this;
 		}
 
-		public MessageBuilder withContent(String content) {
+		public MessageBuilder content(String content) {
 			instance.content = content;
 			return this;
 		}
 
-		public MessageBuilder withParameter(String key, String value) {
+		public MessageBuilder parameter(String key, String value) {
 			instance.parameters.put(key, value);
 			return this;
 		}

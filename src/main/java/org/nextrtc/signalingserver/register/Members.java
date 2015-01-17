@@ -14,6 +14,9 @@ public class Members {
 	private Map<String, Member> members = Maps.newConcurrentMap();
 
 	public Optional<Member> findBy(String id) {
+		if (id == null) {
+			return Optional.absent();
+		}
 		return Optional.fromNullable(members.get(id));
 	}
 
