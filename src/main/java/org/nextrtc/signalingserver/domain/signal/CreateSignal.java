@@ -24,16 +24,26 @@ public class CreateSignal extends AbstractSignal {
 	@Autowired
 	private Conversations conversations;
 
+	@Autowired
+	private CreatedSignal created;
+
 	@Override
-	protected String signalName() {
+	public String name() {
 		return "create";
 	}
 
 	@Override
 	protected void execute(InternalMessage message) {
 		Conversation conv = createConversation(message);
+
 		conv.joinOwner(message.getFrom());
 
+		InternalMessage.create()//
+				.to(message.getFrom())//
+				.signal(created)//
+				.content(conv.getId())//
+				.build()//
+				.post();
 	}
 
 	private Conversation createConversation(InternalMessage message) {

@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver.domain;
+package org.nextrtc.signalingserver;
 
 import java.util.List;
 

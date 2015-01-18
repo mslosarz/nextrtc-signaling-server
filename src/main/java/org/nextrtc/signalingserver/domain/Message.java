@@ -65,6 +65,11 @@ public class Message {
 			return this;
 		}
 
+		public MessageBuilder parameters(Map<String, String> map) {
+			instance.parameters.putAll(map);
+			return this;
+		}
+
 		public Message build() {
 			return instance;
 		}

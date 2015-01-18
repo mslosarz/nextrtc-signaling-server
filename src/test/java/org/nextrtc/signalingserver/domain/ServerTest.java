@@ -16,8 +16,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.nextrtc.signalingserver.TestConfig;
+import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.EventChecker;
 import org.nextrtc.signalingserver.api.NextRTCEvent;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
@@ -26,11 +26,9 @@ import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ContextConfiguration(classes = { TestConfig.class, ServerEventCheck.class })
-@RunWith(SpringJUnit4ClassRunner.class)
-public class ServerTest {
+@ContextConfiguration(classes = { ServerEventCheck.class })
+public class ServerTest extends BaseTest {
 
 	@NextRTCEventListener({ SESSION_STARTED, CONVERSATION_CREATED })
 	public static class ServerEventCheck extends EventChecker {
@@ -80,8 +78,7 @@ public class ServerTest {
 	@Test
 	public void shouldCreateConversationOnCreateSignal() throws Exception {
 		// given
-		Session session = mock(Session.class);
-		when(session.getId()).thenReturn("s1");
+		Session session = mockSession("s1");
 		server.register(session);
 
 		// when

@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Sets;
+
 @Getter
 @Component
 @Scope("prototype")
 public class Conversation {
 
-	private Set<Member> members;
+	private Set<Member> members = Sets.newConcurrentHashSet();
 
 	private String id;
 

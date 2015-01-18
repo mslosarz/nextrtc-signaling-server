@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.nextrtc.signalingserver.SignalResolverTest.A;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.SignalResolver;
@@ -13,22 +12,27 @@ import org.nextrtc.signalingserver.domain.signal.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@ContextConfiguration(classes = { TestConfig.class, A.class })
-@RunWith(SpringJUnit4ClassRunner.class)
-public class SignalResolverTest {
+@ContextConfiguration(classes = { A.class })
+public class SignalResolverTest extends BaseTest {
 
 	@Component
 	public static class A implements Signal {
 
+		private String existing = "existing";
+
 		@Override
 		public boolean is(String string) {
-			return "existing".equalsIgnoreCase(string);
+			return existing.equalsIgnoreCase(string);
 		}
 
 		@Override
 		public void executeMessage(InternalMessage internal) {
+		}
+
+		@Override
+		public String name() {
+			return existing;
 		}
 	}
 

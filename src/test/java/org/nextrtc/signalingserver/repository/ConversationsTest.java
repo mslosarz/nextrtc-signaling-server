@@ -10,19 +10,13 @@ import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_CONVERSAT
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.nextrtc.signalingserver.TestConfig;
+import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.base.Optional;
 
-@ContextConfiguration(classes = { TestConfig.class })
-@RunWith(SpringJUnit4ClassRunner.class)
-public class ConversationsTest {
+public class ConversationsTest extends BaseTest {
 
 	@Autowired
 	private Conversations conversations;

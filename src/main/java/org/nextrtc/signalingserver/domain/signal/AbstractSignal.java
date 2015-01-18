@@ -19,7 +19,7 @@ public abstract class AbstractSignal implements Signal {
 
 	@Override
 	public boolean is(String incomming) {
-		return signalName().equalsIgnoreCase(incomming);
+		return name().equalsIgnoreCase(incomming);
 	}
 
 	@Override
@@ -42,8 +42,6 @@ public abstract class AbstractSignal implements Signal {
 	}
 
 	protected abstract void execute(InternalMessage message);
-
-	protected abstract String signalName();
 
 	protected abstract Optional<NextRTCEvents> before();
 

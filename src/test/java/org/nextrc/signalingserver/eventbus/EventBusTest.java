@@ -9,8 +9,7 @@ import lombok.Data;
 
 import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.nextrtc.signalingserver.TestConfig;
+import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.api.NextRTCEvent;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
@@ -19,14 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestConfig.class, T1.class, T2.class, T3.class })
-public class EventBusTest {
+@ContextConfiguration(classes = { T1.class, T2.class, T3.class })
+public class EventBusTest extends BaseTest {
 
 	@Autowired
 	@Qualifier("nextRTCEventBus")

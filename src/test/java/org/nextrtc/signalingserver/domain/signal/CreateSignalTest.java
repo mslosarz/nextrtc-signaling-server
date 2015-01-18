@@ -1,27 +1,22 @@
 package org.nextrtc.signalingserver.domain.signal;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import javax.websocket.Session;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.nextrtc.signalingserver.TestConfig;
-import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.MessageMatcher;
+import org.nextrtc.signalingserver.domain.*;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.base.Optional;
 
-@ContextConfiguration(classes = { TestConfig.class })
-@RunWith(SpringJUnit4ClassRunner.class)
-public class CreateSignalTest {
+public class CreateSignalTest extends BaseTest {
 
 	@Autowired
 	private CreateSignal create;
@@ -32,9 +27,10 @@ public class CreateSignalTest {
 	@Test
 	public void shouldCreateConversation() throws Exception {
 		// given
+		MessageMatcher matcher = new MessageMatcher();
 		InternalMessage message = InternalMessage.create()//
 				.from(Member.builder()//
-						.session(mockSession("sessionId"))//
+						.session(mockSession("sessionId", matcher))//
 						.build())//
 				.signal(create)//
 				.content("c1")//
@@ -46,12 +42,12 @@ public class CreateSignalTest {
 		// then
 		Optional<Conversation> conv = conversations.findBy("c1");
 		assertTrue(conv.isPresent());
+		Message send = matcher.getMessage();
+		assertNotNull(send);
+		assertThat(send.getFrom(), is(EMPTY));
+		assertThat(send.getTo(), is("sessionId"));
+		assertThat(send.getSignal(), is("created"));
+		assertThat(send.getContent(), is("c1"));
+		assertThat(send.getParameters(), notNullValue());
 	}
-
-	private Session mockSession(String id) {
-		Session s = mock(Session.class);
-		when(s.getId()).thenReturn(id);
-		return s;
-	}
-
 }
