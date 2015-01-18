@@ -25,10 +25,7 @@ public class InternalMessage {
 	private String content;
 	private Map<String, String> parameters = Maps.newHashMap();
 
-	public InternalMessage() {
-	}
-
-	public InternalMessage(Member from, Member to, Signal signal, String content, Map<String, String> parameters) {
+	private InternalMessage(Member from, Member to, Signal signal, String content, Map<String, String> parameters) {
 		this.from = from;
 		this.to = to;
 		this.signal = signal;
