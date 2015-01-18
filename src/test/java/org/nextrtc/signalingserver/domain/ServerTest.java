@@ -23,7 +23,7 @@ import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
 import org.nextrtc.signalingserver.exception.Exceptions;
 import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.register.Members;
+import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

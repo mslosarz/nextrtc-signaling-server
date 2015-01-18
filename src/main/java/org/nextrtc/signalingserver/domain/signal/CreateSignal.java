@@ -8,8 +8,8 @@ import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.CONVERSAT
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.register.Conversations;
-import org.nextrtc.signalingserver.register.Members;
+import org.nextrtc.signalingserver.repository.Conversations;
+import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,9 @@ public class CreateSignal extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		Conversation conversation = createConversation(message);
+		Conversation conv = createConversation(message);
+		conv.joinOwner(message.getFrom());
+
 	}
 
 	private Conversation createConversation(InternalMessage message) {

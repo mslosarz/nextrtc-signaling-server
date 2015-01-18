@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver.register;
+package org.nextrtc.signalingserver.repository;
 
 import java.util.Map;
 

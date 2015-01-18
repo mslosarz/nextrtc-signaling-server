@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver.register;
+package org.nextrtc.signalingserver.repository;
 
 import static com.google.common.base.Optional.fromNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;

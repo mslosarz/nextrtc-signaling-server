@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver.register;
+package org.nextrtc.signalingserver.repository;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -13,6 +13,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.nextrtc.signalingserver.TestConfig;
 import org.nextrtc.signalingserver.domain.Conversation;
+import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

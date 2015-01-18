@@ -10,7 +10,7 @@ import javax.websocket.Session;
 
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
 import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.register.Members;
+import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

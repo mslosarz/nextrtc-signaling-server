@@ -12,7 +12,7 @@ import org.nextrtc.signalingserver.TestConfig;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.register.Conversations;
+import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

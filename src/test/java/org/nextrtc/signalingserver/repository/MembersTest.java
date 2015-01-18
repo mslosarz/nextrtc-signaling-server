@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver.register;
+package org.nextrtc.signalingserver.repository;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
@@ -11,6 +11,7 @@ import javax.websocket.Session;
 
 import org.junit.Test;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.repository.Members;
 
 import com.google.common.base.Optional;
 
