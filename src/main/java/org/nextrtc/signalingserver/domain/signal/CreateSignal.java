@@ -43,11 +43,10 @@ public class CreateSignal extends AbstractSignal {
 	}
 
 	private Conversation createConversation(InternalMessage message) {
-		if (isEmpty(message.getContent())) {
-			return conversations.create();
-		} else {
+		if (!isEmpty(message.getContent())) {
 			return conversations.create(message.getContent());
 		}
+		return conversations.create();
 	}
 
 	@Override
