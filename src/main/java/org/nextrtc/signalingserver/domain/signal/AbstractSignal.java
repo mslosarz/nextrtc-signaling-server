@@ -43,9 +43,13 @@ public abstract class AbstractSignal implements Signal {
 
 	protected abstract void execute(InternalMessage message);
 
-	protected abstract Optional<NextRTCEvents> before();
+	protected Optional<NextRTCEvents> before() {
+		return Optional.absent();
+	}
 
-	protected abstract Optional<NextRTCEvents> after();
+	protected Optional<NextRTCEvents> after() {
+		return Optional.absent();
+	}
 
 	protected NextRTCEvents error() {
 		return NextRTCEvents.UNEXPECTED_SITUATION;

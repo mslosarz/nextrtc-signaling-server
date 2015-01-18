@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class InternalMessage {
 				.from(fromNullable(from))//
 				.to(fromNullable(to))//
 				.signal(signal.name())//
-				.content(content)//
+				.content(defaultString(content))//
 				.parameters(parameters)//
 				.build();
 	}

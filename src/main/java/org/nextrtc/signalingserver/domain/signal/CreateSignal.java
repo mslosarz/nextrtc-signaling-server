@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.domain.signal;
 
-import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.CONVERSATION_CREATED;
@@ -47,11 +46,6 @@ public class CreateSignal extends AbstractSignal {
 			return conversations.create(message.getContent());
 		}
 		return conversations.create();
-	}
-
-	@Override
-	protected Optional<NextRTCEvents> before() {
-		return absent();
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Builder;
 
 @Data
-@Builder
+@Builder(builderMethodName = "create")
 @ToString
 public class Member {
 

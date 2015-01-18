@@ -4,14 +4,16 @@ import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreatedSignal extends AbstractSignal {
+public class JoinedSignal extends AbstractSignal {
+
 	@Override
 	public String name() {
-		return "created";
+		return "joined";
 	}
 
 	@Override
 	protected void execute(InternalMessage message) {
 
 	}
+
 }

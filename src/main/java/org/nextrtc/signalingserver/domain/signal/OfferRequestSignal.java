@@ -4,10 +4,11 @@ import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreatedSignal extends AbstractSignal {
+public class OfferRequestSignal extends AbstractSignal {
+
 	@Override
 	public String name() {
-		return "created";
+		return "offerRequest";
 	}
 
 	@Override

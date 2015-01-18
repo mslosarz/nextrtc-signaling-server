@@ -29,7 +29,7 @@ public class CreateSignalTest extends BaseTest {
 		// given
 		MessageMatcher matcher = new MessageMatcher();
 		InternalMessage message = InternalMessage.create()//
-				.from(Member.builder()//
+				.from(Member.create()//
 						.session(mockSession("sessionId", matcher))//
 						.build())//
 				.signal(create)//

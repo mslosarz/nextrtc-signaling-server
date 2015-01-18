@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_CLOSED;
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_STARTED;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import org.junit.After;
 import org.junit.Test;
@@ -86,7 +87,8 @@ public class EventBusTest extends BaseTest {
 	}
 }
 
-@Data
+@Getter
+@Setter
 @Component("t1")
 @NextRTCEventListener
 class T1 {
@@ -99,7 +101,8 @@ class T1 {
 	}
 }
 
-@Data
+@Getter
+@Setter
 @Component("t2")
 @NextRTCEventListener(SESSION_STARTED)
 class T2 implements NextRTCHandler {
@@ -112,7 +115,8 @@ class T2 implements NextRTCHandler {
 	}
 }
 
-@Data
+@Getter
+@Setter
 @Component("t3")
 @NextRTCEventListener
 class T3 implements NextRTCHandler {

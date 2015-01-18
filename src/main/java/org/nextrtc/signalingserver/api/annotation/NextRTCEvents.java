@@ -8,6 +8,7 @@ public enum NextRTCEvents implements NextRTCEvent {
 	SESSION_CLOSED, //
 	UNEXPECTED_SITUATION, //
 	CONVERSATION_CREATED, //
+	MEMBER_JOINDED, //
 	;
 
 	public NextRTCEvents getType() {

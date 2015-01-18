@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
+import java.util.Collection;
 import java.util.Set;
 
 import lombok.Getter;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 
 @Getter
@@ -26,6 +29,25 @@ public class Conversation {
 
 	public void joinOwner(Member owner) {
 		members.add(owner);
+	}
+
+	public void joinMember(Member member) {
+		members.add(member);
+
+	}
+
+	public Collection<Member> getMemberWithout(Member sender) {
+		return FluentIterable.from(members).filter(without(sender)).toSet();
+	}
+
+	private Predicate<Member> without(final Member sender) {
+		return new Predicate<Member>() {
+
+			@Override
+			public boolean apply(Member input) {
+				return !sender.equals(input);
+			}
+		};
 	}
 
 }
