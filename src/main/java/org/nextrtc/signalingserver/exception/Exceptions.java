@@ -2,12 +2,13 @@ package org.nextrtc.signalingserver.exception;
 
 public enum Exceptions {
 	MEMBER_NOT_FOUND("0001"), //
+	INVALID_RECIPIENT("0002"), //
 
 	INVALID_CONVERSATION_NAME("0101"), //
 	CONVERSATION_NAME_OCCUPIED("0102"), //
 	CONVERSATION_NOT_FOUND("0103"), //
 
-	UNKNOWN_ERROR("0501"), //
+	UNKNOWN_ERROR("0501"),
 
 	;
 

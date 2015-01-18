@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.repository;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.nextrtc.signalingserver.domain.Member;
@@ -12,6 +13,10 @@ import com.google.common.collect.Maps;
 public class Members {
 
 	private Map<String, Member> members = Maps.newConcurrentMap();
+
+	public Collection<String> getAllKeys() {
+		return members.keySet();
+	}
 
 	public Optional<Member> findBy(String id) {
 		if (id == null) {

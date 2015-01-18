@@ -5,10 +5,12 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_CONVERSATION_NAME;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
 import org.nextrtc.signalingserver.domain.Conversation;
+import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
@@ -49,5 +51,19 @@ public class Conversations {
 		Conversation conversation = context.getBean(Conversation.class, name);
 		conversations.put(name, conversation);
 		return conversation;
+	}
+
+	public Collection<String> getAllKeys() {
+		return conversations.keySet();
+	}
+
+	public Optional<Conversation> getBy(Member from) {
+		for (String conversationIds : conversations.keySet()) {
+			Conversation conversation = conversations.get(conversationIds);
+			if (conversation.has(from)) {
+				return Optional.of(conversation);
+			}
+		}
+		return Optional.absent();
 	}
 }

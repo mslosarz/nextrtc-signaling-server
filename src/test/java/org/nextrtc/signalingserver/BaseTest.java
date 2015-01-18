@@ -6,11 +6,13 @@ import static org.mockito.Mockito.when;
 import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.nextrtc.signalingserver.domain.*;
 import org.nextrtc.signalingserver.domain.signal.CreateSignal;
+import org.nextrtc.signalingserver.domain.signal.JoinSignal;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,23 @@ public abstract class BaseTest {
 	private CreateSignal create;
 
 	@Autowired
+	private JoinSignal join;
+
+	@Autowired
 	private Members members;
 
 	@Autowired
 	private Conversations conversations;
+
+	@Before
+	public void reset() {
+		for (String id : conversations.getAllKeys()) {
+			conversations.unregister(id);
+		}
+		for (String id : members.getAllKeys()) {
+			members.unregister(id);
+		}
+	}
 
 	protected Session mockSession(String string) {
 		return mockSession(string, new MessageMatcher());
@@ -68,17 +83,32 @@ public abstract class BaseTest {
 	}
 
 	protected Conversation createConversationWithOwner(String conversationName, String memberName, MessageMatcher match) {
-		Member member = mockMember(memberName);
+		Member member = mockMember(memberName, match);
 		members.register(member);
 		create.executeMessage(InternalMessage.create()//
-				.from(mockMember(memberName, match))//
+				.from(member)//
 				.content(conversationName)//
 				.build());
 		match.reset();
 		return conversations.findBy(conversationName).get();
 	}
 
-	protected Conversation createConversationWithOwner(String conversationName, String memberName) {
-		return createConversationWithOwner(conversationName, memberName, new MessageMatcher());
+	protected Conversation joinMemberToConversation(String conversationName, String memberName, MessageMatcher match) {
+		Member member = mockMember(memberName, match);
+		members.register(member);
+		join.executeMessage(InternalMessage.create()//
+				.from(member)//
+				.content(conversationName)//
+				.build());
+		match.reset();
+		return conversations.findBy(conversationName).get();
+	}
+
+	protected Conversation joinMemberToConversation(String conversationName, String memberName) {
+		return joinMemberToConversation(conversationName, memberName, new MessageMatcher());
+	}
+
+	protected Conversation createConversationWithOwner(String conversation, String member) {
+		return createConversationWithOwner(conversation, member, new MessageMatcher());
 	}
 }

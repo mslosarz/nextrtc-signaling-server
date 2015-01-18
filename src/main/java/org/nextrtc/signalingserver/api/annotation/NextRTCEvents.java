@@ -9,6 +9,7 @@ public enum NextRTCEvents implements NextRTCEvent {
 	UNEXPECTED_SITUATION, //
 	CONVERSATION_CREATED, //
 	MEMBER_JOINDED, //
+	MEMBER_LOCAL_STREAM_CREATED, //
 	;
 
 	public NextRTCEvents getType() {

@@ -50,4 +50,11 @@ public class Conversation {
 		};
 	}
 
+	public boolean has(Member member) {
+		if (member == null) {
+			return false;
+		}
+		return members.contains(member);
+	}
+
 }
