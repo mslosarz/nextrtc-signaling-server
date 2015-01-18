@@ -9,7 +9,6 @@ import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.repository.Conversations;
-import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,9 +16,6 @@ import com.google.common.base.Optional;
 
 @Component
 public class CreateSignal extends AbstractSignal {
-
-	@Autowired
-	private Members members;
 
 	@Autowired
 	private Conversations conversations;
