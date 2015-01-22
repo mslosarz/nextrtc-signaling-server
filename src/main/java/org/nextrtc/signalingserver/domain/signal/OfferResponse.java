@@ -19,6 +19,9 @@ public class OfferResponse extends AbstractSignal {
 	@Autowired
 	private Conversations conversations;
 
+	@Autowired
+	private AnswerRequest answerRequest;
+
 	@Override
 	public String name() {
 		return "offerResponse";
@@ -26,16 +29,22 @@ public class OfferResponse extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		Optional<Conversation> optional = conversations.getBy(message.getFrom());
-		checkPrecondition(message, optional);
+		checkPrecondition(message, conversations.getBy(message.getFrom()));
 
+		InternalMessage.create()//
+				.from(message.getFrom())//
+				.to(message.getTo())//
+				.signal(answerRequest)//
+				.content(message.getContent())//
+				.build()//
+				.post();
 	}
 
-	private void checkPrecondition(InternalMessage message, Optional<Conversation> optional) {
-		if (!optional.isPresent()) {
-			throw Exceptions.INVALID_RECIPIENT.exception();
+	private void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
+		if (!conversation.isPresent()) {
+			throw Exceptions.CONVERSATION_NOT_FOUND.exception();
 		}
-		if (!optional.get().has(message.getTo())) {
+		if (!conversation.get().has(message.getTo())) {
 			throw Exceptions.INVALID_RECIPIENT.exception();
 		}
 	}
