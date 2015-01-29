@@ -4,6 +4,8 @@ import static java.lang.String.format;
 
 public class SignalingException extends RuntimeException {
 
+	private static final long serialVersionUID = 4171073365651049929L;
+
 	private String errorCode;
 
 	public SignalingException(Exceptions exception) {

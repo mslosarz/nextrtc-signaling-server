@@ -48,19 +48,18 @@ public class JoinSignalTest extends BaseTest {
 	@Test
 	public void shouldJoinNewMemberToConversation() throws Exception {
 		// given
-		MessageMatcher sentToAlice = new MessageMatcher();
+		MessageMatcher sentToAlice = createConversationWithOwner("conv", "alice");
 		MessageMatcher sentToBob = new MessageMatcher();
-
-		Conversation conv = createConversationWithOwner("conv", "alice", sentToAlice);
 		Member bob = mockMember("bob", sentToBob);
 
 		// when
 		join.executeMessage(InternalMessage.create()//
 				.from(bob)//
-				.content(conv.getId())//
+				.content("conv")//
 				.build());
 
 		// then
+		Conversation conv = conversations.findBy("conv").get();
 		assertThat(conv.getMembers().size(), is(2));
 
 		assertThat(sentToAlice.getMessages().size(), is(2));

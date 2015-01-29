@@ -62,9 +62,8 @@ public class OfferResponseTest extends BaseTest {
 	@Test
 	public void shouldSendOfferResponse() throws Exception {
 		// given
-		MessageMatcher messagesToBob = new MessageMatcher();
 		createConversationWithOwner("conv", "alice");
-		joinMemberToConversation("conv", "bob", messagesToBob);
+		MessageMatcher messagesToBob = joinMemberToConversation("conv", "bob");
 
 		// when
 		offerResponse.executeMessage(InternalMessage.create()//

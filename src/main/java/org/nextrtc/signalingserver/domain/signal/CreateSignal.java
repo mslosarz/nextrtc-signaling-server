@@ -37,6 +37,7 @@ public class CreateSignal extends AbstractSignal {
 				.to(message.getFrom())//
 				.signal(created)//
 				.content(conv.getId())//
+				.parameters(message.getParameters())//
 				.build()//
 				.post();
 	}

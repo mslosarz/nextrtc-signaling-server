@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.nextrtc.signalingserver.domain.*;
+import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.signal.CreateSignal;
 import org.nextrtc.signalingserver.domain.signal.JoinSignal;
 import org.nextrtc.signalingserver.repository.Conversations;
@@ -82,7 +84,8 @@ public abstract class BaseTest {
 				.build();
 	}
 
-	protected Conversation createConversationWithOwner(String conversationName, String memberName, MessageMatcher match) {
+	protected MessageMatcher createConversationWithOwner(String conversationName, String memberName) {
+		MessageMatcher match = new MessageMatcher();
 		Member member = mockMember(memberName, match);
 		members.register(member);
 		create.executeMessage(InternalMessage.create()//
@@ -90,10 +93,11 @@ public abstract class BaseTest {
 				.content(conversationName)//
 				.build());
 		match.reset();
-		return conversations.findBy(conversationName).get();
+		return match;
 	}
 
-	protected Conversation joinMemberToConversation(String conversationName, String memberName, MessageMatcher match) {
+	protected MessageMatcher joinMemberToConversation(String conversationName, String memberName) {
+		MessageMatcher match = new MessageMatcher();
 		Member member = mockMember(memberName, match);
 		members.register(member);
 		join.executeMessage(InternalMessage.create()//
@@ -101,14 +105,7 @@ public abstract class BaseTest {
 				.content(conversationName)//
 				.build());
 		match.reset();
-		return conversations.findBy(conversationName).get();
+		return match;
 	}
 
-	protected Conversation joinMemberToConversation(String conversationName, String memberName) {
-		return joinMemberToConversation(conversationName, memberName, new MessageMatcher());
-	}
-
-	protected Conversation createConversationWithOwner(String conversation, String member) {
-		return createConversationWithOwner(conversation, member, new MessageMatcher());
-	}
 }

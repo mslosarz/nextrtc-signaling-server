@@ -24,7 +24,7 @@ public class JoinSignal extends AbstractSignal {
 	private JoinedSignal joined;
 
 	@Autowired
-	private OfferRequestSignal offerRequest;
+	private OfferRequest offerRequest;
 
 	@Override
 	public String name() {
@@ -46,20 +46,23 @@ public class JoinSignal extends AbstractSignal {
 				.to(sender)//
 				.content(conversation.getId())//
 				.signal(joined)//
+				.parameters(message.getParameters())//
 				.build()//
 				.post();
 
-		for (Member member : conversation.getMemberWithout(sender)) {
+		for (Member member : conversation.getMembersWithout(sender)) {
 			InternalMessage.create()//
 					.from(sender)//
 					.to(member)//
 					.signal(joined)//
+					.parameters(message.getParameters())//
 					.build()//
 					.post();
 			InternalMessage.create()//
 					.from(sender)//
 					.to(member)//
 					.signal(offerRequest)//
+					.parameters(message.getParameters())//
 					.build()//
 					.post();
 		}
