@@ -1,5 +1,9 @@
 package org.nextrtc.signalingserver.domain.signal;
 
+import static com.google.common.base.Optional.of;
+import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
+
+import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.exception.Exceptions;
@@ -15,6 +19,9 @@ public class AnswerResponse extends AbstractSignal {
 	@Autowired
 	private Conversations conversations;
 
+	@Autowired
+	private Finalize finalize;
+
 	@Override
 	public String name() {
 		return "answerResponse";
@@ -25,8 +32,9 @@ public class AnswerResponse extends AbstractSignal {
 		checkPrecondition(message, conversations.getBy(message.getFrom()));
 
 		InternalMessage.create()//
-				.from(null)//
-				.to(null)//
+				.from(message.getFrom())//
+				.to(message.getTo())//
+				.signal(finalize)//
 				.content(message.getContent())//
 				.parameters(message.getParameters())//
 				.build().post();
@@ -40,6 +48,11 @@ public class AnswerResponse extends AbstractSignal {
 		if (!conversation.get().has(message.getTo())) {
 			throw Exceptions.INVALID_RECIPIENT.exception();
 		}
+	}
+
+	@Override
+	protected Optional<NextRTCEvents> after() {
+		return of(MEMBER_LOCAL_STREAM_CREATED);
 	}
 
 }

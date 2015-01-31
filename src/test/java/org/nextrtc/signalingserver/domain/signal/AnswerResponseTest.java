@@ -64,19 +64,20 @@ public class AnswerResponseTest extends BaseTest {
 		// given
 		MessageMatcher messagesToAlice = createConversationWithOwner("conv", "alice");
 		joinMemberToConversation("conv", "bob");
+		messagesToAlice.reset();
 
 		// when
 		answerResponse.executeMessage(InternalMessage.create()//
-				.from(members.findBy("alice").get())//
-				.to(members.findBy("bob").get())//
-				.content("Session Description Protocol From Alice")//
+				.from(members.findBy("bob").get())//
+				.to(members.findBy("alice").get())//
+				.content("Session Description Protocol From Bob")//
 				.build());
 
 		// then
 		assertThat(messagesToAlice.getMessages().size(), is(1));
 		assertThat(messagesToAlice.getMessage().getFrom(), is("bob"));
 		assertThat(messagesToAlice.getMessage().getTo(), is("alice"));
-		assertThat(messagesToAlice.getMessage().getContent(), is("Session Description Protocol From Alice"));
+		assertThat(messagesToAlice.getMessage().getContent(), is("Session Description Protocol From Bob"));
 		assertThat(messagesToAlice.getMessage().getSignal(), is("finalize"));
 	}
 
