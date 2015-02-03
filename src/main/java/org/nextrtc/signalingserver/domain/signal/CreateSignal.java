@@ -31,7 +31,7 @@ public class CreateSignal extends AbstractSignal {
 	protected void execute(InternalMessage message) {
 		Conversation conv = createConversation(message);
 
-		conv.joinOwner(message.getFrom());
+		conv.joinMember(message.getFrom());
 
 		InternalMessage.create()//
 				.to(message.getFrom())//

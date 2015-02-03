@@ -7,6 +7,7 @@ import java.util.Set;
 
 import lombok.Getter;
 
+import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ import com.google.common.collect.Sets;
 @Scope("prototype")
 public class Conversation {
 
+	@Autowired
+	private Conversations conversations;
+
 	private Set<Member> members = Sets.newConcurrentHashSet();
 
 	private String id;
@@ -26,10 +30,6 @@ public class Conversation {
 	@Autowired
 	public Conversation(String id) {
 		this.id = id;
-	}
-
-	public void joinOwner(Member owner) {
-		members.add(owner);
 	}
 
 	public void joinMember(Member member) {
@@ -55,6 +55,13 @@ public class Conversation {
 			return false;
 		}
 		return members.contains(member);
+	}
+
+	public void left(Member member) {
+		members.remove(member);
+		if (members.size() == 0) {
+			conversations.remove(id);
+		}
 	}
 
 }

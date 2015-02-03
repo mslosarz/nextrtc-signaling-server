@@ -39,10 +39,10 @@ public abstract class BaseTest {
 
 	@Before
 	public void reset() {
-		for (String id : conversations.getAllKeys()) {
-			conversations.unregister(id);
+		for (String id : conversations.getAllIds()) {
+			conversations.remove(id);
 		}
-		for (String id : members.getAllKeys()) {
+		for (String id : members.getAllIds()) {
 			members.unregister(id);
 		}
 	}

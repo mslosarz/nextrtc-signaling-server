@@ -10,8 +10,11 @@ public enum NextRTCEvents implements NextRTCEvent {
 	CONVERSATION_CREATED, //
 	MEMBER_JOINDED, //
 	MEMBER_LOCAL_STREAM_CREATED, //
+	MEMBER_LEFT, //
+	CONVERSATION_CLOSED, //
 	;
 
+	@Override
 	public NextRTCEvents getType() {
 		return this;
 	}

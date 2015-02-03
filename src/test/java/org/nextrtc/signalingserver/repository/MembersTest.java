@@ -10,14 +10,16 @@ import static org.mockito.Mockito.when;
 import javax.websocket.Session;
 
 import org.junit.Test;
+import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.repository.Members;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Optional;
 
-public class MembersTest {
+public class MembersTest extends BaseTest {
 
-	private Members members = new Members();
+	@Autowired
+	private Members members;
 
 	@Test
 	public void shouldAddMember() throws Exception {

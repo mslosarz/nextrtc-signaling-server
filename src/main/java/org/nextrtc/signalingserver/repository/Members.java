@@ -14,7 +14,7 @@ public class Members {
 
 	private Map<String, Member> members = Maps.newConcurrentMap();
 
-	public Collection<String> getAllKeys() {
+	public Collection<String> getAllIds() {
 		return members.keySet();
 	}
 

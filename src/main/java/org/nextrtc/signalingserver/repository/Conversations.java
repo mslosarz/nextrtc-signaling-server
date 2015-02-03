@@ -33,7 +33,7 @@ public class Conversations {
 		return fromNullable(conversations.get(id));
 	}
 
-	public void unregister(String id) {
+	public void remove(String id) {
 		conversations.remove(id);
 	}
 
@@ -53,7 +53,7 @@ public class Conversations {
 		return conversation;
 	}
 
-	public Collection<String> getAllKeys() {
+	public Collection<String> getAllIds() {
 		return conversations.keySet();
 	}
 
