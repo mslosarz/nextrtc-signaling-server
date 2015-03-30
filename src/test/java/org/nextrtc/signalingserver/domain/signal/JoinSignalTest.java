@@ -19,13 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JoinSignalTest extends BaseTest {
 
 	@Autowired
-	private JoinSignal join;
+	private Join join;
 
 	@Autowired
 	private Conversations conversations;
 
 	@Autowired
-	private CreatedSignal create;
+	private Created create;
 
 	@Rule
 	public ExpectedException expect = ExpectedException.none();

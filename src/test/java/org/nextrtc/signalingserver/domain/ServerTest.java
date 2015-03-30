@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.EventChecker;
+import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.api.NextRTCEvent;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
@@ -89,6 +90,63 @@ public class ServerTest extends BaseTest {
 		// then
 		List<NextRTCEvent> events = eventCheckerCall.getEvents();
 		assertThat(events.size(), is(2));
+	}
+
+	@Test
+	public void shouldCreateConversationCreate() throws Exception {
+		// given
+		MessageMatcher s1Matcher = new MessageMatcher();
+		MessageMatcher s2Matcher = new MessageMatcher();
+		Session s1 = mockSession("s1", s1Matcher);
+		Session s2 = mockSession("s2", s2Matcher);
+		server.register(s1);
+		server.register(s2);
+
+		// when
+		server.handle(Message.create()//
+				.signal("create")//
+				.build(), s1);
+
+		// then
+		assertThat(s1Matcher.getMessages().size(), is(1));
+		assertThat(s1Matcher.getMessage().getSignal(), is("created"));
+		assertThat(s2Matcher.getMessages().size(), is(0));
+	}
+
+	@Test
+	public void shouldCreateConversationThenJoinAndSendOfferRequest() throws Exception {
+		// given
+		MessageMatcher s1Matcher = new MessageMatcher();
+		MessageMatcher s2Matcher = new MessageMatcher();
+		Session s1 = mockSession("s1", s1Matcher);
+		Session s2 = mockSession("s2", s2Matcher);
+		server.register(s1);
+		server.register(s2);
+
+		// when
+		server.handle(Message.create()//
+				.signal("create")//
+				.build(), s1);
+		String conversationKey = s1Matcher.getMessage().getContent();
+		s1Matcher.reset();
+		server.handle(Message.create()//
+				.signal("join")//
+				.content(conversationKey)//
+				.build(), s2);
+
+		// then
+		assertThat(s1Matcher.getMessages().size(), is(2));
+		assertThat(s1Matcher.getMessage().getFrom(), is("s2"));
+		assertThat(s1Matcher.getMessage().getTo(), is("s1"));
+		assertThat(s1Matcher.getMessage().getSignal(), is("joined"));
+
+		assertThat(s1Matcher.getMessage(1).getFrom(), is("s2"));
+		assertThat(s1Matcher.getMessage(1).getTo(), is("s1"));
+		assertThat(s1Matcher.getMessage(1).getSignal(), is("offerRequest"));
+
+		assertThat(s2Matcher.getMessages().size(), is(1));
+		assertThat(s2Matcher.getMessage().getSignal(), is("joined"));
+		assertThat(s2Matcher.getMessage().getContent(), is(conversationKey));
 	}
 
 	@Before

@@ -1,5 +1,7 @@
 package org.nextrtc.signalingserver.api;
 
+import java.util.Set;
+
 import javax.websocket.*;
 
 import lombok.extern.log4j.Log4j;
@@ -8,20 +10,25 @@ import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
+
+import com.google.common.collect.Sets;
 
 @Log4j
 @Component
 public class NextRTCEndpoint {
 
-	@Autowired
 	private Server server;
 
+	private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();
+
 	public NextRTCEndpoint() {
-		WebApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();
-		if (ctx != null) {
-			server = ctx.getBean(Server.class);
+		endpoints.add(this);
+		log.info("Created " + this);
+		for (NextRTCEndpoint endpoint : endpoints) {
+			if (endpoint.server != null) {
+				this.setServer(endpoint.server);
+				break;
+			}
 		}
 	}
 
@@ -48,5 +55,11 @@ public class NextRTCEndpoint {
 		log.info("Occured exception for session: " + session.getId());
 		log.error(exception);
 		server.handleError(session, exception);
+	}
+
+	@Autowired
+	public void setServer(Server server) {
+		log.info("Setted server: " + server + " to " + this);
+		this.server = server;
 	}
 }

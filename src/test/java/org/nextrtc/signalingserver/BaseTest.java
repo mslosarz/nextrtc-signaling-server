@@ -13,8 +13,8 @@ import org.mockito.Mockito;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Message;
-import org.nextrtc.signalingserver.domain.signal.CreateSignal;
-import org.nextrtc.signalingserver.domain.signal.JoinSignal;
+import org.nextrtc.signalingserver.domain.signal.Create;
+import org.nextrtc.signalingserver.domain.signal.Join;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public abstract class BaseTest {
 
 	@Autowired
-	private CreateSignal create;
+	private Create create;
 
 	@Autowired
-	private JoinSignal join;
+	private Join join;
 
 	@Autowired
 	private Members members;

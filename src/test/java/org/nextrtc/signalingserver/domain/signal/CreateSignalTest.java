@@ -19,7 +19,7 @@ import com.google.common.base.Optional;
 public class CreateSignalTest extends BaseTest {
 
 	@Autowired
-	private CreateSignal create;
+	private Create create;
 
 	@Autowired
 	private Conversations conversations;

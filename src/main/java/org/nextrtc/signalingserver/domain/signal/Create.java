@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
 
 @Component
-public class CreateSignal extends AbstractSignal {
+public class Create extends AbstractSignal {
 
 	@Autowired
 	private Conversations conversations;
 
 	@Autowired
-	private CreatedSignal created;
+	private Created created;
 
 	@Override
 	public String name() {

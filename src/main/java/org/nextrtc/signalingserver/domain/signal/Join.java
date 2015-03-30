@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
 
 @Component
-public class JoinSignal extends AbstractSignal {
+public class Join extends AbstractSignal {
 
 	@Autowired
 	private Conversations conversations;
 
 	@Autowired
-	private JoinedSignal joined;
+	private Joined joined;
 
 	@Autowired
 	private OfferRequest offerRequest;
@@ -33,11 +33,7 @@ public class JoinSignal extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		Optional<Conversation> found = conversations.findBy(message.getContent());
-		if (!found.isPresent()) {
-			throw CONVERSATION_NOT_FOUND.exception();
-		}
-		Conversation conversation = found.get();
+		Conversation conversation = checkPrecondition(message).get();
 
 		Member sender = message.getFrom();
 		conversation.joinMember(sender);
@@ -66,6 +62,14 @@ public class JoinSignal extends AbstractSignal {
 					.build()//
 					.post();
 		}
+	}
+
+	private Optional<Conversation> checkPrecondition(InternalMessage message) {
+		Optional<Conversation> found = conversations.findBy(message.getContent());
+		if (!found.isPresent()) {
+			throw CONVERSATION_NOT_FOUND.exception();
+		}
+		return found;
 	}
 
 	@Override
