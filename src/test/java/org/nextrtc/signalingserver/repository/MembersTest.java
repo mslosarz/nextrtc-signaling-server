@@ -28,7 +28,7 @@ public class MembersTest extends BaseTest {
 		when(session.getId()).thenReturn("s1");
 
 		// when
-		members.register(new Member(session));
+		members.register(new Member(session, null));
 
 		// then
 		assertThat(members.findBy("s1").isPresent(), is(true));
@@ -61,7 +61,7 @@ public class MembersTest extends BaseTest {
 		// given
 		Session session = mock(Session.class);
 		when(session.getId()).thenReturn("s1");
-		members.register(new Member(session));
+		members.register(new Member(session, null));
 		assertTrue(members.findBy("s1").isPresent());
 
 		// when

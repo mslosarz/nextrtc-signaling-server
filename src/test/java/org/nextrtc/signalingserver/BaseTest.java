@@ -3,6 +3,8 @@ package org.nextrtc.signalingserver;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.ScheduledFuture;
+
 import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 
@@ -75,12 +77,14 @@ public abstract class BaseTest {
 	protected Member mockMember(String string) {
 		return Member.create()//
 				.session(mockSession(string))//
+				.ping(mock(ScheduledFuture.class))//
 				.build();
 	}
 
 	protected Member mockMember(String string, ArgumentMatcher<Message> match) {
 		return Member.create()//
 				.session(mockSession(string, match))//
+				.ping(mock(ScheduledFuture.class))//
 				.build();
 	}
 

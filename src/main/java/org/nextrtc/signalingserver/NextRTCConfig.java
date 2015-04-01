@@ -3,24 +3,24 @@ package org.nextrtc.signalingserver;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.eventbus.EventBus;
 
 @Configuration
-@ComponentScan(basePackages = "org.nextrtc.signalingserver")
-public class TestConfig {
+@ComponentScan(basePackageClasses = { NextRTCConfig.class })
+public class NextRTCConfig {
 
-	@Primary
 	@Bean(name = "nextRTCEventBus")
 	public EventBus eventBus() {
 		return new EventBus();
 	}
 
-	@Primary
 	@Bean(name = "nextRTCPingScheduler")
 	public ScheduledExecutorService scheduler() {
-		return Executors.newScheduledThreadPool(1);
+		return Executors.newScheduledThreadPool(10);
 	}
 
 }

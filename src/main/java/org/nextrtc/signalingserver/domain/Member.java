@@ -1,8 +1,13 @@
 package org.nextrtc.signalingserver.domain;
 
+import static lombok.AccessLevel.PRIVATE;
+
+import java.util.concurrent.ScheduledFuture;
+
 import javax.websocket.Session;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Builder;
 
@@ -17,14 +22,21 @@ public class Member {
 	private String id;
 	private Session session;
 
-	public Member(Session session) {
-		this.session = session;
-		this.id = session.getId();
+	@Getter(PRIVATE)
+	private ScheduledFuture<?> ping;
+
+	public Member(Session session, ScheduledFuture<?> ping) {
+		this(null, session, ping);
 	}
 
-	Member(String id, Session session) {
+	private Member(String id, Session session, ScheduledFuture<?> ping) {
 		this.id = session.getId();
 		this.session = session;
+		this.ping = ping;
+	}
+
+	public void markLeft() {
+		ping.cancel(true);
 	}
 
 	@Override

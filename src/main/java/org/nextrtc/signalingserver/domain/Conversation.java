@@ -59,6 +59,7 @@ public class Conversation {
 
 	public void left(Member member) {
 		members.remove(member);
+		member.markLeft();
 		if (members.size() == 0) {
 			conversations.remove(id);
 		}
