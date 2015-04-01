@@ -290,6 +290,61 @@ public class ServerTest extends BaseTest {
 		assertThat(eventLocalStream.getEvents().size(), is(2));
 	}
 
+	@Test
+	public void shouldExchangeCandidate() throws Exception {
+		// given
+		MessageMatcher s1Matcher = new MessageMatcher();
+		MessageMatcher s2Matcher = new MessageMatcher();
+		Session s1 = mockSession("s1", s1Matcher);
+		Session s2 = mockSession("s2", s2Matcher);
+		server.register(s1);
+		server.register(s2);
+
+		server.handle(Message.create()//
+				.signal("create")//
+				.build(), s1);
+		// -> created
+		String conversationKey = s1Matcher.getMessage().getContent();
+		server.handle(Message.create()//
+				.signal("join")//
+				.content(conversationKey)//
+				.build(), s2);
+		// -> joined
+		// -> offerRequest
+		server.handle(Message.create()//
+				.to("s1")//
+				.signal("offerResponse")//
+				.content("s2 spd")//
+				.build(), s2);
+		// -> answerRequest
+		server.handle(Message.create()//
+				.to("s2")//
+				.signal("answerResponse")//
+				.content("s1 spd")//
+				.build(), s1);
+		// -> finalize
+		s1Matcher.reset();
+		s2Matcher.reset();
+		server.handle(Message.create()//
+				.to("s1")//
+				.signal("candidate")//
+				.content("candidate s2")//
+				.build(), s2);
+		server.handle(Message.create()//
+				.to("s2")//
+				.signal("candidate")//
+				.content("candidate s1")//
+				.build(), s1);
+		// when
+
+		// then
+		assertThat(s1Matcher.getMessages().size(), is(1));
+		assertMatch(s1Matcher, 0, "s2", "s1", "candidate", "candidate s2");
+
+		assertThat(s2Matcher.getMessages().size(), is(1));
+		assertMatch(s2Matcher, 0, "s1", "s2", "candidate", "candidate s1");
+	}
+
 	private void assertMatch(MessageMatcher matcher, int number, String from, String to, String signal, String content) {
 		assertThat(matcher.getMessage(number).getFrom(), is(from));
 		assertThat(matcher.getMessage(number).getTo(), is(to));

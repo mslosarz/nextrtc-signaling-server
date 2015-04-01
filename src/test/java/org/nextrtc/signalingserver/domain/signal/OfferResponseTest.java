@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 public class OfferResponseTest extends BaseTest {
 
 	@Autowired
-	private OfferResponse offerResponse;
+	private AbstractSignal offerResponse;
 
 	@Autowired
 	private Members members;

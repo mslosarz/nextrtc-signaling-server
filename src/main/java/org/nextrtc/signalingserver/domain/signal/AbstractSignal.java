@@ -3,7 +3,9 @@ package org.nextrtc.signalingserver.domain.signal;
 import lombok.extern.log4j.Log4j;
 
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
+import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.exception.Exceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -53,5 +55,14 @@ public abstract class AbstractSignal implements Signal {
 
 	protected NextRTCEvents error() {
 		return NextRTCEvents.UNEXPECTED_SITUATION;
+	}
+
+	protected void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
+		if (!conversation.isPresent()) {
+			throw Exceptions.CONVERSATION_NOT_FOUND.exception();
+		}
+		if (!conversation.get().has(message.getTo())) {
+			throw Exceptions.INVALID_RECIPIENT.exception();
+		}
 	}
 }

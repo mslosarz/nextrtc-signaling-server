@@ -4,9 +4,7 @@ import static com.google.common.base.Optional.of;
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
 
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
-import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.exception.Exceptions;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,15 +37,6 @@ public class OfferResponse extends AbstractSignal {
 				.parameters(message.getParameters())//
 				.build()//
 				.post();
-	}
-
-	private void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
-		if (!conversation.isPresent()) {
-			throw Exceptions.CONVERSATION_NOT_FOUND.exception();
-		}
-		if (!conversation.get().has(message.getTo())) {
-			throw Exceptions.INVALID_RECIPIENT.exception();
-		}
 	}
 
 	@Override
