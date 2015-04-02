@@ -25,10 +25,6 @@ public class Member {
 	@Getter(PRIVATE)
 	private ScheduledFuture<?> ping;
 
-	public Member(Session session, ScheduledFuture<?> ping) {
-		this(null, session, ping);
-	}
-
 	private Member(String id, Session session, ScheduledFuture<?> ping) {
 		this.id = session.getId();
 		this.session = session;
