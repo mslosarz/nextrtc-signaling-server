@@ -48,7 +48,6 @@ public class Member {
 		return new EqualsBuilder()//
 				.append(m.id, id)//
 				.isEquals();
-
 	}
 
 	@Override

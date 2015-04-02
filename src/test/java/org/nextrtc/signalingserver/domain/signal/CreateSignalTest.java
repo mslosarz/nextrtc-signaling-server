@@ -6,6 +6,9 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import java.util.concurrent.ScheduledFuture;
 
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
@@ -31,6 +34,7 @@ public class CreateSignalTest extends BaseTest {
 		InternalMessage message = InternalMessage.create()//
 				.from(Member.create()//
 						.session(mockSession("sessionId", matcher))//
+						.ping(mock(ScheduledFuture.class))//
 						.build())//
 				.signal(create)//
 				.content("c1")//

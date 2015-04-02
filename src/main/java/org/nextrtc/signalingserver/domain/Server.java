@@ -49,12 +49,15 @@ public class Server {
 
 	public void register(Session session) {
 		session.setMaxIdleTimeout(10 * 1000); // 10 seconds
-		members.register(new Member(session, ping(session)));
+		members.register(Member.create()//
+				.session(session)//
+				.ping(ping(session))//
+				.build());
 		eventBus.post(SESSION_STARTED);
 	}
 
 	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 5, 9, TimeUnit.SECONDS);
+		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 9, 9, TimeUnit.SECONDS);
 	}
 
 	public void handle(Message external, Session session) {
@@ -94,10 +97,9 @@ public class Server {
 		Member member = maybeMember.get();
 		Optional<Conversation> maybeConvers = conversations.getBy(member);
 		if (maybeConvers.isPresent()) {
-			maybeConvers.get().left(member);
-		} else {
-			member.markLeft();
+			resolver.resolve("left").executeMessage(InternalMessage.create().from(member).build());
 		}
+		members.unregister(session.getId());
 	}
 
 	public void handleError(Session session, Throwable exception) {

@@ -8,7 +8,6 @@ import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,7 +35,6 @@ public class Left extends AbstractSignal {
 			InternalMessage.create()//
 					.from(message.getFrom())//
 					.to(to)//
-					.content(message.getContent())//
 					.parameters(message.getParameters())//
 					.signal(this)//
 					.build()//
@@ -46,6 +44,7 @@ public class Left extends AbstractSignal {
 
 	}
 
+	@Override
 	protected void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
 		if (!conversation.isPresent()) {
 			throw CONVERSATION_NOT_FOUND.exception();

@@ -32,6 +32,10 @@ public class Members {
 	}
 
 	public void unregister(String id) {
+		Member member = members.get(id);
+		if (member != null) {
+			member.markLeft();
+		}
 		members.remove(id);
 	}
 }

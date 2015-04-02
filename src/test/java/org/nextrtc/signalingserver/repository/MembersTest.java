@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.ScheduledFuture;
+
 import javax.websocket.Session;
 
 import org.junit.Test;
@@ -28,7 +30,7 @@ public class MembersTest extends BaseTest {
 		when(session.getId()).thenReturn("s1");
 
 		// when
-		members.register(new Member(session, null));
+		members.register(Member.create().session(session).ping(mock(ScheduledFuture.class)).build());
 
 		// then
 		assertThat(members.findBy("s1").isPresent(), is(true));
@@ -61,7 +63,7 @@ public class MembersTest extends BaseTest {
 		// given
 		Session session = mock(Session.class);
 		when(session.getId()).thenReturn("s1");
-		members.register(new Member(session, null));
+		members.register(Member.create().session(session).ping(mock(ScheduledFuture.class)).build());
 		assertTrue(members.findBy("s1").isPresent());
 
 		// when

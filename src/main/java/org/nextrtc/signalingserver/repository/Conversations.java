@@ -57,10 +57,10 @@ public class Conversations {
 		return conversations.keySet();
 	}
 
-	public Optional<Conversation> getBy(Member from) {
+	public Optional<Conversation> getBy(Member member) {
 		for (String conversationIds : conversations.keySet()) {
 			Conversation conversation = conversations.get(conversationIds);
-			if (conversation.has(from)) {
+			if (conversation.has(member)) {
 				return Optional.of(conversation);
 			}
 		}

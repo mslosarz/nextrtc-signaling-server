@@ -12,6 +12,7 @@ import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_S
 
 import java.util.List;
 
+import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
 import org.junit.Before;
@@ -343,6 +344,36 @@ public class ServerTest extends BaseTest {
 
 		assertThat(s2Matcher.getMessages().size(), is(1));
 		assertMatch(s2Matcher, 0, "s1", "s2", "candidate", "candidate s1");
+	}
+
+	@Test
+	public void shouldUnregisterSession() throws Exception {
+		// given
+		MessageMatcher s1Matcher = new MessageMatcher();
+		MessageMatcher s2Matcher = new MessageMatcher();
+		Session s1 = mockSession("s1", s1Matcher);
+		Session s2 = mockSession("s2", s2Matcher);
+		server.register(s1);
+		server.register(s2);
+
+		server.handle(Message.create()//
+				.signal("create")//
+				.build(), s1);
+		// -> created
+		String conversationKey = s1Matcher.getMessage().getContent();
+		server.handle(Message.create()//
+				.signal("join")//
+				.content(conversationKey)//
+				.build(), s2);
+		s1Matcher.reset();
+		s2Matcher.reset();
+		server.unregister(s1, mock(CloseReason.class));
+		// when
+
+		// then
+		assertThat(s1Matcher.getMessages().size(), is(0));
+		assertThat(s2Matcher.getMessages().size(), is(1));
+		assertMatch(s2Matcher, 0, "s1", "s2", "left", EMPTY);
 	}
 
 	private void assertMatch(MessageMatcher matcher, int number, String from, String to, String signal, String content) {

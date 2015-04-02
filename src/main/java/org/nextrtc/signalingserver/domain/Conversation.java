@@ -7,6 +7,7 @@ import java.util.Set;
 
 import lombok.Getter;
 
+import org.nextrtc.signalingserver.domain.signal.Left;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -22,6 +23,9 @@ public class Conversation {
 
 	@Autowired
 	private Conversations conversations;
+
+	@Autowired
+	private Left left;
 
 	private Set<Member> members = Sets.newConcurrentHashSet();
 
@@ -59,7 +63,6 @@ public class Conversation {
 
 	public void left(Member member) {
 		members.remove(member);
-		member.markLeft();
 		if (members.size() == 0) {
 			conversations.remove(id);
 		}

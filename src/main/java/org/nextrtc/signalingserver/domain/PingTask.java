@@ -11,7 +11,7 @@ public class PingTask implements Runnable {
 
 	public PingTask(Ping ping, Session to) {
 		this.ping = ping;
-		this.to = new Member(to, null);
+		this.to = Member.create().session(to).build();
 	}
 
 	@Override
