@@ -140,11 +140,11 @@ public class ServerTest extends BaseTest {
 
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(2));
-		assertMatch(s1Matcher, 0, "s2", "s1", "joined", EMPTY);
-		assertMatch(s1Matcher, 1, "s2", "s1", "offerRequest", EMPTY);
+		assertMessage(s1Matcher, 0, "s2", "s1", "joined", EMPTY);
+		assertMessage(s1Matcher, 1, "s2", "s1", "offerRequest", EMPTY);
 
 		assertThat(s2Matcher.getMessages().size(), is(1));
-		assertMatch(s2Matcher, 0, EMPTY, "s2", "joined", conversationKey);
+		assertMessage(s2Matcher, 0, EMPTY, "s2", "joined", conversationKey);
 	}
 
 	@NextRTCEventListener({ MEMBER_LOCAL_STREAM_CREATED })
@@ -186,7 +186,7 @@ public class ServerTest extends BaseTest {
 
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(1));
-		assertMatch(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
+		assertMessage(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
 
 		assertThat(s2Matcher.getMessages().size(), is(0));
 		assertThat(eventLocalStream.getEvents().size(), is(1));
@@ -237,8 +237,8 @@ public class ServerTest extends BaseTest {
 
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(2));
-		assertMatch(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
-		assertMatch(s1Matcher, 1, "s3", "s1", "answerRequest", "s3 spd");
+		assertMessage(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
+		assertMessage(s1Matcher, 1, "s3", "s1", "answerRequest", "s3 spd");
 
 		assertThat(s2Matcher.getMessages().size(), is(0));
 		assertThat(s3Matcher.getMessages().size(), is(0));
@@ -284,7 +284,7 @@ public class ServerTest extends BaseTest {
 
 		// then
 		assertThat(s2Matcher.getMessages().size(), is(1));
-		assertMatch(s2Matcher, 0, "s1", "s2", "finalize", "s1 spd");
+		assertMessage(s2Matcher, 0, "s1", "s2", "finalize", "s1 spd");
 
 		assertThat(s1Matcher.getMessages().size(), is(0));
 
@@ -340,10 +340,10 @@ public class ServerTest extends BaseTest {
 
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(1));
-		assertMatch(s1Matcher, 0, "s2", "s1", "candidate", "candidate s2");
+		assertMessage(s1Matcher, 0, "s2", "s1", "candidate", "candidate s2");
 
 		assertThat(s2Matcher.getMessages().size(), is(1));
-		assertMatch(s2Matcher, 0, "s1", "s2", "candidate", "candidate s1");
+		assertMessage(s2Matcher, 0, "s1", "s2", "candidate", "candidate s1");
 	}
 
 	@Test
@@ -373,10 +373,10 @@ public class ServerTest extends BaseTest {
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(0));
 		assertThat(s2Matcher.getMessages().size(), is(1));
-		assertMatch(s2Matcher, 0, "s1", "s2", "left", EMPTY);
+		assertMessage(s2Matcher, 0, "s1", "s2", "left", EMPTY);
 	}
 
-	private void assertMatch(MessageMatcher matcher, int number, String from, String to, String signal, String content) {
+	private void assertMessage(MessageMatcher matcher, int number, String from, String to, String signal, String content) {
 		assertThat(matcher.getMessage(number).getFrom(), is(from));
 		assertThat(matcher.getMessage(number).getTo(), is(to));
 		assertThat(matcher.getMessage(number).getSignal(), is(signal));
