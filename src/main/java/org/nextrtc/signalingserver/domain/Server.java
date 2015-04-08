@@ -5,15 +5,11 @@ import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_S
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
+import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
-import org.nextrtc.signalingserver.domain.signal.Ping;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
@@ -37,39 +33,37 @@ public class Server {
 	private SignalResolver resolver;
 
 	@Autowired
-	private Ping ping;
+	private RegisterMember register;
 
 	@Autowired
 	@Qualifier("nextRTCEventBus")
 	private EventBus eventBus;
 
-	@Autowired
-	@Qualifier("nextRTCPingScheduler")
-	private ScheduledExecutorService scheduler;
-
 	public void register(Session session) {
 		session.setMaxIdleTimeout(10 * 1000); // 10 seconds
-		members.register(Member.create()//
-				.session(session)//
-				.ping(ping(session))//
-				.build());
+		register.executeFor(session);
 		eventBus.post(SESSION_STARTED);
 	}
 
-	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 9, 9, TimeUnit.SECONDS);
+	public void handle(Message external, Session session) {
+		InternalMessage message = buildInternalMessage(external, session);
+		processMessage(session, message);
 	}
 
-	public void handle(Message external, Session session) {
-		buildInternalMessage(external, session).execute();
+	private void processMessage(Session session, InternalMessage message) {
+		Optional<Conversation> conversation = conversations.getBy(findMember(session));
+		if (conversation.isPresent()) {
+			conversation.get().process(message);
+		} else {
+			message.execute();
+		}
 	}
 
 	private InternalMessage buildInternalMessage(Message message, Session session) {
 		InternalMessageBuilder messageBld = InternalMessage.create()//
 				.from(findMember(session))//
 				.content(message.getContent())//
-				.signal(resolver.resolve(message.getSignal()))//
-				.parameters(message.getParameters());
+				.signal(resolver.resolve(message.getSignal()));
 		for (Member to : members.findBy(message.getTo()).asSet()) {
 			messageBld.to(to);
 		}
@@ -95,9 +89,9 @@ public class Server {
 			return;
 		}
 		Member member = maybeMember.get();
-		Optional<Conversation> maybeConvers = conversations.getBy(member);
-		if (maybeConvers.isPresent()) {
-			resolver.resolve("left").executeMessage(InternalMessage.create().from(member).build());
+		Optional<Conversation> conversation = conversations.getBy(member);
+		if (conversation.isPresent()) {
+			conversation.get().unbind(member);
 		}
 		members.unregister(session.getId());
 	}

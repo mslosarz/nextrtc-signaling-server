@@ -35,7 +35,6 @@ public class Left extends AbstractSignal {
 			InternalMessage.create()//
 					.from(message.getFrom())//
 					.to(to)//
-					.parameters(message.getParameters())//
 					.signal(this)//
 					.build()//
 					.post();

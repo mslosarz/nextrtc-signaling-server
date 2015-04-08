@@ -25,7 +25,6 @@ public class Candidate extends AbstractSignal {
 				.to(message.getTo())//
 				.signal(this)//
 				.content(message.getContent())//
-				.parameters(message.getParameters())//
 				.build()//
 				.post();
 

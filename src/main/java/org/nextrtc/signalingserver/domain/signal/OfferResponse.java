@@ -34,7 +34,6 @@ public class OfferResponse extends AbstractSignal {
 				.to(message.getTo())//
 				.signal(answerRequest)//
 				.content(message.getContent())//
-				.parameters(message.getParameters())//
 				.build()//
 				.post();
 	}

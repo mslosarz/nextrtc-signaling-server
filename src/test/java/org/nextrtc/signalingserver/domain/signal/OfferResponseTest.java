@@ -4,8 +4,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Map;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,8 +13,6 @@ import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.Maps;
 
 public class OfferResponseTest extends BaseTest {
 
@@ -74,7 +70,6 @@ public class OfferResponseTest extends BaseTest {
 				.from(members.findBy("alice").get())//
 				.to(members.findBy("bob").get())//
 				.content("Session Description Protocol From Alice")//
-				.parameters($("name", "leg"))//
 				.build());
 
 		// then
@@ -85,12 +80,6 @@ public class OfferResponseTest extends BaseTest {
 		assertThat(messagesToBob.getMessage().getSignal(), is("answerRequest"));
 		assertThat(messagesToBob.getMessage().getParameters().get("name"), is("leg"));
 
-	}
-
-	private Map<String, String> $(String key, String value) {
-		Map<String, String> params = Maps.newHashMap();
-		params.put(key, value);
-		return params;
 	}
 
 }

@@ -34,7 +34,6 @@ public class AnswerResponse extends AbstractSignal {
 				.to(message.getTo())//
 				.signal(finalize)//
 				.content(message.getContent())//
-				.parameters(message.getParameters())//
 				.build().post();
 
 	}

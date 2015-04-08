@@ -3,8 +3,6 @@ package org.nextrtc.signalingserver.domain;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-import java.util.Map;
-
 import javax.websocket.RemoteEndpoint.Async;
 
 import lombok.Getter;
@@ -12,8 +10,6 @@ import lombok.ToString;
 import lombok.experimental.Builder;
 
 import org.nextrtc.signalingserver.domain.signal.Signal;
-
-import com.google.common.collect.Maps;
 
 @Getter
 @ToString
@@ -24,16 +20,12 @@ public class InternalMessage {
 	private Member to;
 	private Signal signal;
 	private String content;
-	private Map<String, String> parameters = Maps.newHashMap();
 
-	private InternalMessage(Member from, Member to, Signal signal, String content, Map<String, String> parameters) {
+	private InternalMessage(Member from, Member to, Signal signal, String content) {
 		this.from = from;
 		this.to = to;
 		this.signal = signal;
 		this.content = content;
-		if (parameters != null) {
-			this.parameters.putAll(parameters);
-		}
 	}
 
 	public void execute() {
@@ -53,7 +45,6 @@ public class InternalMessage {
 				.to(fromNullable(to))//
 				.signal(signal.name())//
 				.content(defaultString(content))//
-				.parameters(parameters)//
 				.build();
 	}
 

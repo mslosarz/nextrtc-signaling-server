@@ -43,7 +43,7 @@ public class EventBusTest extends BaseTest {
 	private T3 t3;
 
 	@Test
-	public void should_register_listener_with_NextRTCEventListener_annotation() throws InterruptedException {
+	public void shouldRegisterListenerWithNextRTCEventListenerAnnotation() throws InterruptedException {
 		// given
 		Object object = new Object();
 
@@ -55,7 +55,7 @@ public class EventBusTest extends BaseTest {
 	}
 
 	@Test
-	public void should_call_handleEvent_method() throws Exception {
+	public void shouldCallHandleEventMethod() throws Exception {
 		// given
 		NextRTCEvent event = event(SESSION_STARTED);
 		NextRTCEvent notValidEvent = event(SESSION_CLOSED);

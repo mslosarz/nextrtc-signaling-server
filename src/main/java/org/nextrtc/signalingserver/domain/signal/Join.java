@@ -7,7 +7,6 @@ import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,12 +19,6 @@ public class Join extends AbstractSignal {
 	@Autowired
 	private Conversations conversations;
 
-	@Autowired
-	private Joined joined;
-
-	@Autowired
-	private OfferRequest offerRequest;
-
 	@Override
 	public String name() {
 		return "join";
@@ -33,43 +26,15 @@ public class Join extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		Conversation conversation = checkPrecondition(message).get();
-
-		Member sender = message.getFrom();
-		conversation.joinMember(sender);
-
-		InternalMessage.create()//
-				.to(sender)//
-				.content(conversation.getId())//
-				.signal(joined)//
-				.parameters(message.getParameters())//
-				.build()//
-				.post();
-
-		for (Member member : conversation.getMembersWithout(sender)) {
-			InternalMessage.create()//
-					.from(sender)//
-					.to(member)//
-					.signal(joined)//
-					.parameters(message.getParameters())//
-					.build()//
-					.post();
-			InternalMessage.create()//
-					.from(sender)//
-					.to(member)//
-					.signal(offerRequest)//
-					.parameters(message.getParameters())//
-					.build()//
-					.post();
-		}
+		checkPrecondition(message).joinMember(message.getFrom());
 	}
 
-	private Optional<Conversation> checkPrecondition(InternalMessage message) {
+	private Conversation checkPrecondition(InternalMessage message) {
 		Optional<Conversation> found = conversations.findBy(message.getContent());
 		if (!found.isPresent()) {
 			throw CONVERSATION_NOT_FOUND.exception();
 		}
-		return found;
+		return found.get();
 	}
 
 	@Override

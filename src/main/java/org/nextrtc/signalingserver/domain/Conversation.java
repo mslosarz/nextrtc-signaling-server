@@ -7,7 +7,9 @@ import java.util.Set;
 
 import lombok.Getter;
 
-import org.nextrtc.signalingserver.domain.signal.Left;
+import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
+import org.nextrtc.signalingserver.cases.JoinMember;
+import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -25,7 +27,13 @@ public class Conversation {
 	private Conversations conversations;
 
 	@Autowired
-	private Left left;
+	private JoinMember join;
+
+	@Autowired
+	private ExchangeSignalsBetweenMembers exchange;
+
+	@Autowired
+	private LeftConversation left;
 
 	private Set<Member> members = Sets.newConcurrentHashSet();
 
@@ -36,12 +44,24 @@ public class Conversation {
 		this.id = id;
 	}
 
-	public void joinMember(Member member) {
-		members.add(member);
-
+	public synchronized void joinMember(Member sender) {
+		if (isConversationWithoutMember()) {
+			join.sendMessageToFirstJoined(sender, id);
+		} else {
+			join.sendMessageToJoining(sender, id);
+			for (Member member : getMembersWithout(sender)) {
+				join.sendMessageToOthers(sender, member);
+				exchange.begin(sender, member);
+			}
+		}
+		members.add(sender);
 	}
 
-	public Collection<Member> getMembersWithout(Member sender) {
+	private boolean isConversationWithoutMember() {
+		return members.size() == 0;
+	}
+
+	private Collection<Member> getMembersWithout(Member sender) {
 		return from(members).filter(without(sender)).toSet();
 	}
 
@@ -61,11 +81,20 @@ public class Conversation {
 		return members.contains(member);
 	}
 
-	public void left(Member member) {
+	public synchronized void left(Member member) {
 		members.remove(member);
-		if (members.size() == 0) {
+		if (isConversationWithoutMember()) {
 			conversations.remove(id);
 		}
+		left.executeFor(member);
+	}
+
+	public void process(InternalMessage buildInternalMessage) {
+
+	}
+
+	public void unbind(Member member) {
+
 	}
 
 }
