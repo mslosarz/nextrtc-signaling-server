@@ -57,12 +57,13 @@ public abstract class AbstractSignal implements Signal {
 		return NextRTCEvents.UNEXPECTED_SITUATION;
 	}
 
-	protected void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
+	protected Conversation checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
 		if (!conversation.isPresent()) {
 			throw Exceptions.CONVERSATION_NOT_FOUND.exception();
 		}
 		if (!conversation.get().has(message.getTo())) {
 			throw Exceptions.INVALID_RECIPIENT.exception();
 		}
+		return conversation.get();
 	}
 }

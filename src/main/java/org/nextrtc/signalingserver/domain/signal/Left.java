@@ -7,7 +7,6 @@ import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,30 +26,18 @@ public class Left extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		Optional<Conversation> conv = conversations.getBy(message.getFrom());
-		checkPrecondition(message, conv);
-
-		Conversation conversation = conv.get();
-		for (Member to : conversation.getMembersWithout(message.getFrom())) {
-			InternalMessage.create()//
-					.from(message.getFrom())//
-					.to(to)//
-					.signal(this)//
-					.build()//
-					.post();
-		}
-		conversation.left(message.getFrom());
-
+		checkPrecondition(message, conversations.getBy(message.getFrom())).left(message.getFrom());
 	}
 
 	@Override
-	protected void checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
+	protected Conversation checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
 		if (!conversation.isPresent()) {
 			throw CONVERSATION_NOT_FOUND.exception();
 		}
 		if (!conversation.get().has(message.getFrom())) {
 			throw INVALID_RECIPIENT.exception();
 		}
+		return conversation.get();
 	}
 
 	@Override

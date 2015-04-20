@@ -91,7 +91,7 @@ public class Server {
 		Member member = maybeMember.get();
 		Optional<Conversation> conversation = conversations.getBy(member);
 		if (conversation.isPresent()) {
-			conversation.get().unbind(member);
+			conversation.get().left(member);
 		}
 		members.unregister(session.getId());
 	}

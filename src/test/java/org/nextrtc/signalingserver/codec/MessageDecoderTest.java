@@ -6,22 +6,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import java.util.Map;
-
 import javax.websocket.DecodeException;
 
 import org.junit.Test;
 import org.nextrtc.signalingserver.domain.Message;
 
-import com.google.common.collect.Maps;
-import com.google.gson.annotations.Expose;
-
 public class MessageDecoderTest {
 
 	private MessageDecoder decoder = new MessageDecoder();
-
-	@Expose
-	private Map<String, String> parameters = Maps.newHashMap();
 
 	@Test
 	public void shouldParseBasicObject() throws DecodeException {
@@ -91,8 +83,6 @@ public class MessageDecoderTest {
 		assertThat(result.getTo(), is("Bob"));
 		assertThat(result.getSignal(), is("join"));
 		assertThat(result.getContent(), is("something"));
-		assertThat(result.getParameters().size(), is(1));
-		assertThat(result.getParameters().get("param1"), is("value1"));
 	}
 
 }

@@ -20,4 +20,8 @@ public class ExchangeSignalsBetweenMembers {
 				.build()//
 				.post();
 	}
+
+	public void processCommunication(InternalMessage message) {
+		message.execute(); // TODO: move logic from signals to exchange signals
+	}
 }

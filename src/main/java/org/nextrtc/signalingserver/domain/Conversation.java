@@ -1,8 +1,5 @@
 package org.nextrtc.signalingserver.domain;
 
-import static com.google.common.collect.FluentIterable.from;
-
-import java.util.Collection;
 import java.util.Set;
 
 import lombok.Getter;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
 @Getter
@@ -49,7 +45,7 @@ public class Conversation {
 			join.sendMessageToFirstJoined(sender, id);
 		} else {
 			join.sendMessageToJoining(sender, id);
-			for (Member member : getMembersWithout(sender)) {
+			for (Member member : members) {
 				join.sendMessageToOthers(sender, member);
 				exchange.begin(sender, member);
 			}
@@ -61,19 +57,6 @@ public class Conversation {
 		return members.size() == 0;
 	}
 
-	private Collection<Member> getMembersWithout(Member sender) {
-		return from(members).filter(without(sender)).toSet();
-	}
-
-	private Predicate<Member> without(final Member sender) {
-		return new Predicate<Member>() {
-			@Override
-			public boolean apply(Member input) {
-				return !sender.equals(input);
-			}
-		};
-	}
-
 	public boolean has(Member member) {
 		if (member == null) {
 			return false;
@@ -81,20 +64,17 @@ public class Conversation {
 		return members.contains(member);
 	}
 
-	public synchronized void left(Member member) {
-		members.remove(member);
+	public synchronized void left(Member leaving) {
+		members.remove(leaving);
 		if (isConversationWithoutMember()) {
 			conversations.remove(id);
 		}
-		left.executeFor(member);
+		for (Member member : members) {
+			left.executeFor(leaving, member);
+		}
 	}
 
-	public void process(InternalMessage buildInternalMessage) {
-
+	public synchronized void process(InternalMessage message) {
+		exchange.processCommunication(message);
 	}
-
-	public void unbind(Member member) {
-
-	}
-
 }

@@ -78,7 +78,6 @@ public class OfferResponseTest extends BaseTest {
 		assertThat(messagesToBob.getMessage().getTo(), is("bob"));
 		assertThat(messagesToBob.getMessage().getContent(), is("Session Description Protocol From Alice"));
 		assertThat(messagesToBob.getMessage().getSignal(), is("answerRequest"));
-		assertThat(messagesToBob.getMessage().getParameters().get("name"), is("leg"));
 
 	}
 

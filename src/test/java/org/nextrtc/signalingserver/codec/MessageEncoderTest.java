@@ -23,7 +23,6 @@ public class MessageEncoderTest {
 				.to("B")//
 				.content("con")//
 				.signal("sig")//
-				.parameter("param1", "noga")//
 				.build();
 
 		// when
@@ -35,7 +34,6 @@ public class MessageEncoderTest {
 		assertThat(result, containsString(replaceQuotes("'from':'A'")));
 		assertThat(result, containsString(replaceQuotes("'to':'B'")));
 		assertThat(result, containsString(replaceQuotes("'signal':'sig'")));
-		assertThat(result, containsString(replaceQuotes("'param1':'noga'")));
 	}
 
 	@Test
