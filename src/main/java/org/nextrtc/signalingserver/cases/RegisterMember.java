@@ -35,7 +35,7 @@ public class RegisterMember {
 	}
 
 	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 9, 9, TimeUnit.SECONDS);
+		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 3, 3, TimeUnit.SECONDS);
 	}
 
 }
