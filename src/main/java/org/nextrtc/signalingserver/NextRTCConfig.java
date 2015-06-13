@@ -6,12 +6,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import com.google.common.eventbus.EventBus;
 
 @Configuration
 @ComponentScan(basePackageClasses = { NextRTCConfig.class })
 public class NextRTCConfig {
+
+	@Bean
+	public PropertySourcesPlaceholderConfigurer conf() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
 
 	@Bean(name = "nextRTCEventBus")
 	public EventBus eventBus() {

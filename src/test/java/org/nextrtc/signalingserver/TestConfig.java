@@ -9,6 +9,7 @@ import com.google.common.eventbus.EventBus;
 
 @Configuration
 @ComponentScan(basePackages = "org.nextrtc.signalingserver")
+@PropertySource("classpath:application.properties")
 public class TestConfig {
 
 	@Primary
