@@ -1,13 +1,10 @@
 package org.nextrtc.signalingserver.repository;
 
-import static com.google.common.base.Optional.fromNullable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_CONVERSATION_NAME;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.Member;
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 @Repository
@@ -28,9 +24,9 @@ public class Conversations {
 
 	public Optional<Conversation> findBy(String id) {
 		if (isEmpty(id)) {
-			return Optional.absent();
+			return Optional.empty();
 		}
-		return fromNullable(conversations.get(id));
+		return Optional.ofNullable(conversations.get(id));
 	}
 
 	public void remove(String id) {
@@ -64,6 +60,6 @@ public class Conversations {
 				return Optional.of(conversation);
 			}
 		}
-		return Optional.absent();
+		return Optional.empty();
 	}
 }

@@ -2,11 +2,11 @@ package org.nextrtc.signalingserver.repository;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 @Repository
@@ -20,9 +20,9 @@ public class Members {
 
 	public Optional<Member> findBy(String id) {
 		if (id == null) {
-			return Optional.absent();
+			return Optional.empty();
 		}
-		return Optional.fromNullable(members.get(id));
+		return Optional.ofNullable(members.get(id));
 	}
 
 	public void register(Member member) {
@@ -32,10 +32,6 @@ public class Members {
 	}
 
 	public void unregister(String id) {
-		Member member = members.get(id);
-		if (member != null) {
-			member.markLeft();
-		}
 		members.remove(id);
 	}
 }

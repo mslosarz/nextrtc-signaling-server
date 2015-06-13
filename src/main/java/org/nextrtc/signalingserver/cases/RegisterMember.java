@@ -12,10 +12,14 @@ import org.nextrtc.signalingserver.domain.signal.Ping;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterMember {
+
+	@Value("${nextrtc.ping.timeout:1}")
+	private int timeout;
 
 	@Autowired
 	private Members members;
@@ -27,7 +31,7 @@ public class RegisterMember {
 	@Qualifier("nextRTCPingScheduler")
 	private ScheduledExecutorService scheduler;
 
-	public void executeFor(Session session) {
+	public void incomming(Session session) {
 		members.register(Member.create()//
 				.session(session)//
 				.ping(ping(session))//
@@ -35,7 +39,7 @@ public class RegisterMember {
 	}
 
 	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), 3, 3, TimeUnit.SECONDS);
+		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), timeout, timeout, TimeUnit.SECONDS);
 	}
 
 }

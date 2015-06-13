@@ -56,4 +56,9 @@ public class InternalMessage {
 		return to.getSession().getAsyncRemote();
 	}
 
+	public boolean isCreateOrJoin() {
+		return Signal.CREATE_VALUE.equalsIgnoreCase(signal.name()) //
+				|| Signal.JOIN_VALUE.equalsIgnoreCase(signal.name());
+	}
+
 }

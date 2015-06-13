@@ -5,6 +5,9 @@ import org.nextrtc.signalingserver.domain.InternalMessage;
 
 public interface Signal {
 
+	public static final String JOIN_VALUE = "join";
+	public static final String CREATE_VALUE = "create";
+
 	public static final Signal EMPTY = new Signal() {
 		@Override
 		public boolean is(String signalName) {

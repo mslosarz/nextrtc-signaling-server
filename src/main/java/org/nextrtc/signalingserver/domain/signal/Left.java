@@ -4,14 +4,14 @@ import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.MEMBER_LE
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_FOUND;
 import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT;
 
+import java.util.Optional;
+
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.base.Optional;
 
 @Component
 public class Left extends AbstractSignal {

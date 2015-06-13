@@ -7,14 +7,14 @@ import static org.junit.Assert.assertTrue;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_CONVERSATION_NAME;
 
+import java.util.Optional;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Optional;
 
 public class ConversationsTest extends BaseTest {
 

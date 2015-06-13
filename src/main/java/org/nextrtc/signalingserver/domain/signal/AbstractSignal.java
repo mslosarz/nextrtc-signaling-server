@@ -1,5 +1,7 @@
 package org.nextrtc.signalingserver.domain.signal;
 
+import java.util.Optional;
+
 import lombok.extern.log4j.Log4j;
 
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
@@ -9,7 +11,6 @@ import org.nextrtc.signalingserver.exception.Exceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 
 @Log4j
@@ -46,11 +47,11 @@ public abstract class AbstractSignal implements Signal {
 	protected abstract void execute(InternalMessage message);
 
 	protected Optional<NextRTCEvents> before() {
-		return Optional.absent();
+		return Optional.empty();
 	}
 
 	protected Optional<NextRTCEvents> after() {
-		return Optional.absent();
+		return Optional.empty();
 	}
 
 	protected NextRTCEvents error() {

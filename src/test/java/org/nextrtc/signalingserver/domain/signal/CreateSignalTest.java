@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
 import org.junit.Test;
@@ -15,8 +16,6 @@ import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.domain.*;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Optional;
 
 public class CreateSignalTest extends BaseTest {
 

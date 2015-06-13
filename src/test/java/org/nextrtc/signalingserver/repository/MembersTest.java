@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.websocket.Session;
@@ -15,8 +16,6 @@ import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.base.Optional;
 
 public class MembersTest extends BaseTest {
 
