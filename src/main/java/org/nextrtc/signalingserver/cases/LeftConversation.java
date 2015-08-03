@@ -1,24 +1,47 @@
 package org.nextrtc.signalingserver.cases;
 
+import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_FOUND;
+import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT;
+
+import java.util.Optional;
+
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
+import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.signal.Left;
+import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LeftConversation {
 
 	@Autowired
-	private Left left;
+	@Qualifier("nextRTCEventBus")
+	private NextRTCEventBus eventBus;
 
-	public void executeFor(Member leaving, Member recipien) {
-		InternalMessage.create()//
-				.from(leaving)//
-				.to(recipien)//
-				.signal(left)//
-				.build()//
-				.post();
+	@Autowired
+	private Conversations conversations;
+
+	public void execute(InternalMessage message) {
+		checkPrecondition(message, conversations.getBy(message.getFrom())).left(message.getFrom());
+
+		sendEventMemberLeftFrom(message);
+	}
+
+	private void sendEventMemberLeftFrom(InternalMessage message) {
+		eventBus.post(NextRTCEvents.MEMBER_LEFT.basedOn(message));
+	}
+
+	protected Conversation checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
+		if (!conversation.isPresent()) {
+			throw CONVERSATION_NOT_FOUND.exception();
+		}
+		if (!conversation.get().has(message.getFrom())) {
+			throw INVALID_RECIPIENT.exception();
+		}
+		return conversation.get();
 	}
 
 }

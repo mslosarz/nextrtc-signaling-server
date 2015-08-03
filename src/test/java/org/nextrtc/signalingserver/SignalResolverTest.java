@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.nextrtc.signalingserver.SignalResolverTest.A;
-import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.SignalResolver;
 import org.nextrtc.signalingserver.domain.signal.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,6 @@ public class SignalResolverTest extends BaseTest {
 		@Override
 		public boolean is(String string) {
 			return existing.equalsIgnoreCase(string);
-		}
-
-		@Override
-		public void executeMessage(InternalMessage internal) {
 		}
 
 		@Override

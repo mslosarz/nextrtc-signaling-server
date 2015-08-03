@@ -17,8 +17,10 @@ public class MessageMatcher extends ArgumentMatcher<Message> {
 	@Override
 	public boolean matches(Object argument) {
 		if (argument instanceof Message) {
-			messages.add((Message) argument);
-
+			Message msg = (Message) argument;
+			if (!"ping".equals(msg.getSignal())) {
+				messages.add(msg);
+			}
 			return true;
 		}
 		return false;
@@ -37,6 +39,16 @@ public class MessageMatcher extends ArgumentMatcher<Message> {
 
 	public void reset() {
 		messages.clear();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Message msg : messages) {
+			sb.append(msg);
+			sb.append(", ");
+		}
+		return sb.toString();
 	}
 
 }

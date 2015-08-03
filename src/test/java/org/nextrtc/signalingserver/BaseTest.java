@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+import org.nextrtc.signalingserver.cases.CreateConversation;
+import org.nextrtc.signalingserver.cases.JoinConversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Message;
-import org.nextrtc.signalingserver.domain.signal.Create;
-import org.nextrtc.signalingserver.domain.signal.Join;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +28,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public abstract class BaseTest {
 
 	@Autowired
-	private Create create;
+	private CreateConversation create;
 
 	@Autowired
-	private Join join;
+	private JoinConversation join;
 
 	@Autowired
 	private Members members;
@@ -92,7 +92,7 @@ public abstract class BaseTest {
 		MessageMatcher match = new MessageMatcher();
 		Member member = mockMember(memberName, match);
 		members.register(member);
-		create.executeMessage(InternalMessage.create()//
+		create.execute(InternalMessage.create()//
 				.from(member)//
 				.content(conversationName)//
 				.build());
@@ -104,7 +104,7 @@ public abstract class BaseTest {
 		MessageMatcher match = new MessageMatcher();
 		Member member = mockMember(memberName, match);
 		members.register(member);
-		join.executeMessage(InternalMessage.create()//
+		join.execute(InternalMessage.create()//
 				.from(member)//
 				.content(conversationName)//
 				.build());

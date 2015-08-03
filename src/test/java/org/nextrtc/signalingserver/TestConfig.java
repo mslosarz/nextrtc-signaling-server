@@ -3,9 +3,8 @@ package org.nextrtc.signalingserver;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.springframework.context.annotation.*;
-
-import com.google.common.eventbus.EventBus;
 
 @Configuration
 @ComponentScan(basePackages = "org.nextrtc.signalingserver")
@@ -14,8 +13,8 @@ public class TestConfig {
 
 	@Primary
 	@Bean(name = "nextRTCEventBus")
-	public EventBus eventBus() {
-		return new EventBus();
+	public NextRTCEventBus eventBus() {
+		return new NextRTCEventBus();
 	}
 
 	@Primary

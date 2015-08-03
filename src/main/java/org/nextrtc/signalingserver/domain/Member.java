@@ -8,7 +8,6 @@ import javax.websocket.Session;
 
 import lombok.Data;
 import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.Builder;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Data
 @Builder(builderMethodName = "create")
-@ToString
 public class Member {
 
 	private String id;
@@ -33,6 +31,10 @@ public class Member {
 
 	public void markLeft() {
 		ping.cancel(true);
+	}
+	@Override
+	public String toString() {
+		return String.format("%s (%s)", id, session);
 	}
 
 	@Override

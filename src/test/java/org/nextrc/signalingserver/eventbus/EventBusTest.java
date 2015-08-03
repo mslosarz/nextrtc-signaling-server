@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.api.NextRTCEvent;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 @ContextConfiguration(classes = { T1.class, T2.class, T3.class })
@@ -28,7 +28,7 @@ public class EventBusTest extends BaseTest {
 
 	@Autowired
 	@Qualifier("nextRTCEventBus")
-	private EventBus eventBus;
+	private NextRTCEventBus eventBus;
 
 	@Autowired
 	@Qualifier("t1")

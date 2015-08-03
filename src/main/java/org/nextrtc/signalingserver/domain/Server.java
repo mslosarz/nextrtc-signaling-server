@@ -5,10 +5,13 @@ import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_S
 import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
+import java.util.Optional;
+
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
-import org.nextrtc.signalingserver.cases.RegisterMember;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.cases.*;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Conversations;
@@ -16,8 +19,6 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import com.google.common.eventbus.EventBus;
 
 @Component
 public class Server {
@@ -35,8 +36,20 @@ public class Server {
 	private RegisterMember register;
 
 	@Autowired
+	private CreateConversation create;
+
+	@Autowired
+	private JoinConversation join;
+
+	@Autowired
+	private LeftConversation left;
+
+	@Autowired
+	private ExchangeSignalsBetweenMembers exchange;
+
+	@Autowired
 	@Qualifier("nextRTCEventBus")
-	private EventBus eventBus;
+	private NextRTCEventBus eventBus;
 
 	public void register(Session session) {
 		session.setMaxIdleTimeout(10 * 1000); // 10 seconds
@@ -45,16 +58,20 @@ public class Server {
 	}
 
 	public void handle(Message external, Session session) {
-		InternalMessage message = buildInternalMessage(external, session);
-		if (message.isCreateOrJoin()) {
-			message.execute();
-			return;
-		}
-		processMessage(session, message);
+		processMessage(session, buildInternalMessage(external, session));
 	}
 
 	private void processMessage(Session session, InternalMessage message) {
-		conversations.getBy(findMember(session)).ifPresent(c -> c.process(message));
+		Optional<Conversation> conversation = conversations.getBy(findMember(session));
+		if (conversation.isPresent()) {
+			exchange.execute(message);
+		} else if (message.isCreate()) {
+			create.execute(message);
+		} else if (message.isJoin()) {
+			join.execute(message);
+		} else if (message.isLeft()) {
+			left.execute(message);
+		}
 	}
 
 	private InternalMessage buildInternalMessage(Message message, Session session) {
@@ -77,7 +94,7 @@ public class Server {
 
 	private void unbind(Session session) {
 		members.findBy(session.getId()).ifPresent(member -> {
-			conversations.getBy(member).ifPresent(conversation -> conversation.left(member));
+			conversations.getBy(member).ifPresent(conv -> conv.left(member));
 		});
 		members.unregister(session.getId());
 	}

@@ -97,7 +97,7 @@ public class ServerTest extends BaseTest {
 	}
 
 	@Test
-	public void shouldCreateConversationCreate() throws Exception {
+	public void shouldCreateConversation() throws Exception {
 		// given
 		MessageMatcher s1Matcher = new MessageMatcher();
 		MessageMatcher s2Matcher = new MessageMatcher();

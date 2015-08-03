@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import lombok.extern.log4j.Log4j;
 
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
@@ -11,25 +12,22 @@ import org.nextrtc.signalingserver.exception.Exceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.google.common.eventbus.EventBus;
-
 @Log4j
 public abstract class AbstractSignal implements Signal {
 
 	@Autowired
 	@Qualifier("nextRTCEventBus")
-	private EventBus eventBus;
+	private NextRTCEventBus eventBus;
 
 	@Override
 	public boolean is(String incomming) {
 		return name().equalsIgnoreCase(incomming);
 	}
 
-	@Override
 	public void executeMessage(InternalMessage message) {
 		postEvent(before(), message);
 		try {
-			execute(message);
+			// execute(message);
 		} catch (Exception reason) {
 			postEvent(Optional.of(error()), message);
 			log.debug(reason.getMessage() + " " + message);

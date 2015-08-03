@@ -25,7 +25,7 @@ public class Join extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		checkPrecondition(message).joinMember(message.getFrom());
+		checkPrecondition(message).join(message.getFrom());
 	}
 
 	private Conversation checkPrecondition(InternalMessage message) {

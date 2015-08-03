@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.JoinMember;
-import org.nextrtc.signalingserver.cases.LeftConversation;
+import org.nextrtc.signalingserver.cases.LeftMember;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -29,18 +29,18 @@ public class Conversation {
 	private ExchangeSignalsBetweenMembers exchange;
 
 	@Autowired
-	private LeftConversation left;
-
-	private Set<Member> members = Sets.newConcurrentHashSet();
+	private LeftMember left;
 
 	private String id;
+
+	private Set<Member> members = Sets.newConcurrentHashSet();
 
 	@Autowired
 	public Conversation(String id) {
 		this.id = id;
 	}
 
-	public synchronized void joinMember(Member sender) {
+	public synchronized void join(Member sender) {
 		if (isConversationWithoutMember()) {
 			join.sendMessageToFirstJoined(sender, id);
 		} else {
@@ -74,7 +74,4 @@ public class Conversation {
 		}
 	}
 
-	public synchronized void process(InternalMessage message) {
-		exchange.processCommunication(message);
-	}
 }

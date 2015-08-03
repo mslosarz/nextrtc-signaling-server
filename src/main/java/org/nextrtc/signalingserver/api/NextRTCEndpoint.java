@@ -24,12 +24,7 @@ public class NextRTCEndpoint {
 	public NextRTCEndpoint() {
 		endpoints.add(this);
 		log.info("Created " + this);
-		for (NextRTCEndpoint endpoint : endpoints) {
-			if (endpoint.server != null) {
-				this.setServer(endpoint.server);
-				break;
-			}
-		}
+		endpoints.stream().filter(e -> e.server != null).findFirst().ifPresent(s -> this.setServer(s.server));
 	}
 
 	@OnOpen

@@ -25,7 +25,7 @@ public class Create extends AbstractSignal {
 
 	@Override
 	protected void execute(InternalMessage message) {
-		createConversation(message).joinMember(message.getFrom());
+		createConversation(message).join(message.getFrom());
 	}
 
 	private Conversation createConversation(InternalMessage message) {

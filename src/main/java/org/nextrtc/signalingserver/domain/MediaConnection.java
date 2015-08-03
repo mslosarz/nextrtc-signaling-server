@@ -4,10 +4,10 @@ public class MediaConnection {
 
 	private Member master;
 	private Member slave;
-	private State state;
+	private State state = State.NOT_INITIALIZED;
 
 	public enum State {
-		OPENED, CLOSED;
+		NOT_INITIALIZED, OPENED, CLOSED;
 	}
 
 }

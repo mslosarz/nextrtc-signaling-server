@@ -26,6 +26,11 @@ public class Message {
 	@Expose
 	private String content = EMPTY;
 
+	@Override
+	public String toString() {
+		return String.format("(%s -> %s)[%s]: %s", from, to, signal, content);
+	}
+
 	public static MessageBuilder create() {
 		return new MessageBuilder();
 	}

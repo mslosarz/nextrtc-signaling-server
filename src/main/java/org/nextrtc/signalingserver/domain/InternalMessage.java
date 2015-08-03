@@ -6,13 +6,11 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import javax.websocket.RemoteEndpoint.Async;
 
 import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.Builder;
 
 import org.nextrtc.signalingserver.domain.signal.Signal;
 
 @Getter
-@ToString
 @Builder(builderMethodName = "create")
 public class InternalMessage {
 
@@ -26,10 +24,6 @@ public class InternalMessage {
 		this.to = to;
 		this.signal = signal;
 		this.content = content;
-	}
-
-	public void execute() {
-		signal.executeMessage(this);
 	}
 
 	/**
@@ -56,9 +50,20 @@ public class InternalMessage {
 		return to.getSession().getAsyncRemote();
 	}
 
-	public boolean isCreateOrJoin() {
-		return Signal.CREATE_VALUE.equalsIgnoreCase(signal.name()) //
-				|| Signal.JOIN_VALUE.equalsIgnoreCase(signal.name());
+	public boolean isCreate() {
+		return Signal.CREATE_VALUE.equalsIgnoreCase(signal.name());
 	}
 
+	public boolean isJoin() {
+		return Signal.JOIN_VALUE.equalsIgnoreCase(signal.name());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("(%s -> %s)[%s]: %s", from, to, signal != null ? signal.name() : null, content);
+	}
+
+	public boolean isLeft() {
+		return Signal.LEFT_VALUE.equalsIgnoreCase(signal.name());
+	}
 }
