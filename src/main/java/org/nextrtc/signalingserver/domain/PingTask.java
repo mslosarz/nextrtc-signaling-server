@@ -2,15 +2,13 @@ package org.nextrtc.signalingserver.domain;
 
 import javax.websocket.Session;
 
-import org.nextrtc.signalingserver.domain.signal.Ping;
+import org.nextrtc.signalingserver.domain.signal.Signal;
 
 public class PingTask implements Runnable {
 
-	private Ping ping;
 	private Member to;
 
-	public PingTask(Ping ping, Session to) {
-		this.ping = ping;
+	public PingTask(Session to) {
 		this.to = Member.create().session(to).build();
 	}
 
@@ -18,7 +16,7 @@ public class PingTask implements Runnable {
 	public void run() {
 		InternalMessage.create()//
 				.to(to)//
-				.signal(ping)//
+				.signal(Signal.PING)//
 				.build()//
 				.post();
 	}

@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver;
 
-import java.util.concurrent.Executors;
+import static org.mockito.Mockito.mock;
+
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
@@ -20,7 +21,7 @@ public class TestConfig {
 	@Primary
 	@Bean(name = "nextRTCPingScheduler")
 	public ScheduledExecutorService scheduler() {
-		return Executors.newScheduledThreadPool(1);
+		return mock(ScheduledExecutorService.class);
 	}
 
 }

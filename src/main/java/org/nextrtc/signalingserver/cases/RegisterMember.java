@@ -8,7 +8,6 @@ import javax.websocket.Session;
 
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.PingTask;
-import org.nextrtc.signalingserver.domain.signal.Ping;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,9 +24,6 @@ public class RegisterMember {
 	private Members members;
 
 	@Autowired
-	private Ping ping;
-
-	@Autowired
 	@Qualifier("nextRTCPingScheduler")
 	private ScheduledExecutorService scheduler;
 
@@ -39,7 +35,7 @@ public class RegisterMember {
 	}
 
 	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(ping, session), timeout, timeout, TimeUnit.SECONDS);
+		return scheduler.scheduleAtFixedRate(new PingTask(session), timeout, timeout, TimeUnit.SECONDS);
 	}
 
 }

@@ -3,28 +3,32 @@ package org.nextrtc.signalingserver.cases.connection;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.signal.Signal;
 
-public abstract class ConnectionState {
+public enum ConnectionState {
 
-	public static final ConnectionState OFFER_REQUESTED = new ConnectionState() {
+	OFFER_REQUESTED {
 		@Override
 		public boolean isValid(InternalMessage message) {
-			return Signal.OFFER_RESPONSE.is(message.getSignal());
+			return false;
 		}
-	};
-	public static final ConnectionState ANSWER_REQUESTED = new ConnectionState() {
+	},
+	ANSWER_REQUESTED {
 		@Override
 		public boolean isValid(InternalMessage message) {
-			return Signal.ANSWER_RESPONSE.is(message.getSignal());
+			return false;
 		}
-	};
-	public static final ConnectionState SPD_EXCHANGED = new ConnectionState() {
+	},
+	EXCHANGE_CANDIDATES {
 		@Override
 		public boolean isValid(InternalMessage message) {
-			return Signal.ANSWER_RESPONSE.is(message.getSignal());
+			return Signal.CANDIDATE.is(message.getSignal());
+		}
+	},
+	NOT_INITIALIZED {
+		@Override
+		public boolean isValid(InternalMessage message) {
+			return false;
 		}
 	};
-
-	public static final ConnectionState NOT_INITIALIZED = null;
 
 
 	private ConnectionState() {

@@ -6,7 +6,6 @@ import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.signal.Joined;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,14 +19,15 @@ public class JoinConversation {
 	private NextRTCEventBus eventBus;
 
 	@Autowired
-	private Joined joined;
+	private JoinMember joinMember;
 
 	@Autowired
 	private Conversations conversations;
 
 	public void execute(InternalMessage message) {
-		findConversationToJoin(message).join(message.getFrom());
-
+		Conversation conversation = findConversationToJoin(message);
+		joinMember.sendMessageToJoining(message.getFrom(), conversation.getId());
+		conversation.join(message.getFrom());
 		sendEventMemberJoinedFrom(message);
 	}
 

@@ -13,6 +13,7 @@ public interface Signal {
 	public static final String FINALIZE_VALUE = "finalize";
 	public static final String CANDIDATE_VALUE = "candidate";
 	public static final String LEFT_VALUE = "left";
+	public static final String PING_VALUE = "ping";
 
 	public static final Signal EMPTY = new Signal() {
 		@Override
@@ -55,6 +56,42 @@ public interface Signal {
 		public String name() {
 			return CANDIDATE_VALUE;
 		}
+	};
+	public static final Signal PING = new Signal() {
+		@Override
+		public String name() {
+			return PING_VALUE;
+		};
+	};
+	public static final Signal LEFT = new Signal() {
+		@Override
+		public String name() {
+			return LEFT_VALUE;
+		};
+	};
+	public static final Signal JOIN = new Signal() {
+		@Override
+		public String name() {
+			return JOIN_VALUE;
+		};
+	};
+	public static final Signal CREATE = new Signal() {
+		@Override
+		public String name() {
+			return CREATE_VALUE;
+		};
+	};
+	public static final Signal JOINED = new Signal() {
+		@Override
+		public String name() {
+			return "joined";
+		};
+	};
+	public static final Signal CREATED = new Signal() {
+		@Override
+		public String name() {
+			return "created";
+		};
 	};
 
 	default boolean is(String string) {

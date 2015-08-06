@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.JoinMember;
 import org.nextrtc.signalingserver.cases.LeftMember;
-import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,13 +19,10 @@ import com.google.common.collect.Sets;
 public class Conversation {
 
 	@Autowired
-	private Conversations conversations;
+	private ExchangeSignalsBetweenMembers exchange;
 
 	@Autowired
 	private JoinMember join;
-
-	@Autowired
-	private ExchangeSignalsBetweenMembers exchange;
 
 	@Autowired
 	private LeftMember left;
@@ -41,19 +37,14 @@ public class Conversation {
 	}
 
 	public synchronized void join(Member sender) {
-		if (isConversationWithoutMember()) {
-			join.sendMessageToFirstJoined(sender, id);
-		} else {
-			join.sendMessageToJoining(sender, id);
-			for (Member member : members) {
-				join.sendMessageToOthers(sender, member);
-				exchange.begin(sender, member);
-			}
+		for (Member member : members) {
+			join.sendMessageToOthers(sender, member);
+			exchange.begin(member, sender);
 		}
 		members.add(sender);
 	}
 
-	private boolean isConversationWithoutMember() {
+	public boolean isWithoutMember() {
 		return members.size() == 0;
 	}
 
@@ -66,12 +57,13 @@ public class Conversation {
 
 	public synchronized void left(Member leaving) {
 		members.remove(leaving);
-		if (isConversationWithoutMember()) {
-			conversations.remove(id);
-		}
 		for (Member member : members) {
 			left.executeFor(leaving, member);
 		}
+	}
+
+	public void execute(InternalMessage message) {
+		exchange.execute(message);
 	}
 
 }

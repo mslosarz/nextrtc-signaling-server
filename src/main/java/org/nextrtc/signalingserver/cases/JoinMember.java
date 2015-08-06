@@ -2,25 +2,17 @@ package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.signal.Created;
-import org.nextrtc.signalingserver.domain.signal.Joined;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.nextrtc.signalingserver.domain.signal.Signal;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JoinMember {
 
-	@Autowired
-	private Joined joined;
-
-	@Autowired
-	private Created created;
-
 	public void sendMessageToJoining(Member sender, String id) {
 		InternalMessage.create()//
 				.to(sender)//
 				.content(id)//
-				.signal(joined)//
+				.signal(Signal.JOINED)//
 				.build()//
 				.post();
 	}
@@ -29,7 +21,7 @@ public class JoinMember {
 		InternalMessage.create()//
 				.from(sender)//
 				.to(member)//
-				.signal(joined)//
+				.signal(Signal.JOINED)//
 				.build()//
 				.post();
 	}
@@ -37,7 +29,7 @@ public class JoinMember {
 	public void sendMessageToFirstJoined(Member sender, String id) {
 		InternalMessage.create()//
 				.to(sender)//
-				.signal(created)//
+				.signal(Signal.CREATED)//
 				.content(id)//
 				.build()//
 				.post();

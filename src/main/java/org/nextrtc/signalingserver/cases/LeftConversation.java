@@ -25,8 +25,11 @@ public class LeftConversation {
 	private Conversations conversations;
 
 	public void execute(InternalMessage message) {
-		checkPrecondition(message, conversations.getBy(message.getFrom())).left(message.getFrom());
-
+		Conversation conversation = checkPrecondition(message, conversations.getBy(message.getFrom()));
+		conversation.left(message.getFrom());
+		if (conversation.isWithoutMember()) {
+			conversations.remove(conversation.getId());
+		}
 		sendEventMemberLeftFrom(message);
 	}
 

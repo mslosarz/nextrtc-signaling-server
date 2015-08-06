@@ -22,32 +22,47 @@ public class ConnectionContext {
 
 	public void process(InternalMessage message) {
 		if (is(message, ConnectionState.OFFER_REQUESTED)) {
-			InternalMessage.create()//
-					.from(slave)//
-					.to(master)//
-					.signal(Signal.ANSWER_REQUEST)//
-					.content(message.getContent())//
-					.build()//
-					.post();
+			answerRequest(message);
 			state = ConnectionState.ANSWER_REQUESTED;
 		} else if (is(message, ConnectionState.ANSWER_REQUESTED)) {
-			InternalMessage.create()//
-					.from(master)//
-					.to(slave)//
-					.signal(Signal.FINALIZE)//
-					.content(message.getContent())//
-					.build()//
-					.post();
-			state = ConnectionState.SPD_EXCHANGED;
-		} else if (is(message, ConnectionState.SPD_EXCHANGED)) {
-			InternalMessage.create()//
-					.from(master)//
-					.to(slave)//
-					.signal(Signal.CANDIDATE)//
-					.content(message.getContent())//
-					.build()//
-					.post();
+			finalize(message);
+			state = ConnectionState.EXCHANGE_CANDIDATES;
+		} else if (is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
+			exchangeCandidates(message);
 		}
+	}
+
+
+	private void exchangeCandidates(InternalMessage message) {
+		InternalMessage.create()//
+				.from(message.getFrom())//
+				.to(message.getTo())//
+				.signal(Signal.CANDIDATE)//
+				.content(message.getContent())//
+				.build()//
+				.post();
+	}
+
+
+	private void finalize(InternalMessage message) {
+		InternalMessage.create()//
+				.from(master)//
+				.to(slave)//
+				.signal(Signal.FINALIZE)//
+				.content(message.getContent())//
+				.build()//
+				.post();
+	}
+
+
+	private void answerRequest(InternalMessage message) {
+		InternalMessage.create()//
+				.from(slave)//
+				.to(master)//
+				.signal(Signal.ANSWER_REQUEST)//
+				.content(message.getContent())//
+				.build()//
+				.post();
 	}
 
 	private boolean is(InternalMessage message, ConnectionState state) {

@@ -45,9 +45,6 @@ public class Server {
 	private LeftConversation left;
 
 	@Autowired
-	private ExchangeSignalsBetweenMembers exchange;
-
-	@Autowired
 	@Qualifier("nextRTCEventBus")
 	private NextRTCEventBus eventBus;
 
@@ -63,15 +60,19 @@ public class Server {
 
 	private void processMessage(Session session, InternalMessage message) {
 		Optional<Conversation> conversation = conversations.getBy(findMember(session));
-		if (conversation.isPresent()) {
-			exchange.execute(message);
-		} else if (message.isCreate()) {
+		if (message.isCreate()) {
 			create.execute(message);
-		} else if (message.isJoin()) {
-			join.execute(message);
-		} else if (message.isLeft()) {
-			left.execute(message);
+			return;
 		}
+		if (message.isJoin()) {
+			join.execute(message);
+			return;
+		}
+		if (conversation.isPresent() && message.isLeft()) {
+			left.execute(message);
+			return;
+		}
+		conversation.ifPresent(c -> c.execute(message));
 	}
 
 	private InternalMessage buildInternalMessage(Message message, Session session) {

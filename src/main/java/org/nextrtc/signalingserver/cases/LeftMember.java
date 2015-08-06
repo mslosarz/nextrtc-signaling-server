@@ -2,21 +2,17 @@ package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.signal.Left;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.nextrtc.signalingserver.domain.signal.Signal;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LeftMember {
 
-	@Autowired
-	private Left left;
-
 	public void executeFor(Member leaving, Member recipien) {
 		InternalMessage.create()//
 				.from(leaving)//
 				.to(recipien)//
-				.signal(left)//
+				.signal(Signal.LEFT)//
 				.build()//
 				.post();
 	}

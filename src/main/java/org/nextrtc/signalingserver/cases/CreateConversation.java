@@ -7,7 +7,6 @@ import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.signal.Created;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +20,7 @@ public class CreateConversation {
 	private NextRTCEventBus eventBus;
 
 	@Autowired
-	private Created created;
+	private JoinMember joinMember;
 
 	@Autowired
 	private Conversations conversations;
@@ -30,6 +29,8 @@ public class CreateConversation {
 		Member creating = message.getFrom();
 
 		Conversation conversation = createConversationUsing(message);
+
+		joinMember.sendMessageToFirstJoined(message.getFrom(), conversation.getId());
 
 		conversation.join(creating);
 

@@ -179,10 +179,10 @@ public class ServerTest extends BaseTest {
 		// when
 		// s2 has to create local stream
 		server.handle(Message.create()//
-				.to("s1")//
+				.to("s2")//
 				.signal("offerResponse")//
 				.content("s2 spd")//
-				.build(), s2);
+				.build(), s1);
 
 		// then
 		assertThat(s1Matcher.getMessages().size(), is(1));
