@@ -2,7 +2,7 @@ package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.signal.Signal;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.stereotype.Component;
 
 @Component

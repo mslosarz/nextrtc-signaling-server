@@ -2,8 +2,6 @@ package org.nextrtc.signalingserver.domain;
 
 import javax.websocket.Session;
 
-import org.nextrtc.signalingserver.domain.signal.Signal;
-
 public class PingTask implements Runnable {
 
 	private Member to;

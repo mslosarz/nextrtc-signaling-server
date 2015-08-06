@@ -5,31 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.nextrtc.signalingserver.SignalResolverTest.A;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.domain.SignalResolver;
-import org.nextrtc.signalingserver.domain.signal.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = { A.class })
 public class SignalResolverTest extends BaseTest {
-
-	@Component
-	public static class A implements Signal {
-
-		private String existing = "existing";
-
-		@Override
-		public boolean is(String string) {
-			return existing.equalsIgnoreCase(string);
-		}
-
-		@Override
-		public String name() {
-			return existing;
-		}
-	}
 
 	@Autowired
 	private SignalResolver signals;
@@ -39,7 +19,7 @@ public class SignalResolverTest extends BaseTest {
 		// given
 
 		// when
-		Signal existing = signals.resolve("existing");
+		Signal existing = signals.resolve("finalize");
 
 		// then
 		assertNotNull(existing);

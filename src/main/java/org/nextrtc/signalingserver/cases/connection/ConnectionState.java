@@ -1,7 +1,7 @@
 package org.nextrtc.signalingserver.cases.connection;
 
 import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.signal.Signal;
+import org.nextrtc.signalingserver.domain.Signal;
 
 public enum ConnectionState {
 

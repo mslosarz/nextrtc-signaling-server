@@ -8,8 +8,6 @@ import javax.websocket.RemoteEndpoint.Async;
 import lombok.Getter;
 import lombok.experimental.Builder;
 
-import org.nextrtc.signalingserver.domain.signal.Signal;
-
 @Getter
 @Builder(builderMethodName = "create")
 public class InternalMessage {
@@ -51,11 +49,11 @@ public class InternalMessage {
 	}
 
 	public boolean isCreate() {
-		return Signal.CREATE_VALUE.equalsIgnoreCase(signal.name());
+		return Signal.CREATE.is(signal);
 	}
 
 	public boolean isJoin() {
-		return Signal.JOIN_VALUE.equalsIgnoreCase(signal.name());
+		return Signal.JOIN.is(signal);
 	}
 
 	@Override
@@ -64,6 +62,6 @@ public class InternalMessage {
 	}
 
 	public boolean isLeft() {
-		return Signal.LEFT_VALUE.equalsIgnoreCase(signal.name());
+		return Signal.LEFT.is(signal);
 	}
 }
