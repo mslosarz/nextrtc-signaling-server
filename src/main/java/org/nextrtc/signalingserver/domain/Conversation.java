@@ -75,7 +75,6 @@ public class Conversation {
 		for (Member member : members) {
 			left.executeFor(leaving, member);
 		}
-        leaving.markLeft();
 	}
 
 	public void execute(InternalMessage message) {

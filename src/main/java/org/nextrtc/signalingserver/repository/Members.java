@@ -32,6 +32,7 @@ public class Members {
 	}
 
 	public void unregister(String id) {
+        findBy(id).ifPresent(m -> m.markLeft());
 		members.remove(id);
 	}
 }

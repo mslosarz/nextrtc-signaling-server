@@ -49,7 +49,6 @@ public class Server {
 	private NextRTCEventBus eventBus;
 
 	public void register(Session session) {
-		session.setMaxIdleTimeout(10 * 1000); // 10 seconds
 		register.incomming(session);
 		eventBus.post(SESSION_STARTED);
 	}

@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegisterMember {
 
-	@Value("${nextrtc.ping.timeout:1}")
-	private int timeout;
+    @Value("${nextrtc.ping_period:3}")
+	private int period;
 
 	@Autowired
 	private Members members;
@@ -35,7 +35,7 @@ public class RegisterMember {
 	}
 
 	private ScheduledFuture<?> ping(Session session) {
-		return scheduler.scheduleAtFixedRate(new PingTask(session), timeout, timeout, TimeUnit.SECONDS);
+		return scheduler.scheduleAtFixedRate(new PingTask(session), period, period, TimeUnit.SECONDS);
 	}
 
 }
