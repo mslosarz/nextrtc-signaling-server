@@ -1,9 +1,9 @@
 package org.nextrtc.signalingserver;
 
-import static org.mockito.Mockito.mock;
-
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.mockito.Answers;
+import org.mockito.Mockito;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.springframework.context.annotation.*;
 
@@ -21,7 +21,7 @@ public class TestConfig {
 	@Primary
 	@Bean(name = "nextRTCPingScheduler")
 	public ScheduledExecutorService scheduler() {
-		return mock(ScheduledExecutorService.class);
+        return Mockito.mock(ScheduledExecutorService.class, Answers.RETURNS_DEEP_STUBS.get());
 	}
 
 }

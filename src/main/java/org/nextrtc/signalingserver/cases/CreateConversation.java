@@ -20,17 +20,12 @@ public class CreateConversation {
 	private NextRTCEventBus eventBus;
 
 	@Autowired
-	private JoinMember joinMember;
-
-	@Autowired
 	private Conversations conversations;
 
 	public void execute(InternalMessage message) {
 		Member creating = message.getFrom();
 
 		Conversation conversation = createConversationUsing(message);
-
-		joinMember.sendMessageToFirstJoined(message.getFrom(), conversation.getId());
 
 		conversation.join(creating);
 

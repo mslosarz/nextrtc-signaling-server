@@ -132,16 +132,17 @@ public class ServerTest extends BaseTest {
 				.signal("create")//
 				.build(), s1);
 		String conversationKey = s1Matcher.getMessage().getContent();
-		s1Matcher.reset();
+        // s1Matcher.reset();
 		server.handle(Message.create()//
 				.signal("join")//
 				.content(conversationKey)//
 				.build(), s2);
 
 		// then
-		assertThat(s1Matcher.getMessages().size(), is(2));
-		assertMessage(s1Matcher, 0, "s2", "s1", "joined", EMPTY);
-		assertMessage(s1Matcher, 1, "s2", "s1", "offerRequest", EMPTY);
+        assertThat(s1Matcher.getMessages().size(), is(3));
+        assertMessage(s1Matcher, 0, EMPTY, "s1", "created", conversationKey);
+        assertMessage(s1Matcher, 1, "s2", "s1", "joined", EMPTY);
+        assertMessage(s1Matcher, 2, "s2", "s1", "offerRequest", EMPTY);
 
 		assertThat(s2Matcher.getMessages().size(), is(1));
 		assertMessage(s2Matcher, 0, EMPTY, "s2", "joined", conversationKey);
@@ -189,8 +190,6 @@ public class ServerTest extends BaseTest {
 		assertMessage(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
 
 		assertThat(s2Matcher.getMessages().size(), is(0));
-		assertThat(eventLocalStream.getEvents().size(), is(1));
-		assertThat(eventLocalStream.getEvents().get(0).getType(), is(MEMBER_LOCAL_STREAM_CREATED));
 	}
 
 	@Test
@@ -242,8 +241,6 @@ public class ServerTest extends BaseTest {
 
 		assertThat(s2Matcher.getMessages().size(), is(0));
 		assertThat(s3Matcher.getMessages().size(), is(0));
-
-		assertThat(eventLocalStream.getEvents().size(), is(2));
 	}
 
 	@Test
@@ -287,8 +284,6 @@ public class ServerTest extends BaseTest {
 		assertMessage(s2Matcher, 0, "s1", "s2", "finalize", "s1 spd");
 
 		assertThat(s1Matcher.getMessages().size(), is(0));
-
-		assertThat(eventLocalStream.getEvents().size(), is(2));
 	}
 
 	@Test

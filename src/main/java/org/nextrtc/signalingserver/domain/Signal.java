@@ -84,7 +84,7 @@ public enum Signal {
 	};
 
 	public boolean is(String string) {
-		return name().equalsIgnoreCase(string);
+        return ordinaryName().equalsIgnoreCase(string);
 	}
 
 	public boolean is(Signal signal) {

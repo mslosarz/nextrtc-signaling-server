@@ -71,8 +71,8 @@ public class ConnectionContext {
 
 	public void begin() {
 		InternalMessage.create()//
-				.from(master)//
-				.to(slave)//
+                .from(slave)//
+                .to(master)//
 				.signal(Signal.OFFER_REQUEST)
 				.build()//
 				.post();

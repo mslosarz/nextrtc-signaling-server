@@ -19,15 +19,13 @@ public class JoinConversation {
 	private NextRTCEventBus eventBus;
 
 	@Autowired
-	private JoinMember joinMember;
-
-	@Autowired
 	private Conversations conversations;
 
 	public void execute(InternalMessage message) {
 		Conversation conversation = findConversationToJoin(message);
-		joinMember.sendMessageToJoining(message.getFrom(), conversation.getId());
+
 		conversation.join(message.getFrom());
+
 		sendEventMemberJoinedFrom(message);
 	}
 

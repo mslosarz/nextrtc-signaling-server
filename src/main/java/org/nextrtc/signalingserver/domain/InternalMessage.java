@@ -35,7 +35,7 @@ public class InternalMessage {
 		return Message.create()//
 				.from(fromNullable(from))//
 				.to(fromNullable(to))//
-				.signal(signal.name())//
+                .signal(signal.ordinaryName())//
 				.content(defaultString(content))//
 				.build();
 	}
@@ -58,7 +58,7 @@ public class InternalMessage {
 
 	@Override
 	public String toString() {
-		return String.format("(%s -> %s)[%s]: %s", from, to, signal != null ? signal.name() : null, content);
+        return String.format("(%s -> %s)[%s]: %s", from, to, signal != null ? signal.ordinaryName() : null, content);
 	}
 
 	public boolean isLeft() {

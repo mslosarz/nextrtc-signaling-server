@@ -37,12 +37,27 @@ public class Conversation {
 	}
 
 	public synchronized void join(Member sender) {
-		for (Member member : members) {
+        informSenderThatHasBeenJoined(sender);
+
+        informRestAndBeginSignalExchange(sender);
+
+        members.add(sender);
+    }
+
+    private void informRestAndBeginSignalExchange(Member sender) {
+        for (Member member : members) {
 			join.sendMessageToOthers(sender, member);
 			exchange.begin(member, sender);
 		}
-		members.add(sender);
-	}
+    }
+
+    private void informSenderThatHasBeenJoined(Member sender) {
+        if (isWithoutMember()) {
+            join.sendMessageToFirstJoined(sender, id);
+        } else {
+            join.sendMessageToJoining(sender, id);
+        }
+    }
 
 	public boolean isWithoutMember() {
 		return members.size() == 0;
@@ -60,6 +75,7 @@ public class Conversation {
 		for (Member member : members) {
 			left.executeFor(leaving, member);
 		}
+        leaving.markLeft();
 	}
 
 	public void execute(InternalMessage message) {

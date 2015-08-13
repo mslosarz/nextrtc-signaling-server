@@ -4,17 +4,16 @@ import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Signal;
 
 public enum ConnectionState {
-
 	OFFER_REQUESTED {
 		@Override
 		public boolean isValid(InternalMessage message) {
-			return false;
+            return Signal.OFFER_RESPONSE.is(message.getSignal());
 		}
 	},
 	ANSWER_REQUESTED {
 		@Override
 		public boolean isValid(InternalMessage message) {
-			return false;
+            return Signal.ANSWER_RESPONSE.is(message.getSignal());
 		}
 	},
 	EXCHANGE_CANDIDATES {
