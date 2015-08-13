@@ -287,7 +287,7 @@ public class ServerTest extends BaseTest {
 	}
 
 	@Test
-	public void shouldExchangeCandidate() throws Exception {
+    public void shouldExchangeCandidates() throws Exception {
 		// given
 		MessageMatcher s1Matcher = new MessageMatcher();
 		MessageMatcher s2Matcher = new MessageMatcher();
