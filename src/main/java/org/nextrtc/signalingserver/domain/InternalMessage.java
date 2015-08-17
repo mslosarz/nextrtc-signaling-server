@@ -7,8 +7,10 @@ import javax.websocket.RemoteEndpoint.Async;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
+import lombok.extern.log4j.Log4j;
 
 @Getter
+@Log4j
 @Builder(builderMethodName = "create")
 public class InternalMessage {
 
@@ -28,6 +30,9 @@ public class InternalMessage {
 	 * Method will post message to recipient (member To)
 	 */
 	public void post() {
+        if (signal != Signal.PING) {
+            log.info("Outgoing: " + this);
+        }
 		getRemotePeer().sendObject(transformToExternalMessage());
 	}
 

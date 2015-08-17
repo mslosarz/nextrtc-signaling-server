@@ -10,6 +10,8 @@ import java.util.Optional;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
+import lombok.extern.log4j.Log4j;
+
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.*;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
+@Log4j
 public class Server {
 
 	@Autowired
@@ -58,6 +61,7 @@ public class Server {
 	}
 
 	private void processMessage(Session session, InternalMessage message) {
+        log.info("Incomming: " + message);
 		Optional<Conversation> conversation = conversations.getBy(findMember(session));
 		if (message.isCreate()) {
 			create.execute(message);
