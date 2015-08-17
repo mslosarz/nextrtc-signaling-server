@@ -34,7 +34,7 @@ public class Member {
 	}
 	@Override
 	public String toString() {
-        return String.format("%s (Session: %s)", id, session != null ? session.getId() : "---");
+        return String.format("%s", id);
 	}
 
 	@Override
