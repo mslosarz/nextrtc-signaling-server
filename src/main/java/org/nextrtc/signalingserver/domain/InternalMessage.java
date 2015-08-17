@@ -31,7 +31,7 @@ public class InternalMessage {
 	 */
 	public void post() {
         if (signal != Signal.PING) {
-            log.info("Outgoing: " + this);
+            log.info("Outgoing: " + toString());
         }
 		getRemotePeer().sendObject(transformToExternalMessage());
 	}
