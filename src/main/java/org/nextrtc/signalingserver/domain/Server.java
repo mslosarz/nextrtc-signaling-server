@@ -98,7 +98,10 @@ public class Server {
 
 	private void unbind(Session session) {
 		members.findBy(session.getId()).ifPresent(member -> {
-			conversations.getBy(member).ifPresent(conv -> conv.left(member));
+            conversations.getBy(member).ifPresent(conv -> left.execute(InternalMessage.create()//
+                    .from(member)//
+                    .signal(Signal.LEFT)//
+                    .build()));
 		});
 		members.unregister(session.getId());
 	}

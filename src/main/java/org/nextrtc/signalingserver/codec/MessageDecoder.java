@@ -8,26 +8,21 @@ import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
-import lombok.extern.log4j.Log4j;
-
 import org.nextrtc.signalingserver.domain.Message;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Log4j
 public class MessageDecoder implements Decoder.Text<Message> {
 
 	private Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 	@Override
 	public void destroy() {
-
 	}
 
 	@Override
 	public void init(EndpointConfig config) {
-
 	}
 
 	@Override
@@ -37,9 +32,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
 
 	@Override
 	public boolean willDecode(String json) {
-		json = json.replace("\"", "'");
-		log.info(String.format("Request: %s", json));
-		return tryParse(json);
+        return tryParse(json.replace("\"", "'"));
 	}
 
 	@SuppressWarnings("unchecked")

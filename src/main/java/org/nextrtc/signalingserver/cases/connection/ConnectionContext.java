@@ -59,8 +59,8 @@ public class ConnectionContext {
 
 	private void finalize(InternalMessage message) {
 		InternalMessage.create()//
-				.from(master)//
-				.to(slave)//
+                .from(slave)//
+                .to(master)//
 				.signal(Signal.FINALIZE)//
 				.content(message.getContent())//
 				.build()//
@@ -70,8 +70,8 @@ public class ConnectionContext {
 
 	private void answerRequest(InternalMessage message) {
 		InternalMessage.create()//
-				.from(slave)//
-				.to(master)//
+                .from(master)//
+                .to(slave)//
 				.signal(Signal.ANSWER_REQUEST)//
 				.content(message.getContent())//
 				.build()//

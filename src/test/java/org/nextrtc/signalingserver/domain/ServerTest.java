@@ -186,10 +186,10 @@ public class ServerTest extends BaseTest {
 				.build(), s1);
 
 		// then
-		assertThat(s1Matcher.getMessages().size(), is(1));
-		assertMessage(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
+        assertThat(s2Matcher.getMessages().size(), is(1));
+        assertMessage(s2Matcher, 0, "s1", "s2", "answerRequest", "s2 spd");
 
-		assertThat(s2Matcher.getMessages().size(), is(0));
+        assertThat(s1Matcher.getMessages().size(), is(0));
 	}
 
 	@Test
@@ -235,12 +235,11 @@ public class ServerTest extends BaseTest {
 				.build(), s3);
 
 		// then
-		assertThat(s1Matcher.getMessages().size(), is(2));
-		assertMessage(s1Matcher, 0, "s2", "s1", "answerRequest", "s2 spd");
-		assertMessage(s1Matcher, 1, "s3", "s1", "answerRequest", "s3 spd");
-
-		assertThat(s2Matcher.getMessages().size(), is(0));
-		assertThat(s3Matcher.getMessages().size(), is(0));
+        assertThat(s2Matcher.getMessages().size(), is(1));
+        assertMessage(s2Matcher, 0, "s1", "s2", "answerRequest", "s2 spd");
+        assertThat(s3Matcher.getMessages().size(), is(1));
+        assertMessage(s3Matcher, 0, "s1", "s3", "answerRequest", "s3 spd");
+        assertThat(s1Matcher.getMessages().size(), is(0));
 	}
 
 	@Test
@@ -280,10 +279,10 @@ public class ServerTest extends BaseTest {
 				.build(), s1);
 
 		// then
-		assertThat(s2Matcher.getMessages().size(), is(1));
-		assertMessage(s2Matcher, 0, "s1", "s2", "finalize", "s1 spd");
+        assertThat(s1Matcher.getMessages().size(), is(1));
+        assertMessage(s1Matcher, 0, "s2", "s1", "finalize", "s1 spd");
 
-		assertThat(s1Matcher.getMessages().size(), is(0));
+        assertThat(s2Matcher.getMessages().size(), is(0));
 	}
 
 	@Test
