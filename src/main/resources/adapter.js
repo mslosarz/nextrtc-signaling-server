@@ -1,4 +1,3 @@
-/*https://github.com/webrtc/samples/blob/master/src/js/adapter.js*/
 /*
  *  Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
  *
@@ -536,4 +535,4 @@ if (typeof module !== 'undefined') {
       //trace: not exposed on purpose.
     };
   });
-}}
+}
