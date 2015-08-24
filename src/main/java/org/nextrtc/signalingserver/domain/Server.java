@@ -1,8 +1,8 @@
 package org.nextrtc.signalingserver.domain;
 
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_STARTED;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.UNEXPECTED_SITUATION;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
 import java.util.Optional;
@@ -53,7 +53,7 @@ public class Server {
 
 	public void register(Session session) {
 		register.incomming(session);
-		eventBus.post(SESSION_STARTED);
+        eventBus.post(SESSION_STARTED.occurFor(session));
 	}
 
 	public void handle(Message external, Session session) {
@@ -93,7 +93,7 @@ public class Server {
 
 	public void unregister(Session session, CloseReason reason) {
 		unbind(session);
-		eventBus.post(SESSION_CLOSED);
+        eventBus.post(SESSION_CLOSED.occurFor(session, reason.getReasonPhrase()));
 	}
 
 	private void unbind(Session session) {
@@ -108,7 +108,7 @@ public class Server {
 
 	public void handleError(Session session, Throwable exception) {
 		unbind(session);
-		eventBus.post(UNEXPECTED_SITUATION);
+        eventBus.post(UNEXPECTED_SITUATION.occurFor(session, exception.getMessage()));
 	}
 
 }

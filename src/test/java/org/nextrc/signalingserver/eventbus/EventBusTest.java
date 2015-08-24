@@ -3,19 +3,16 @@ package org.nextrc.signalingserver.eventbus;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
 import lombok.Getter;
 import lombok.Setter;
 
 import org.junit.After;
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
-import org.nextrtc.signalingserver.api.NextRTCEvent;
-import org.nextrtc.signalingserver.api.NextRTCEventBus;
-import org.nextrtc.signalingserver.api.NextRTCHandler;
+import org.nextrtc.signalingserver.api.*;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -70,13 +67,7 @@ public class EventBusTest extends BaseTest {
 	}
 
 	private NextRTCEvent event(final NextRTCEvents event) {
-		return new NextRTCEvent() {
-
-			@Override
-			public NextRTCEvents getType() {
-				return event;
-			}
-		};
+        return EventContext.builder().type(event).build();
 	}
 
 	@After

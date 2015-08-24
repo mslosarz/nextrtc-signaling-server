@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.nextrtc.signalingserver.api.NextRTCEvent;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;

@@ -6,9 +6,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.CONVERSATION_CREATED;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT
 import java.util.Optional;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.repository.Conversations;

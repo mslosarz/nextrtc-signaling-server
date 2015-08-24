@@ -1,9 +1,11 @@
 package org.nextrtc.signalingserver.api;
 
-import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
+import java.util.Optional;
 
 public interface NextRTCEvent {
 
 	NextRTCEvents getType();
+
+    Optional<String> getSessionId();
 
 }

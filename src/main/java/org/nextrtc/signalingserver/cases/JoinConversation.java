@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.cases;
 
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.MEMBER_JOINDED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_JOINDED;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_FOUND;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;

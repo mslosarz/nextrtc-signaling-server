@@ -2,7 +2,7 @@ package org.nextrtc.signalingserver.cases;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.CONVERSATION_CREATED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
 import java.util.Optional;
@@ -13,8 +13,8 @@ import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.EventChecker;
 import org.nextrtc.signalingserver.MessageMatcher;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;

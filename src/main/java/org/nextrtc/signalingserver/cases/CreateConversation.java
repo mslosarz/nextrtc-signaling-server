@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.cases;
 
-import static org.nextrtc.signalingserver.api.annotation.NextRTCEvents.CONVERSATION_CREATED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
