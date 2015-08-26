@@ -3,9 +3,13 @@ package org.nextrtc.signalingserver.cases.connection;
 import lombok.Getter;
 
 import org.joda.time.DateTime;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,6 +23,10 @@ public class ConnectionContext {
 
 	private ConnectionState state = ConnectionState.NOT_INITIALIZED;
     private DateTime lastUpdated = DateTime.now();
+
+    @Autowired
+    @Qualifier("nextRTCEventBus")
+    private NextRTCEventBus bus;
 
     @Getter
     private Member master;
@@ -65,10 +73,14 @@ public class ConnectionContext {
 				.content(message.getContent())//
 				.build()//
 				.post();
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
+        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(master.getSession()));
+        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(slave.getSession()));
 	}
 
 
 	private void answerRequest(InternalMessage message) {
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getSession()));
 		InternalMessage.create()//
                 .from(master)//
                 .to(slave)//
@@ -76,6 +88,7 @@ public class ConnectionContext {
 				.content(message.getContent())//
 				.build()//
 				.post();
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));
 	}
 
 	private boolean is(InternalMessage message, ConnectionState state) {
@@ -90,6 +103,7 @@ public class ConnectionContext {
 				.build()//
 				.post();
         setState(ConnectionState.OFFER_REQUESTED);
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
 	}
 
     private void setState(ConnectionState state) {

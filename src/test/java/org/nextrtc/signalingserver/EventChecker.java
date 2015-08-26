@@ -27,4 +27,8 @@ public class EventChecker implements NextRTCHandler {
 		events.clear();
 	}
 
+    public NextRTCEvent get(int index) {
+        return events.get(index);
+    }
+
 }

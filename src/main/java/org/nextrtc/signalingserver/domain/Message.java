@@ -1,8 +1,12 @@
 package org.nextrtc.signalingserver.domain;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.Map;
+
 import lombok.Getter;
 
+import com.google.common.collect.Maps;
 import com.google.gson.annotations.Expose;
 
 @Getter
@@ -11,7 +15,7 @@ public class Message {
 	 * Use Message.create(...) instead of new Message()
 	 */
 	@Deprecated
-	public Message() {
+    Message() {
 	}
 
 	@Expose
@@ -26,9 +30,12 @@ public class Message {
 	@Expose
 	private String content = EMPTY;
 
+    @Expose
+    private Map<String, String> custom = Maps.newHashMap();
+
 	@Override
 	public String toString() {
-		return String.format("(%s -> %s)[%s]: %s", from, to, signal, content);
+        return String.format("(%s -> %s)[%s]: %s |%s", from, to, signal, content, custom);
 	}
 
 	public static MessageBuilder create() {
@@ -58,8 +65,19 @@ public class Message {
 			return this;
 		}
 
+        public MessageBuilder custom(String key, String value) {
+            instance.custom.put(key, value);
+            return this;
+        }
+
+        public MessageBuilder custom(Map<String, String> custom) {
+            instance.custom.putAll(custom);
+            return this;
+        }
+
 		public Message build() {
 			return instance;
 		}
+
 	}
 }

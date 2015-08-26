@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
 import java.util.List;
@@ -23,6 +22,7 @@ import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.EventChecker;
 import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.api.NextRTCEvent;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.domain.ServerTest.LocalStreamCreated;
 import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
@@ -148,7 +148,7 @@ public class ServerTest extends BaseTest {
 		assertMessage(s2Matcher, 0, EMPTY, "s2", "joined", conversationKey);
 	}
 
-	@NextRTCEventListener({ MEMBER_LOCAL_STREAM_CREATED })
+    @NextRTCEventListener({ NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED })
 	public static class LocalStreamCreated extends EventChecker {
 
 	}

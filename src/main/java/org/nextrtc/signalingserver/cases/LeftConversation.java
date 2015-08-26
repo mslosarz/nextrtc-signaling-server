@@ -29,13 +29,18 @@ public class LeftConversation {
 		conversation.left(message.getFrom());
 		if (conversation.isWithoutMember()) {
 			conversations.remove(conversation.getId());
+            sendEventConversationDestroyed(message, conversation);
 		}
-		sendEventMemberLeftFrom(message);
+        sendEventMemberLeftFrom(message, conversation);
 	}
 
-	private void sendEventMemberLeftFrom(InternalMessage message) {
-		eventBus.post(NextRTCEvents.MEMBER_LEFT.basedOn(message));
+    private void sendEventMemberLeftFrom(InternalMessage message, Conversation conversation) {
+        eventBus.post(NextRTCEvents.MEMBER_LEFT.basedOn(message, conversation));
 	}
+
+    private void sendEventConversationDestroyed(InternalMessage message, Conversation conversation) {
+        eventBus.post(NextRTCEvents.CONVERSATION_DESTROYED.basedOn(message, conversation));
+    }
 
 	protected Conversation checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
 		if (!conversation.isPresent()) {

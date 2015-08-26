@@ -2,21 +2,29 @@ package org.nextrtc.signalingserver.api;
 
 import javax.websocket.Session;
 
+import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 
 public enum NextRTCEvents {
 	SESSION_OPENED, //
 	SESSION_CLOSED, //
+    CONVERSATION_CREATED, //
+    CONVERSATION_DESTROYED, //
 	UNEXPECTED_SITUATION, //
-	CONVERSATION_CREATED, //
 	MEMBER_JOINDED, //
-	MEMBER_LOCAL_STREAM_CREATED, //
-	MEMBER_LEFT, //
-	CONVERSATION_CLOSED, //
+    MEMBER_LEFT, //
+    MEDIA_LOCAL_STREAM_REQUESTED, //
+    MEDIA_LOCAL_STREAM_CREATED, //
+    MEDIA_STREAMING, //
 	;
 
-	public NextRTCEvent basedOn(InternalMessage message) {
-        return EventContext.builder().type(this).build();
+    public NextRTCEvent basedOn(InternalMessage message, Conversation conv) {
+        return EventContext.builder()//
+                .sessionId(message.getFrom().getId())//
+                .custom(message.getCustom())//
+                .conversationId(conv.getId())//
+                .type(this)//
+                .build();
 	}
 
     public NextRTCEvent occurFor(Session session, String reason) {

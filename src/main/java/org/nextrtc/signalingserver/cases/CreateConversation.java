@@ -29,11 +29,11 @@ public class CreateConversation {
 
 		conversation.join(creating);
 
-		sendEventConversationCreatedFrom(message);
+        sendEventConversationCreatedFrom(message, conversation);
 	}
 
-	private void sendEventConversationCreatedFrom(InternalMessage message) {
-		eventBus.post(CONVERSATION_CREATED.basedOn(message));
+    private void sendEventConversationCreatedFrom(InternalMessage message, Conversation conversation) {
+        eventBus.post(CONVERSATION_CREATED.basedOn(message, conversation));
 	}
 
 	private Conversation createConversationUsing(InternalMessage message) {

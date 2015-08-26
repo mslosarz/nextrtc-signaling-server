@@ -3,6 +3,7 @@ package org.nextrtc.signalingserver;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.websocket.RemoteEndpoint.Async;
@@ -39,6 +40,9 @@ public abstract class BaseTest {
 	@Autowired
 	private Conversations conversations;
 
+    @Autowired
+    private List<EventChecker> checkers;
+
 	@Before
 	public void reset() {
 		for (String id : conversations.getAllIds()) {
@@ -47,6 +51,9 @@ public abstract class BaseTest {
 		for (String id : members.getAllIds()) {
 			members.unregister(id);
 		}
+        for (EventChecker checker : checkers) {
+            checker.reset();
+        }
 	}
 
 	protected Session mockSession(String string) {

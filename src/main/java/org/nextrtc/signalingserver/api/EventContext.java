@@ -1,36 +1,54 @@
 package org.nextrtc.signalingserver.api;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.experimental.Builder;
 
-import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.Member;
+import com.google.common.collect.Maps;
 
 @Builder
 public class EventContext implements NextRTCEvent {
 
     private final NextRTCEvents type;
     private final String sessionId;
-    private final Conversation conversation;
-    private final Member member;
+    private final String conversationId;
     private final String message;
+    private Map<String, String> custom = Maps.newHashMap();
+
+    EventContext(NextRTCEvents type, //
+            String sessionId, //
+            String conversationId, //
+            String message,//
+            Map<String, String> custom) {
+        this.type = type;
+        this.sessionId = sessionId;
+        this.conversationId = conversationId;
+        this.message = message;
+        if (custom != null) {
+            this.custom.putAll(custom);
+        }
+    }
 
     @Override
     public NextRTCEvents getType() {
         return type;
     }
 
-    public Optional<Conversation> forConversation() {
-        return Optional.ofNullable(conversation);
-    }
-
-    public Optional<Member> forMember() {
-        return Optional.ofNullable(member);
-    }
-
-    public Optional<String> withMessage() {
+    @Override
+    public Optional<String> getMessage() {
         return Optional.of(message);
+    }
+
+    @Override
+    public Map<String, String> getCustom() {
+        return Collections.unmodifiableMap(custom);
+    }
+
+    @Override
+    public Optional<String> getConversationId() {
+        return Optional.of(conversationId);
     }
 
     @Override

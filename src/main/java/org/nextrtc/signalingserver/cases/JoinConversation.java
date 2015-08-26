@@ -26,11 +26,11 @@ public class JoinConversation {
 
 		conversation.join(message.getFrom());
 
-		sendEventMemberJoinedFrom(message);
+        sendEventMemberJoinedFrom(message, conversation);
 	}
 
-	private void sendEventMemberJoinedFrom(InternalMessage message) {
-		eventBus.post(MEMBER_JOINDED.basedOn(message));
+    private void sendEventMemberJoinedFrom(InternalMessage message, Conversation conversation) {
+        eventBus.post(MEMBER_JOINDED.basedOn(message, conversation));
 	}
 
 	private Conversation findConversationToJoin(InternalMessage message) {

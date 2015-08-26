@@ -3,11 +3,15 @@ package org.nextrtc.signalingserver.domain;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.util.Map;
+
 import javax.websocket.RemoteEndpoint.Async;
 
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.extern.log4j.Log4j;
+
+import com.google.common.collect.Maps;
 
 @Getter
 @Log4j
@@ -18,12 +22,16 @@ public class InternalMessage {
 	private Member to;
 	private Signal signal;
 	private String content;
+    private Map<String, String> custom = Maps.newHashMap();
 
-	private InternalMessage(Member from, Member to, Signal signal, String content) {
+    private InternalMessage(Member from, Member to, Signal signal, String content, Map<String, String> custom) {
 		this.from = from;
 		this.to = to;
 		this.signal = signal;
 		this.content = content;
+        if (custom != null) {
+            this.custom.putAll(custom);
+        }
 	}
 
 	/**
@@ -42,6 +50,7 @@ public class InternalMessage {
 				.to(fromNullable(to))//
                 .signal(signal.ordinaryName())//
 				.content(defaultString(content))//
+                .custom(custom)//
 				.build();
 	}
 
@@ -63,7 +72,7 @@ public class InternalMessage {
 
 	@Override
 	public String toString() {
-        return String.format("(%s -> %s)[%s]: %s", from, to, signal != null ? signal.ordinaryName() : null, content);
+        return String.format("(%s -> %s)[%s]: %s |%s", from, to, signal != null ? signal.ordinaryName() : null, content, custom);
 	}
 
 	public boolean isLeft() {
