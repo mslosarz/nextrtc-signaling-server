@@ -9,6 +9,8 @@ import org.nextrtc.signalingserver.api.NextRTCEvent;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -41,7 +43,8 @@ public class EventDispatcher {
 	}
 
 	private boolean supportsCurrentEvent(Object listener, NextRTCEvent event) {
-		for (NextRTCEvents supportedEvent : getSupportedEvents(listener)) {
+	    NextRTCEvents[] events = getSupportedEvents(listener);
+		for (NextRTCEvents supportedEvent : events) {
 			if (isSupporting(event, supportedEvent)) {
 				return true;
 			}
@@ -54,6 +57,13 @@ public class EventDispatcher {
 	}
 
 	private NextRTCEvents[] getSupportedEvents(Object listener) {
+	    try {
+            if (AopUtils.isJdkDynamicProxy(listener)) {
+                listener = ((Advised) listener).getTargetSource().getTarget();
+            }
+        } catch (Exception e) {
+            return new NextRTCEvents[0];
+        }
 		return (NextRTCEvents[]) getValue(listener.getClass().getAnnotation(NextRTCEventListener.class));
 	}
 

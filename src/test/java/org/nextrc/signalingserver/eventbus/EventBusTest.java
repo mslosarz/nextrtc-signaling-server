@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -54,7 +54,7 @@ public class EventBusTest extends BaseTest {
 	@Test
 	public void shouldCallHandleEventMethod() throws Exception {
 		// given
-		NextRTCEvent event = event(SESSION_STARTED);
+		NextRTCEvent event = event(SESSION_OPENED);
 		NextRTCEvent notValidEvent = event(SESSION_CLOSED);
 
 		// when
@@ -95,7 +95,7 @@ class T1 {
 @Getter
 @Setter
 @Component("t2")
-@NextRTCEventListener(SESSION_STARTED)
+@NextRTCEventListener(SESSION_OPENED)
 class T2 implements NextRTCHandler {
 
 	private NextRTCEvent event;

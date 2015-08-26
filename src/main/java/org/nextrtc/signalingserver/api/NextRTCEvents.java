@@ -5,7 +5,7 @@ import javax.websocket.Session;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 
 public enum NextRTCEvents {
-	SESSION_STARTED, //
+	SESSION_OPENED, //
 	SESSION_CLOSED, //
 	UNEXPECTED_SITUATION, //
 	CONVERSATION_CREATED, //

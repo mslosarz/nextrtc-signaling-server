@@ -1,7 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
@@ -53,7 +53,7 @@ public class Server {
 
 	public void register(Session session) {
 		register.incomming(session);
-        eventBus.post(SESSION_STARTED.occurFor(session));
+        eventBus.post(SESSION_OPENED.occurFor(session));
 	}
 
 	public void handle(Message external, Session session) {

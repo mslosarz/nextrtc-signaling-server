@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_LOCAL_STREAM_CREATED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_STARTED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = { ServerEventCheck.class, LocalStreamCreated.class })
 public class ServerTest extends BaseTest {
 
-	@NextRTCEventListener({ SESSION_STARTED, CONVERSATION_CREATED })
+	@NextRTCEventListener({ SESSION_OPENED, CONVERSATION_CREATED })
 	public static class ServerEventCheck extends EventChecker {
 
 	}
