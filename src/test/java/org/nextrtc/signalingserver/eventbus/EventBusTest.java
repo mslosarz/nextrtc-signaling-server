@@ -1,24 +1,27 @@
-package org.nextrc.signalingserver.eventbus;
+package org.nextrtc.signalingserver.eventbus;
+
+import com.google.common.eventbus.Subscribe;
+import lombok.Getter;
+import lombok.Setter;
+import org.junit.After;
+import org.junit.Test;
+import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
+import org.nextrtc.signalingserver.api.NextRTCHandler;
+import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
+import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
+import org.nextrtc.signalingserver.domain.EventContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
-import lombok.Getter;
-import lombok.Setter;
-
-import org.junit.After;
-import org.junit.Test;
-import org.nextrtc.signalingserver.BaseTest;
-import org.nextrtc.signalingserver.api.*;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
-
-import com.google.common.eventbus.Subscribe;
 
 @ContextConfiguration(classes = { T1.class, T2.class, T3.class })
 public class EventBusTest extends BaseTest {

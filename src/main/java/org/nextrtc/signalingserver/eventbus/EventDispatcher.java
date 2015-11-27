@@ -1,14 +1,11 @@
 package org.nextrtc.signalingserver.eventbus;
 
-import static org.springframework.core.annotation.AnnotationUtils.getValue;
-
-import java.util.Collection;
-import java.util.Map;
-
-import org.nextrtc.signalingserver.api.NextRTCEvent;
+import com.google.common.eventbus.AllowConcurrentEvents;
+import com.google.common.eventbus.Subscribe;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
+import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +13,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.eventbus.AllowConcurrentEvents;
-import com.google.common.eventbus.Subscribe;
+import java.util.Collection;
+import java.util.Map;
+
+import static org.springframework.core.annotation.AnnotationUtils.getValue;
 
 @Component("nextRTCEventDispatcher")
 @Scope("singleton")
@@ -30,12 +29,11 @@ public class EventDispatcher {
 	@Subscribe
 	@AllowConcurrentEvents
 	public void handle(NextRTCEvent event) {
-		Collection<Object> listeners = getNextRTCEventListeners();
-		for (Object listener : listeners) {
-			if (isNextRTCHandler(listener) && supportsCurrentEvent(listener, event)) {
-				((NextRTCHandler) listener).handleEvent(event);
-			}
-		}
+		getNextRTCEventListeners().stream()
+				.filter(listener -> isNextRTCHandler(listener) && supportsCurrentEvent(listener, event))
+				.forEach(listener -> {
+					((NextRTCHandler) listener).handleEvent(event);
+				});
 	}
 
 	private boolean isNextRTCHandler(Object listener) {
@@ -53,7 +51,7 @@ public class EventDispatcher {
 	}
 
 	private boolean isSupporting(NextRTCEvent msg, NextRTCEvents supportedEvent) {
-		return supportedEvent.equals(msg.getType());
+		return supportedEvent.equals(msg.type());
 	}
 
 	private NextRTCEvents[] getSupportedEvents(Object listener) {

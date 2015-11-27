@@ -1,11 +1,10 @@
 package org.nextrtc.signalingserver.api;
 
+import com.google.common.eventbus.EventBus;
 import lombok.extern.log4j.Log4j;
-
+import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
-import com.google.common.eventbus.EventBus;
 
 @Log4j
 @Service("nextRTCEventBus")

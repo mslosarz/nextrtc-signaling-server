@@ -13,8 +13,9 @@ public enum Exceptions {
 	;
 
 	private String code;
+	private String message;
 
-	private Exceptions(String code) {
+	Exceptions(String code) {
 		this.code = code;
 	}
 
@@ -24,6 +25,10 @@ public enum Exceptions {
 
 	public SignalingException exception() {
 		return new SignalingException(this);
+	}
+
+	public SignalingException exception(String customMesage) {
+		return new SignalingException(this, customMesage);
 	}
 
 	public SignalingException exception(Exception reason) {

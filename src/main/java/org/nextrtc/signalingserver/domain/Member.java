@@ -1,21 +1,20 @@
 package org.nextrtc.signalingserver.domain;
 
-import static lombok.AccessLevel.PRIVATE;
-
-import java.util.concurrent.ScheduledFuture;
-
-import javax.websocket.Session;
-
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
-import lombok.experimental.Builder;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.nextrtc.signalingserver.api.dto.NextRTCMember;
+
+import javax.websocket.Session;
+import java.util.concurrent.ScheduledFuture;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @Data
 @Builder(builderMethodName = "create")
-public class Member {
+public class Member implements NextRTCMember{
 
 	private String id;
 	private Session session;

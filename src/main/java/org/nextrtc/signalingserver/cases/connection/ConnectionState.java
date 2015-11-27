@@ -30,7 +30,7 @@ public enum ConnectionState {
 	};
 
 
-	private ConnectionState() {
+	ConnectionState() {
 	}
 
 	public abstract boolean isValid(InternalMessage message);

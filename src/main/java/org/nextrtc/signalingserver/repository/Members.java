@@ -1,13 +1,12 @@
 package org.nextrtc.signalingserver.repository;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-
+import com.google.common.collect.Maps;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class Members {
@@ -26,13 +25,11 @@ public class Members {
 	}
 
 	public void register(Member member) {
-		if (!members.containsValue(member)) {
-			members.put(member.getId(), member);
-		}
+		members.computeIfAbsent(member.getId(), put -> member);
 	}
 
 	public void unregister(String id) {
-        findBy(id).ifPresent(m -> m.markLeft());
+        findBy(id).ifPresent(Member::markLeft);
 		members.remove(id);
 	}
 }

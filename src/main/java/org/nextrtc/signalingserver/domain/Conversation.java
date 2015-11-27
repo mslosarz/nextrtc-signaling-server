@@ -1,9 +1,8 @@
 package org.nextrtc.signalingserver.domain;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import lombok.Getter;
-
+import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.JoinMember;
 import org.nextrtc.signalingserver.cases.LeftMember;
@@ -11,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 @Getter
 @Component
 @Scope("prototype")
-public class Conversation {
+public class Conversation implements NextRTCConversation{
 
 	@Autowired
 	private ExchangeSignalsBetweenMembers exchange;
@@ -64,10 +63,7 @@ public class Conversation {
 	}
 
 	public boolean has(Member member) {
-		if (member == null) {
-			return false;
-		}
-		return members.contains(member);
+		return member != null && members.contains(member);
 	}
 
 	public synchronized void left(Member leaving) {

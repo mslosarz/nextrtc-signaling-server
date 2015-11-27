@@ -1,5 +1,27 @@
 package org.nextrtc.signalingserver.domain;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.EventChecker;
+import org.nextrtc.signalingserver.MessageMatcher;
+import org.nextrtc.signalingserver.api.NextRTCEvents;
+import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
+import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
+import org.nextrtc.signalingserver.domain.ServerTest.LocalStreamCreated;
+import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
+import org.nextrtc.signalingserver.exception.Exceptions;
+import org.nextrtc.signalingserver.exception.SignalingException;
+import org.nextrtc.signalingserver.repository.Members;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+
+import javax.websocket.CloseReason;
+import javax.websocket.Session;
+import java.util.List;
+
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -8,29 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
-
-import java.util.List;
-
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.nextrtc.signalingserver.BaseTest;
-import org.nextrtc.signalingserver.EventChecker;
-import org.nextrtc.signalingserver.MessageMatcher;
-import org.nextrtc.signalingserver.api.NextRTCEvent;
-import org.nextrtc.signalingserver.api.NextRTCEvents;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
-import org.nextrtc.signalingserver.domain.ServerTest.LocalStreamCreated;
-import org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck;
-import org.nextrtc.signalingserver.exception.Exceptions;
-import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.repository.Members;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(classes = { ServerEventCheck.class, LocalStreamCreated.class })
 public class ServerTest extends BaseTest {

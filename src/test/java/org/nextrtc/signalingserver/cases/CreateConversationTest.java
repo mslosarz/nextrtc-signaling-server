@@ -1,12 +1,5 @@
 package org.nextrtc.signalingserver.cases;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
-import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
-
-import java.util.Optional;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,6 +17,13 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
+import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
 @ContextConfiguration(classes = org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck.class)
 public class CreateConversationTest extends BaseTest {
@@ -69,7 +69,7 @@ public class CreateConversationTest extends BaseTest {
 		assertThat(conv.has(member), is(true));
 		assertThat(match.getMessage().getSignal(), is("created"));
 		assertThat(eventCall.getEvents().size(), is(1));
-		assertThat(eventCall.getEvents().get(0).getType(), is(NextRTCEvents.CONVERSATION_CREATED));
+		assertThat(eventCall.getEvents().get(0).type(), is(NextRTCEvents.CONVERSATION_CREATED));
 	}
 
 	@Test

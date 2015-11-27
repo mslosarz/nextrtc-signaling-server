@@ -1,19 +1,11 @@
 package org.nextrtc.signalingserver.domain;
 
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
-import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
-
-import java.util.Optional;
-
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
-
 import lombok.extern.log4j.Log4j;
-
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
-import org.nextrtc.signalingserver.cases.*;
+import org.nextrtc.signalingserver.cases.CreateConversation;
+import org.nextrtc.signalingserver.cases.JoinConversation;
+import org.nextrtc.signalingserver.cases.LeftConversation;
+import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Conversations;
@@ -21,6 +13,13 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.websocket.CloseReason;
+import javax.websocket.Session;
+import java.util.Optional;
+
+import static org.nextrtc.signalingserver.api.NextRTCEvents.*;
+import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
 @Component
 @Log4j
@@ -52,7 +51,7 @@ public class Server {
 	private NextRTCEventBus eventBus;
 
 	public void register(Session session) {
-		register.incomming(session);
+		register.incoming(session);
         eventBus.post(SESSION_OPENED.occurFor(session));
 	}
 
@@ -61,7 +60,7 @@ public class Server {
 	}
 
 	private void processMessage(Session session, InternalMessage message) {
-        log.info("Incomming: " + message);
+        log.info("Incoming: " + message);
 		Optional<Conversation> conversation = conversations.getBy(findMember(session));
 		if (message.isCreate()) {
 			create.execute(message);
@@ -82,8 +81,9 @@ public class Server {
 		InternalMessageBuilder bld = InternalMessage.create()//
 				.from(findMember(session))//
 				.content(message.getContent())//
-				.signal(resolver.resolve(message.getSignal()));
-		members.findBy(message.getTo()).ifPresent(to -> bld.to(to));
+				.signal(resolver.resolve(message.getSignal()))//
+				.custom(message.getCustom());
+		members.findBy(message.getTo()).ifPresent(bld::to);
 		return bld.build();
 	}
 
@@ -97,12 +97,11 @@ public class Server {
 	}
 
 	private void unbind(Session session) {
-		members.findBy(session.getId()).ifPresent(member -> {
-            conversations.getBy(member).ifPresent(conv -> left.execute(InternalMessage.create()//
-                    .from(member)//
-                    .signal(Signal.LEFT)//
-                    .build()));
-		});
+		members.findBy(session.getId()).ifPresent(member ->
+				conversations.getBy(member).ifPresent(conversation -> left.execute(InternalMessage.create()//
+                .from(member)//
+                .signal(Signal.LEFT)//
+                .build())));
 		members.unregister(session.getId());
 	}
 

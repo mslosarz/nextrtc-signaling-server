@@ -1,15 +1,5 @@
 package org.nextrtc.signalingserver.domain;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
-
-import javax.websocket.CloseReason;
-import javax.websocket.CloseReason.CloseCodes;
-import javax.websocket.Session;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,6 +10,16 @@ import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import javax.websocket.CloseReason;
+import javax.websocket.CloseReason.CloseCodes;
+import javax.websocket.Session;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
 @ContextConfiguration(classes = { SessionOpened.class, SessionClosed.class, UnexpectedSituation.class })
 public class EventContentTest extends BaseTest {
@@ -43,7 +43,7 @@ public class EventContentTest extends BaseTest {
     private UnexpectedSituation unexpectedSituation;
 
     @Test
-    public void shouldPostSessionOpenedCoseAndExceptionEvent() throws Exception {
+    public void shouldPostSessionOpenedCloseAndExceptionEvent() throws Exception {
         // given
         Session s1 = mockSession("s1");
         Session s2 = mockSession("s2");
@@ -57,26 +57,26 @@ public class EventContentTest extends BaseTest {
 
         // then
         assertThat(sessionOpened.getEvents().size(), is(2));
-        assertTrue(sessionOpened.get(0).getSessionId().isPresent());
-        assertTrue(sessionOpened.get(1).getSessionId().isPresent());
-        sessionOpened.get(0).getSessionId().ifPresent(sessionId -> {
-            assertThat(sessionId, is("s1"));
-        });
-        sessionOpened.get(1).getSessionId().ifPresent(sessionId -> {
-            assertThat(sessionId, is("s2"));
-        });
+        assertTrue(sessionOpened.get(0).from().isPresent());
+        assertTrue(sessionOpened.get(1).from().isPresent());
+        sessionOpened.get(0).from().ifPresent(from ->
+            assertThat(from.getId(), is("s1"))
+        );
+        sessionOpened.get(1).from().ifPresent(from ->
+            assertThat(from.getId(), is("s2"))
+        );
 
         assertThat(sessionClosed.getEvents().size(), is(1));
-        assertTrue(sessionClosed.get(0).getSessionId().isPresent());
-        sessionClosed.get(0).getSessionId().ifPresent(sessionId -> {
-            assertThat(sessionId, is("s1"));
-        });
+        assertTrue(sessionClosed.get(0).from().isPresent());
+        sessionClosed.get(0).from().ifPresent(from ->
+            assertThat(from.getId(), is("s1"))
+        );
 
         assertThat(unexpectedSituation.getEvents().size(), is(1));
-        assertTrue(unexpectedSituation.get(0).getSessionId().isPresent());
-        unexpectedSituation.get(0).getSessionId().ifPresent(sessionId -> {
-            assertThat(sessionId, is("s2"));
-        });
+        assertTrue(unexpectedSituation.get(0).from().isPresent());
+        unexpectedSituation.get(0).from().ifPresent(from ->
+            assertThat(from.getId(), is("s2"))
+        );
     }
 }
 
@@ -120,7 +120,7 @@ class Streaming extends EventChecker {
 
 }
 
-@NextRTCEventListener(NextRTCEvents.MEMBER_JOINDED)
+@NextRTCEventListener(NextRTCEvents.MEMBER_JOINED)
 class MemberJoined extends EventChecker {
 
 }
