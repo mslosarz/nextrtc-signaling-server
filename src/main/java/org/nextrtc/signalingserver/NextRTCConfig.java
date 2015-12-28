@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean;
 
 @Configuration
 @ComponentScan(basePackageClasses = { NextRTCConfig.class })
@@ -29,7 +30,10 @@ public class NextRTCConfig {
 
 	@Bean(name = "nextRTCPingScheduler")
 	public ScheduledExecutorService scheduler() {
-        return Executors.newScheduledThreadPool(size);
+        ScheduledExecutorFactoryBean factoryBean = new ScheduledExecutorFactoryBean();
+        factoryBean.setThreadNamePrefix("NextRTCConfig");
+        factoryBean.setPoolSize(size);
+        factoryBean.afterPropertiesSet();
+        return factoryBean.getObject();
 	}
-
 }
