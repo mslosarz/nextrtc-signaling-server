@@ -4,7 +4,7 @@
 
 	<groupId>org.nextrtc.signalingserver</groupId>
 	<artifactId>nextrtc-signaling-server</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>nextrtc-signaling-server</name>
@@ -43,6 +43,17 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring-version>4.1.4.RELEASE</spring-version>
 	</properties>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
 	<build>
 		<plugins>
