@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
