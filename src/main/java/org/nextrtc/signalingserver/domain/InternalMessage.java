@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.websocket.RemoteEndpoint.Async;
 
 import lombok.Getter;
-import lombok.experimental.Builder;
+import lombok.Builder;
 import lombok.extern.log4j.Log4j;
 
 import com.google.common.collect.Maps;

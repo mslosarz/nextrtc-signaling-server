@@ -9,7 +9,7 @@ import org.springframework.context.annotation.*;
 
 @Configuration
 @ComponentScan(basePackages = "org.nextrtc.signalingserver")
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:nextrtc.properties")
 public class TestConfig {
 
 	@Primary
