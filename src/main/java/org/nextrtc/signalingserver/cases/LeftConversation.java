@@ -1,12 +1,10 @@
 package org.nextrtc.signalingserver.cases;
 
-import org.nextrtc.signalingserver.api.NextRTCEventBus;
-import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -18,33 +16,20 @@ import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT
 public class LeftConversation {
 
 	@Autowired
-	@Qualifier("nextRTCEventBus")
-	private NextRTCEventBus eventBus;
-
-	@Autowired
 	private Conversations conversations;
 
-	public void execute(InternalMessage message) {
-		Conversation conversation = checkPrecondition(message, conversations.getBy(message.getFrom()));
-		conversation.left(message.getFrom());
+	public void execute(InternalMessage context) {
+		final Member leaving = context.getFrom();
+		Conversation conversation = checkPrecondition(context, conversations.getBy(leaving));
+		conversation.remove(leaving, context);
 		if (conversation.isWithoutMember()) {
-			unregisterConversation(conversation);
-			sendEventConversationDestroyed(message, conversation);
+			unregisterConversation(conversation, context);
 		}
-        sendEventMemberLeftFrom(message, conversation);
 	}
 
-	private void unregisterConversation(Conversation conversation) {
-		conversations.remove(conversation.getId());
+	private void unregisterConversation(Conversation conversation, InternalMessage message) {
+		conversations.remove(conversation.getId(), message);
 	}
-
-	private void sendEventMemberLeftFrom(InternalMessage message, Conversation conversation) {
-        eventBus.post(NextRTCEvents.MEMBER_LEFT.basedOn(message, conversation));
-	}
-
-    private void sendEventConversationDestroyed(InternalMessage message, Conversation conversation) {
-        eventBus.post(NextRTCEvents.CONVERSATION_DESTROYED.basedOn(message, conversation));
-    }
 
 	protected Conversation checkPrecondition(InternalMessage message, Optional<Conversation> conversation) {
 		if (!conversation.isPresent()) {

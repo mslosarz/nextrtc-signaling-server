@@ -33,7 +33,7 @@ public enum NextRTCEvents {
 
     public NextRTCEvent occurFor(Session session, String reason) {
         return EventContext.builder()
-                .from(session::getId)
+                .from(() -> session)
                 .type(this)
                 .reason(reason)
                 .build();
@@ -42,7 +42,7 @@ public enum NextRTCEvents {
     public NextRTCEvent occurFor(Session session) {
         return EventContext.builder()
                 .type(this)
-                .from(session::getId)
+                .from(() -> session)
                 .exception(Exceptions.UNKNOWN_ERROR.exception())
                 .build();
     }

@@ -6,7 +6,7 @@ import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JoinMember {
+public class SendingTools {
 
 	public void sendMessageToJoining(Member sender, String id) {
 		InternalMessage.create()//
@@ -14,7 +14,7 @@ public class JoinMember {
 				.content(id)//
 				.signal(Signal.JOINED)//
 				.build()//
-				.post();
+				.send();
 	}
 
 	public void sendMessageToOthers(Member sender, Member member) {
@@ -23,7 +23,7 @@ public class JoinMember {
 				.to(member)//
 				.signal(Signal.JOINED)//
 				.build()//
-				.post();
+				.send();
 	}
 
 	public void sendMessageToFirstJoined(Member sender, String id) {
@@ -32,7 +32,16 @@ public class JoinMember {
 				.signal(Signal.CREATED)//
 				.content(id)//
 				.build()//
-				.post();
+				.send();
+	}
+
+	public void sendLeftMessage(Member leaving, Member recipient) {
+		InternalMessage.create()//
+				.from(leaving)//
+				.to(recipient)//
+				.signal(Signal.LEFT)//
+				.build()//
+				.send();
 	}
 
 }

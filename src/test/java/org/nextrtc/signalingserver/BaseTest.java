@@ -1,14 +1,5 @@
 package org.nextrtc.signalingserver;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.concurrent.ScheduledFuture;
-
-import javax.websocket.RemoteEndpoint.Async;
-import javax.websocket.Session;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -23,6 +14,14 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.websocket.RemoteEndpoint.Async;
+import javax.websocket.Session;
+import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = { TestConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,7 +45,9 @@ public abstract class BaseTest {
 	@Before
 	public void reset() {
 		for (String id : conversations.getAllIds()) {
-			conversations.remove(id);
+			conversations.remove(id, InternalMessage.create()
+					.content(id)
+					.build());
 		}
 		for (String id : members.getAllIds()) {
 			members.unregister(id);

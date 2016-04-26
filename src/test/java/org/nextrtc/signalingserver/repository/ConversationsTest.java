@@ -1,20 +1,18 @@
 package org.nextrtc.signalingserver.repository;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
-import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_CONVERSATION_NAME;
-
-import java.util.Optional;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Conversation;
+import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
 public class ConversationsTest extends BaseTest {
 
@@ -29,7 +27,9 @@ public class ConversationsTest extends BaseTest {
 		// given
 
 		// when
-		Conversation createdConversation = conversations.create();
+		Conversation createdConversation = conversations.create(InternalMessage.create()
+				.content(null)
+				.build());
 
 		// then
 		assertNotNull(createdConversation);
@@ -39,7 +39,9 @@ public class ConversationsTest extends BaseTest {
 	@Test
 	public void shouldFindExistingConversation() throws Exception {
 		// given
-		Conversation conversation = conversations.create("new");
+		Conversation conversation = conversations.create(InternalMessage.create()
+				.content("new")
+				.build());
 
 		// when
 		Optional<Conversation> found = conversations.findBy("new");
@@ -52,26 +54,34 @@ public class ConversationsTest extends BaseTest {
 	}
 
 	@Test
-	public void shouldThrowExceptionOnEmptyConversationName() throws Exception {
+	public void shouldCreateConversationWithRandomNameOnEmptyConversationName() throws Exception {
 		// given
 
 		// then
-		expect.expectMessage(containsString(INVALID_CONVERSATION_NAME.getErrorCode()));
+		final Conversation conversation = conversations.create(InternalMessage.create()
+				.content("")
+				.build());
 
 		// when
-		conversations.create("");
+		assertNotNull(conversation);
+		assertThat(conversation.getId(), not(nullValue()));
+
 	}
 
 	@Test
 	public void shouldThrowExceptionWhenConversationNameIsOccupied() throws Exception {
 		// given
-		conversations.create("aaaa");
+		conversations.create(InternalMessage.create()
+				.content("aaaa")
+				.build());
 
 		// then
 		expect.expectMessage(containsString(CONVERSATION_NAME_OCCUPIED.getErrorCode()));
 
 		// when
-		conversations.create("aaaa");
+		conversations.create(InternalMessage.create()
+				.content("aaaa")
+				.build());
 	}
 
 }

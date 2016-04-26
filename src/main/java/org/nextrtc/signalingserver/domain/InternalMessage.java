@@ -1,17 +1,15 @@
 package org.nextrtc.signalingserver.domain;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.util.Map;
-
-import javax.websocket.RemoteEndpoint.Async;
-
-import lombok.Getter;
+import com.google.common.collect.Maps;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 
-import com.google.common.collect.Maps;
+import javax.websocket.RemoteEndpoint.Async;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Getter
 @Log4j
@@ -35,10 +33,10 @@ public class InternalMessage {
 	}
 
 	/**
-	 * Method will post message to recipient (member To)
+	 * Method will send message to recipient (member To)
 	 */
-	public void post() {
-        if (signal != Signal.PING) {
+	public void send() {
+		if (signal != Signal.PING) {
             log.info("Outgoing: " + toString());
         }
 		getRemotePeer().sendObject(transformToExternalMessage());

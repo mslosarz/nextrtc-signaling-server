@@ -1,7 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -12,7 +11,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import static lombok.AccessLevel.PRIVATE;
 
-@Data
+@Getter
 @Builder(builderMethodName = "create")
 public class Member implements NextRTCMember{
 

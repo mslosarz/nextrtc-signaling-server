@@ -1,7 +1,6 @@
 package org.nextrtc.signalingserver.cases.connection;
 
 import lombok.Getter;
-
 import org.joda.time.DateTime;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
@@ -61,7 +60,7 @@ public class ConnectionContext {
 				.signal(Signal.CANDIDATE)//
 				.content(message.getContent())//
 				.build()//
-				.post();
+				.send();
 	}
 
 
@@ -72,8 +71,8 @@ public class ConnectionContext {
 				.signal(Signal.FINALIZE)//
 				.content(message.getContent())//
 				.build()//
-				.post();
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
+				.send();
+		bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
         bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(master.getSession()));
         bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(slave.getSession()));
 	}
@@ -87,8 +86,8 @@ public class ConnectionContext {
 				.signal(Signal.ANSWER_REQUEST)//
 				.content(message.getContent())//
 				.build()//
-				.post();
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));
+				.send();
+		bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));
 	}
 
 	private boolean is(InternalMessage message, ConnectionState state) {
@@ -101,8 +100,8 @@ public class ConnectionContext {
                 .to(master)//
 				.signal(Signal.OFFER_REQUEST)
 				.build()//
-				.post();
-        setState(ConnectionState.OFFER_REQUESTED);
+				.send();
+		setState(ConnectionState.OFFER_REQUESTED);
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
 	}
 
