@@ -172,7 +172,6 @@ function NextRTC(config) {
     }
 	
 	this.init = function() {
-		this.on('created', this.created);
 		this.on('offerRequest', this.offerRequest);
 		this.on('answerRequest', this.answerRequest);
 		this.on('finalize', this.finalize);
