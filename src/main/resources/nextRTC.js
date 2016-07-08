@@ -41,28 +41,24 @@ function NextRTC(config) {
 
 	this.join = function(convId) {
 		var nextRTC = this;
-		navigator.mediaDevices.getUserMedia(nextRTC.mediaConfig)
-		    .then(function(stream) {
-              	    nextRTC.localStream = stream;
-              	    nextRTC.call('localStream', {
-              			stream : stream
-              	    });
-              	    nextRTC.request('join', null, convId);
-              	    })
-            .catch(error);
+		navigator.mediaDevices.getUserMedia(nextRTC.mediaConfig).then(function(stream) {
+			nextRTC.localStream = stream;
+			nextRTC.call('localStream', {
+				stream : stream
+			});
+			nextRTC.request('join', null, convId);
+		}, error);
 	};
 
 	this.create = function(convId) {
 		var nextRTC = this;
-		navigator.mediaDevices.getUserMedia(nextRTC.mediaConfig)
-		    .then(function(stream) {
-            		nextRTC.localStream = stream;
-            		nextRTC.call('localStream', {
-            			stream : stream
-            		});
-            		nextRTC.request('create', null, convId);
-            })
-            .catch(error);
+		navigator.mediaDevices.getUserMedia(nextRTC.mediaConfig).then(function(stream) {
+			nextRTC.localStream = stream;
+			nextRTC.call('localStream', {
+				stream : stream
+			});
+			nextRTC.request('create', null, convId);
+		}, error);
 	};
 
 	this.request = function(signal, to, convId) {
@@ -85,81 +81,78 @@ function NextRTC(config) {
 		NextRTC.instance.call('error', event);
 	};
 
+	this.preparePeerConnection = function(nextRTC, member) {
+		if (nextRTC.peerConnections[member] == undefined) {
+			var pc = new RTCPeerConnection(config.peerConfig);
+			pc.onaddstream = function(evt) {
+				nextRTC.call('remoteStream', {
+					member : member,
+					stream : evt.stream
+				});
+			};
+			pc.onicecandidate = function(evt) {
+				handle(pc, evt);
+
+				function handle(pc, evt){
+					if((pc.signalingState || pc.readyState) == 'stable'
+						&& nextRTC.peerConnections[member]['rem'] == true){
+						nextRTC.onIceCandidate(nextRTC, member, evt);
+						return;
+					}
+					setTimeout(function(){ handle(pc, evt); }, 2000);
+				}
+			};
+			nextRTC.peerConnections[member] = {}
+			nextRTC.peerConnections[member]['pc'] = pc;
+			nextRTC.peerConnections[member]['rem'] = false;
+		}
+		return nextRTC.peerConnections[member];
+	};
+
 	this.offerRequest = function(nextRTC, from) {
 		nextRTC.offerResponse(nextRTC, from);
 	};
 
 	this.offerResponse = function(nextRTC, signal) {
-	    if(nextRTC.peerConnections[signal.from] === undefined){
-	        nextRTC.createPeers(signal);
-	    }
-	    var pcLocal = nextRTC.peerConnections[signal.from]['local'];
-        var pcRemote = nextRTC.peerConnections[signal.from]['remote'];
-        pcLocal.createOffer()
-        .then(
-            function(desc) {
-                pcLocal.setLocalDescription(desc)
+	    var pc = nextRTC.preparePeerConnection(nextRTC, signal.from);
+        		pc['pc'].addStream(nextRTC.localStream);
+        pc['pc'].createOffer({offerToReceiveAudio: 1, offerToReceiveVideo: 1})
+        .then(function(desc) {
+            pc['pc'].setLocalDescription(desc)
                 .then(function() {
                     nextRTC.request('offerResponse', signal.from, desc.sdp);
                 }, error);
-            });
+        });
 	};
-
-	this.createPeers = function(signal){
-	    var pcLocal = new RTCPeerConnection(config.peerConfig);
-    	var pcRemote = new RTCPeerConnection(config.peerConfig);
-        nextRTC.peerConnections[signal.from] = {};
-        nextRTC.peerConnections[signal.from]['local'] = pcLocal;
-        nextRTC.peerConnections[signal.from]['remote'] = pcRemote;
-        pcLocal.onicecandidate = function(e){
-    	    nextRTC.onIceCandidate(signal.from, pcLocal, e);
-    	};
-    	pcRemote.onicecandidate = function(e){
-            nextRTC.onIceCandidate(signal.from, pcRemote, e);
-        };
-        pcRemote.onaddstream = function(evt) {
-            nextRTC.call('remoteStream', {
-                    member : signal.from,
-                    stream : evt.stream
-                });
-         };
-         pcLocal.addStream(nextRTC.localStream);
-	}
-
-    this.onIceCandidate = function(member, pc, event) {
-      if (event.candidate) {
-        nextRTC.request('candidate', member, JSON.stringify(event.candidate));
-      }
-    }
 
 	this.answerRequest = function(nextRTC, signal) {
 		nextRTC.answerResponse(nextRTC, signal);
 	};
 
 	this.answerResponse = function(nextRTC, signal) {
-	    if(nextRTC.peerConnections[signal.from] === undefined){
-    	        nextRTC.createPeers(signal);
-    	}
-	    var pcLocal = nextRTC.peerConnections[signal.from]['local'];
-	    var pcRemote = nextRTC.peerConnections[signal.from]['remote'];
-	    pcRemote.setRemoteDescription(new RTCSessionDescription({
-                                                 			type : 'offer',
-                                                 			sdp : signal.content
-                                                 		}));
-	    pcRemote.createAnswer().then(function(desc){
-	        pcRemote.setLocalDescription(desc).then(function(){
-	            nextRTC.request('answerResponse', signal.from, desc.sdp);
-	        }, error);
-	        pcLocal.setRemoteDescription(desc);
-	    });
+		var pc = nextRTC.preparePeerConnection(nextRTC, signal.from);
+		pc['pc'].addStream(nextRTC.localStream);
+		pc['pc'].setRemoteDescription(new RTCSessionDescription({
+			type : 'offer',
+			sdp : signal.content
+		})).then(function() {
+    		pc['rem'] = true;
+    		pc['pc'].createAnswer().then(function(desc) {
+    		    pc['pc'].setLocalDescription(desc).then(function() {
+        		    nextRTC.request('answerResponse', signal.from, desc.sdp);
+        	    });
+            });
+        });
 	};
 
 	this.finalize = function(nextRTC, signal) {
-	    var pcLocal = nextRTC.peerConnections[signal.from]['local'];
-    	pcLocal.setRemoteDescription(new RTCSessionDescription({
-                                         			type : 'answer',
-                                         			sdp : signal.content
-                                         		}));
+	    var pc = nextRTC.preparePeerConnection(nextRTC, signal.from);
+		pc['pc'].setRemoteDescription(new RTCSessionDescription({
+			type : 'answer',
+			sdp : signal.content
+		})).then(function(){
+			pc['rem'] = true;
+		});
     };
 
 	this.close = function(nextRTC, event) {
@@ -167,10 +160,10 @@ function NextRTC(config) {
 	};
 
 	this.candidate = function(nextRTC, signal) {
-    	var pcLocal = nextRTC.peerConnections[signal.from]['local'];
-    	pcLocal.addIceCandidate(new RTCIceCandidate(JSON.parse(signal.content.replace(new RegExp('\'', 'g'), '"'))), success, error);
+	    var pc = nextRTC.preparePeerConnection(nextRTC, signal.from);
+   	    pc['pc'].addIceCandidate(new RTCIceCandidate(JSON.parse(signal.content.replace(new RegExp('\'', 'g'), '"'))), success, error);
     }
-	
+
 	this.init = function() {
 		this.on('offerRequest', this.offerRequest);
 		this.on('answerRequest', this.answerRequest);
@@ -179,6 +172,12 @@ function NextRTC(config) {
 		this.on('close', this.close);
 		this.on('ping', function(){});
 	};
+
+	this.onIceCandidate = function(nextRTC, member, event) {
+          if (event.candidate) {
+            nextRTC.request('candidate', member, JSON.stringify(event.candidate));
+          }
+        }
 
 	this.init();
 };
