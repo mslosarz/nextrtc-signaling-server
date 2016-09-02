@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface NextRTCEvent {
 
-	NextRTCEvents type();
+    NextRTCEvents type();
 
     DateTime published();
 

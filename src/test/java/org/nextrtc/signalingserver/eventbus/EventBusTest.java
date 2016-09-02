@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.junit.After;
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
@@ -23,62 +24,62 @@ import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
-@ContextConfiguration(classes = { T1.class, T2.class, T3.class })
+@ContextConfiguration(classes = {T1.class, T2.class, T3.class})
 public class EventBusTest extends BaseTest {
 
-	@Autowired
-	@Qualifier("nextRTCEventBus")
-	private NextRTCEventBus eventBus;
+    @Autowired
+    @Qualifier(Names.EVENT_BUS)
+    private NextRTCEventBus eventBus;
 
-	@Autowired
-	@Qualifier("t1")
-	private T1 t1;
+    @Autowired
+    @Qualifier("t1")
+    private T1 t1;
 
-	@Autowired
-	@Qualifier("t2")
-	private T2 t2;
+    @Autowired
+    @Qualifier("t2")
+    private T2 t2;
 
-	@Autowired
-	@Qualifier("t3")
-	private T3 t3;
+    @Autowired
+    @Qualifier("t3")
+    private T3 t3;
 
-	@Test
-	public void shouldRegisterListenerWithNextRTCEventListenerAnnotation() throws InterruptedException {
-		// given
-		Object object = new Object();
+    @Test
+    public void shouldRegisterListenerWithNextRTCEventListenerAnnotation() throws InterruptedException {
+        // given
+        Object object = new Object();
 
-		// when
-		eventBus.post(object);
+        // when
+        eventBus.post(object);
 
-		// then
-		assertThat(t1.getO(), is(object));
-	}
+        // then
+        assertThat(t1.getO(), is(object));
+    }
 
-	@Test
-	public void shouldCallHandleEventMethod() throws Exception {
-		// given
-		NextRTCEvent event = event(SESSION_OPENED);
-		NextRTCEvent notValidEvent = event(SESSION_CLOSED);
+    @Test
+    public void shouldCallHandleEventMethod() throws Exception {
+        // given
+        NextRTCEvent event = event(SESSION_OPENED);
+        NextRTCEvent notValidEvent = event(SESSION_CLOSED);
 
-		// when
-		eventBus.post(event);
-		eventBus.post(notValidEvent);
+        // when
+        eventBus.post(event);
+        eventBus.post(notValidEvent);
 
-		// then
-		assertThat(t2.getEvent(), is(event));
-		assertThat(t3.getEvent(), nullValue());
-	}
+        // then
+        assertThat(t2.getEvent(), is(event));
+        assertThat(t3.getEvent(), nullValue());
+    }
 
-	private NextRTCEvent event(final NextRTCEvents event) {
+    private NextRTCEvent event(final NextRTCEvents event) {
         return EventContext.builder().type(event).build();
-	}
+    }
 
-	@After
-	public void resetClass() {
-		t1.setO(null);
-		t2.setEvent(null);
-		t3.setEvent(null);
-	}
+    @After
+    public void resetClass() {
+        t1.setO(null);
+        t2.setEvent(null);
+        t3.setEvent(null);
+    }
 }
 
 @Getter
@@ -87,12 +88,12 @@ public class EventBusTest extends BaseTest {
 @NextRTCEventListener
 class T1 {
 
-	private Object o;
+    private Object o;
 
-	@Subscribe
-	public void callMe(Object o) {
-		this.o = o;
-	}
+    @Subscribe
+    public void callMe(Object o) {
+        this.o = o;
+    }
 }
 
 @Getter
@@ -101,12 +102,12 @@ class T1 {
 @NextRTCEventListener(SESSION_OPENED)
 class T2 implements NextRTCHandler {
 
-	private NextRTCEvent event;
+    private NextRTCEvent event;
 
-	@Override
-	public void handleEvent(NextRTCEvent event) {
-		this.event = event;
-	}
+    @Override
+    public void handleEvent(NextRTCEvent event) {
+        this.event = event;
+    }
 }
 
 @Getter
@@ -115,10 +116,10 @@ class T2 implements NextRTCHandler {
 @NextRTCEventListener
 class T3 implements NextRTCHandler {
 
-	private NextRTCEvent event;
+    private NextRTCEvent event;
 
-	@Override
-	public void handleEvent(NextRTCEvent event) {
-		this.event = event;
-	}
+    @Override
+    public void handleEvent(NextRTCEvent event) {
+        this.event = event;
+    }
 }

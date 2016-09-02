@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.eventbus;
 
+import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,16 @@ import javax.annotation.PostConstruct;
 @Scope("singleton")
 public class EventBusSetup {
 
-	@Autowired
-	@Qualifier("nextRTCEventBus")
-	private NextRTCEventBus eventBus;
+    @Autowired
+    @Qualifier(Names.EVENT_BUS)
+    private NextRTCEventBus eventBus;
 
-	@Autowired
-	private ApplicationContext context;
+    @Autowired
+    private ApplicationContext context;
 
-	@PostConstruct
-	public void setupHandlers() {
-		context.getBeansWithAnnotation(NextRTCEventListener.class).values()
-				.forEach(eventBus::register);
-	}
+    @PostConstruct
+    public void setupHandlers() {
+        context.getBeansWithAnnotation(NextRTCEventListener.class).values()
+                .forEach(eventBus::register);
+    }
 }

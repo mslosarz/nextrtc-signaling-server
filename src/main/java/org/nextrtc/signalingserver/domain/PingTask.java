@@ -4,19 +4,19 @@ import javax.websocket.Session;
 
 public class PingTask implements Runnable {
 
-	private Member to;
+    private Member to;
 
-	public PingTask(Session to) {
-		this.to = Member.create().session(to).build();
-	}
+    public PingTask(Session to) {
+        this.to = new Member(to, null);
+    }
 
-	@Override
-	public void run() {
-		InternalMessage.create()//
-				.to(to)//
-				.signal(Signal.PING)//
-				.build()//
-				.send();
-	}
+    @Override
+    public void run() {
+        InternalMessage.create()//
+                .to(to)//
+                .signal(Signal.PING)//
+                .build()//
+                .send();
+    }
 
 }

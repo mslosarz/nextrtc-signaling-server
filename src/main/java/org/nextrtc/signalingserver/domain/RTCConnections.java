@@ -2,6 +2,7 @@ package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,17 +17,17 @@ import java.util.stream.Collectors;
 
 @Component
 public class RTCConnections {
-	private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
+    private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
 
     @Autowired
-    @Qualifier("nextRTCPingScheduler")
+    @Qualifier(Names.SCHEDULER_NAME)
     private ScheduledExecutorService scheduler;
 
-    @Value("${nextrtc.max_connection_setup_time:30}")
+    @Value(Names.MAX_CONNECTION_SETUP_TIME)
     private int maxConnectionSetupTime;
 
     @PostConstruct
-    void cleanOldConnections(){
+    void cleanOldConnections() {
         scheduler.scheduleWithFixedDelay(() -> {
             List<ConnectionContext> oldConnections = connections.values().stream()
                     .filter(context -> !context.isCurrent())
@@ -36,13 +37,13 @@ public class RTCConnections {
         }, maxConnectionSetupTime, maxConnectionSetupTime, TimeUnit.SECONDS);
     }
 
-	public void put(Member from, Member to, ConnectionContext ctx) {
-		connections.put(from, to, ctx);
-		connections.put(to, from, ctx);
-	}
+    public void put(Member from, Member to, ConnectionContext ctx) {
+        connections.put(from, to, ctx);
+        connections.put(to, from, ctx);
+    }
 
-	public ConnectionContext get(Member from, Member to) {
-		return connections.get(from, to);
-	}
+    public ConnectionContext get(Member from, Member to) {
+        return connections.get(from, to);
+    }
 
 }

@@ -14,16 +14,16 @@ import java.util.List;
 @Scope("prototype")
 public class EventChecker implements NextRTCHandler {
 
-	List<NextRTCEvent> events = Lists.newArrayList();
+    List<NextRTCEvent> events = Lists.newArrayList();
 
-	@Override
-	public void handleEvent(NextRTCEvent event) {
-		events.add(event);
-	}
+    @Override
+    public void handleEvent(NextRTCEvent event) {
+        events.add(event);
+    }
 
-	public void reset() {
-		events.clear();
-	}
+    public void reset() {
+        events.clear();
+    }
 
     public NextRTCEvent get(int index) {
         return events.get(index);

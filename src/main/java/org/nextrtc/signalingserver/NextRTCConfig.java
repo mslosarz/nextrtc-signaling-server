@@ -15,10 +15,10 @@ import java.util.concurrent.ScheduledExecutorService;
 @ComponentScan(basePackageClasses = {NextRTCConfig.class})
 public class NextRTCConfig {
 
-    @Value("${nextrtc.scheduler_size:10}")
+    @Value(Names.SCHEDULER_SIZE)
     private int size;
 
-    @Bean(name = "nextRTCEventBus")
+    @Bean(name = Names.EVENT_BUS)
     public NextRTCEventBus eventBus() {
         return new NextRTCEventBus();
     }
@@ -30,7 +30,7 @@ public class NextRTCConfig {
         return propertyPlaceholderConfigurer;
     }
 
-    @Bean(name = "nextRTCPingScheduler")
+    @Bean(name = Names.SCHEDULER_NAME)
     public ScheduledExecutorService scheduler() {
         ScheduledExecutorFactoryBean factoryBean = new ScheduledExecutorFactoryBean();
         factoryBean.setThreadNamePrefix("NextRTCConfig");

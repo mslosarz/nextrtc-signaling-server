@@ -92,7 +92,7 @@ public class EventContext implements NextRTCEvent {
         private SignalingException exception;
         private String reason;
 
-        public EventContextBuilder reason(String reason){
+        public EventContextBuilder reason(String reason) {
             this.reason = reason;
             return this;
         }
@@ -112,7 +112,7 @@ public class EventContext implements NextRTCEvent {
             return this;
         }
 
-        public EventContextBuilder to(NextRTCMember to){
+        public EventContextBuilder to(NextRTCMember to) {
             this.to = to;
             return this;
         }

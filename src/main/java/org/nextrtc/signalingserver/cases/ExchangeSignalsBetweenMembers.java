@@ -13,18 +13,18 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class ExchangeSignalsBetweenMembers {
 
-	@Autowired
-	private RTCConnections connections;
+    @Autowired
+    private RTCConnections connections;
 
-	@Autowired
-	private ApplicationContext context;
+    @Autowired
+    private ApplicationContext context;
 
-	public synchronized void begin(Member from, Member to) {
-		connections.put(from, to, context.getBean(ConnectionContext.class, from, to));
-		connections.get(from, to).begin();
-	}
+    public synchronized void begin(Member from, Member to) {
+        connections.put(from, to, context.getBean(ConnectionContext.class, from, to));
+        connections.get(from, to).begin();
+    }
 
-	public synchronized void execute(InternalMessage message) {
-		connections.get(message.getFrom(), message.getTo()).process(message);
-	}
+    public synchronized void execute(InternalMessage message) {
+        connections.get(message.getFrom(), message.getTo()).process(message);
+    }
 }
