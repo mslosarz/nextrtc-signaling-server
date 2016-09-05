@@ -1,7 +1,7 @@
 package org.nextrtc.signalingserver.api;
 
 import com.google.common.collect.Sets;
-import lombok.extern.log4j.Log4j;
+import org.apache.log4j.Logger;
 import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import java.util.Set;
 
-@Log4j
 @Component
 public class NextRTCEndpoint {
 
+    private static final Logger log = Logger.getLogger(NextRTCEndpoint.class);
     private Server server;
 
     private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();

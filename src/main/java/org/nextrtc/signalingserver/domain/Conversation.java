@@ -1,13 +1,11 @@
 package org.nextrtc.signalingserver.domain;
 
-import lombok.Getter;
 import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Getter
 @Component
 @Scope("prototype")
 public abstract class Conversation implements NextRTCConversation {
@@ -40,4 +38,10 @@ public abstract class Conversation implements NextRTCConversation {
     private void unregisterConversation(Member sender, Conversation conversation) {
         conversations.remove(conversation.getId(), sender);
     }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public abstract void exchangeSignals(InternalMessage message);
 }

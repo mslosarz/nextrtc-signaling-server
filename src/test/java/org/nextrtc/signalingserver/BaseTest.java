@@ -72,13 +72,6 @@ public abstract class BaseTest {
         return s;
     }
 
-    protected Session mockSession(String id, Async async, ArgumentMatcher<Message> match) {
-        Session s = mock(Session.class);
-        when(s.getId()).thenReturn(id);
-        when(s.getAsyncRemote()).thenReturn(async);
-        return s;
-    }
-
     protected Async mockAsync(ArgumentMatcher<Message> match) {
         Async async = mock(Async.class);
         when(async.sendObject(Mockito.argThat(match))).thenReturn(null);
@@ -93,28 +86,10 @@ public abstract class BaseTest {
         return context.getBean(Member.class, mockSession(string, match), mock(ScheduledFuture.class));
     }
 
-    protected MessageMatcher createConversationWithOwner(String conversationName, String memberName) {
-        MessageMatcher match = new MessageMatcher();
-        Member member = mockMember(memberName, match);
-        members.register(member);
+    protected void createConversation(String conversationName, Member member) {
         create.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
                 .build());
-        match.reset();
-        return match;
     }
-
-    protected MessageMatcher joinMemberToConversation(String conversationName, String memberName) {
-        MessageMatcher match = new MessageMatcher();
-        Member member = mockMember(memberName, match);
-        members.register(member);
-        join.execute(InternalMessage.create()//
-                .from(member)//
-                .content(conversationName)//
-                .build());
-        match.reset();
-        return match;
-    }
-
 }

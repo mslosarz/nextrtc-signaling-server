@@ -11,6 +11,8 @@ import org.nextrtc.signalingserver.exception.Exceptions;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static junit.framework.TestCase.assertTrue;
+
 public class JoinConversationTest extends BaseTest {
 
     @Autowired
@@ -36,7 +38,26 @@ public class JoinConversationTest extends BaseTest {
                 .from(member)//
                 .content("new conversation")//
                 .build());
+    }
 
+    @Test
+    public void shouldJoinMemberToConversation() throws Exception {
+        // given
+        MessageMatcher match = new MessageMatcher();
+        Member member = mockMember("Jan", match);
+        members.register(member);
+        Member stach = mockMember("Stach");
+        members.register(stach);
+        createConversation("conv", stach);
+
+        // when
+        joinConversation.execute(InternalMessage.create()//
+                .from(member)//
+                .content("conv")//
+                .build());
+
+        // then
+        assertTrue(member.getConversation().isPresent());
     }
 
 }

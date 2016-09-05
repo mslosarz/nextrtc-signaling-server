@@ -1,13 +1,11 @@
 package org.nextrtc.signalingserver;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import org.mockito.ArgumentMatcher;
 import org.nextrtc.signalingserver.domain.Message;
 
 import java.util.List;
 
-@Getter
 public class MessageMatcher extends ArgumentMatcher<Message> {
 
     private List<Message> messages = Lists.newLinkedList();
@@ -49,4 +47,7 @@ public class MessageMatcher extends ArgumentMatcher<Message> {
         return sb.toString();
     }
 
+    public List<Message> getMessages() {
+        return this.messages;
+    }
 }

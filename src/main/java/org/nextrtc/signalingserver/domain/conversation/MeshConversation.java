@@ -4,10 +4,10 @@ import com.google.common.collect.Sets;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
-import org.nextrtc.signalingserver.cases.SendingTools;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -24,9 +24,6 @@ public class MeshConversation extends Conversation {
     @Autowired
     @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus eventBus;
-
-    @Autowired
-    private SendingTools tools;
 
     private Set<Member> members = Sets.newConcurrentHashSet();
 
@@ -51,16 +48,16 @@ public class MeshConversation extends Conversation {
 
     private void informRestAndBeginSignalExchange(Member sender) {
         for (Member to : members) {
-            tools.sendJoinedFrom(sender, to);
+            sendJoinedFrom(sender, to);
             exchange.begin(to, sender);
         }
     }
 
     private void informSenderThatHasBeenJoined(Member sender) {
         if (isWithoutMember()) {
-            tools.sendJoinedToFirst(sender, id);
+            sendJoinedToFirst(sender, id);
         } else {
-            tools.sendJoinedToConversation(sender, id);
+            sendJoinedToConversation(sender, id);
         }
     }
 
@@ -78,7 +75,7 @@ public class MeshConversation extends Conversation {
         if (remove) {
             leaving.unassignConversation(this);
             for (Member member : members) {
-                tools.sendLeftMessage(leaving, member);
+                sendLeftMessage(leaving, member);
             }
         }
         return false;
@@ -86,5 +83,41 @@ public class MeshConversation extends Conversation {
 
     public void execute(InternalMessage message) {
         exchange.execute(message);
+    }
+
+    private void sendJoinedToConversation(Member sender, String id) {
+        InternalMessage.create()//
+                .to(sender)//
+                .content(id)//
+                .signal(Signal.JOINED)//
+                .build()//
+                .send();
+    }
+
+    private void sendJoinedFrom(Member sender, Member member) {
+        InternalMessage.create()//
+                .from(sender)//
+                .to(member)//
+                .signal(Signal.JOINED)//
+                .build()//
+                .send();
+    }
+
+    private void sendJoinedToFirst(Member sender, String id) {
+        InternalMessage.create()//
+                .to(sender)//
+                .signal(Signal.CREATED)//
+                .content(id)//
+                .build()//
+                .send();
+    }
+
+    private void sendLeftMessage(Member leaving, Member recipient) {
+        InternalMessage.create()//
+                .from(leaving)//
+                .to(recipient)//
+                .signal(Signal.LEFT)//
+                .build()//
+                .send();
     }
 }

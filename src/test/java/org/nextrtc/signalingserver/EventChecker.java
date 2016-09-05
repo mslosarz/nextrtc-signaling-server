@@ -1,7 +1,6 @@
 package org.nextrtc.signalingserver;
 
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.springframework.context.annotation.Scope;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Getter
 @Component
 @Scope("prototype")
 public class EventChecker implements NextRTCHandler {
@@ -29,4 +27,7 @@ public class EventChecker implements NextRTCHandler {
         return events.get(index);
     }
 
+    public List<NextRTCEvent> getEvents() {
+        return this.events;
+    }
 }

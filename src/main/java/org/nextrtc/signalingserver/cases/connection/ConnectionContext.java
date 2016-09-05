@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.cases.connection;
 
-import lombok.Getter;
 import org.joda.time.DateTime;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class ConnectionContext {
 
-    @Value("${nextrtc.max_connection_setup_time:30}")
+    @Value(Names.MAX_CONNECTION_SETUP_TIME)
     private int maxConnectionSetupTime;
 
     private ConnectionState state = ConnectionState.NOT_INITIALIZED;
@@ -28,9 +27,7 @@ public class ConnectionContext {
     @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus bus;
 
-    @Getter
     private Member master;
-    @Getter
     private Member slave;
 
 
@@ -113,5 +110,13 @@ public class ConnectionContext {
 
     public boolean isCurrent() {
         return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(DateTime.now());
+    }
+
+    public Member getMaster() {
+        return this.master;
+    }
+
+    public Member getSlave() {
+        return this.slave;
     }
 }

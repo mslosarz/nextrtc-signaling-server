@@ -1,8 +1,6 @@
 package org.nextrtc.signalingserver.eventbus;
 
 import com.google.common.eventbus.Subscribe;
-import lombok.Getter;
-import lombok.Setter;
 import org.junit.After;
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
@@ -82,8 +80,6 @@ public class EventBusTest extends BaseTest {
     }
 }
 
-@Getter
-@Setter
 @Component("t1")
 @NextRTCEventListener
 class T1 {
@@ -94,10 +90,16 @@ class T1 {
     public void callMe(Object o) {
         this.o = o;
     }
+
+    public Object getO() {
+        return this.o;
+    }
+
+    public void setO(Object o) {
+        this.o = o;
+    }
 }
 
-@Getter
-@Setter
 @Component("t2")
 @NextRTCEventListener(SESSION_OPENED)
 class T2 implements NextRTCHandler {
@@ -108,10 +110,16 @@ class T2 implements NextRTCHandler {
     public void handleEvent(NextRTCEvent event) {
         this.event = event;
     }
+
+    public NextRTCEvent getEvent() {
+        return this.event;
+    }
+
+    public void setEvent(NextRTCEvent event) {
+        this.event = event;
+    }
 }
 
-@Getter
-@Setter
 @Component("t3")
 @NextRTCEventListener
 class T3 implements NextRTCHandler {
@@ -120,6 +128,14 @@ class T3 implements NextRTCHandler {
 
     @Override
     public void handleEvent(NextRTCEvent event) {
+        this.event = event;
+    }
+
+    public NextRTCEvent getEvent() {
+        return this.event;
+    }
+
+    public void setEvent(NextRTCEvent event) {
         this.event = event;
     }
 }

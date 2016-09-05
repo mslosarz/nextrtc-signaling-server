@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.domain;
 
-import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.nextrtc.signalingserver.Names;
@@ -15,12 +14,10 @@ import javax.websocket.Session;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
-import static lombok.AccessLevel.PRIVATE;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_JOINED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_LEFT;
 import static org.nextrtc.signalingserver.domain.EventContext.builder;
 
-@Getter
 @Component
 @Scope("prototype")
 public class Member implements NextRTCMember {
@@ -33,7 +30,6 @@ public class Member implements NextRTCMember {
     @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus eventBus;
 
-    @Getter(PRIVATE)
     private ScheduledFuture<?> ping;
 
     public Member(Session session, ScheduledFuture<?> ping) {
@@ -89,4 +85,11 @@ public class Member implements NextRTCMember {
                 .build();
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public Session getSession() {
+        return this.session;
+    }
 }

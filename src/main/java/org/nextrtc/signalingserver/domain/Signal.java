@@ -1,23 +1,28 @@
 package org.nextrtc.signalingserver.domain;
 
 public enum Signal {
-    EMPTY(Signals.EMPTY, Signals.EMPTY_HANDLER),
-    OFFER_REQUEST(Signals.OFFER_REQUEST, Signals.OFFER_REQUEST_HANDLER),
+    EMPTY(Signals.EMPTY),
+    OFFER_REQUEST(Signals.OFFER_REQUEST),
     OFFER_RESPONSE(Signals.OFFER_RESPONSE, Signals.OFFER_RESPONSE_HANDLER),
-    ANSWER_REQUEST(Signals.ANSWER_REQUEST, Signals.ANSWER_REQUEST_HANDLER),
+    ANSWER_REQUEST(Signals.ANSWER_REQUEST),
     ANSWER_RESPONSE(Signals.ANSWER_RESPONSE, Signals.ANSWER_RESPONSE_HANDLER),
-    FINALIZE(Signals.FINALIZE, Signals.FINALIZE_HANDLER),
+    FINALIZE(Signals.FINALIZE),
     CANDIDATE(Signals.CANDIDATE, Signals.CANDIDATE_HANDLER),
-    PING(Signals.PING, Signals.PING_HANDLER),
+    PING(Signals.PING),
     LEFT(Signals.LEFT, Signals.LEFT_HANDLER),
     JOIN(Signals.JOIN, Signals.JOIN_HANDLER),
     CREATE(Signals.CREATE, Signals.CREATE_HANDLER),
-    JOINED(Signals.JOINED, Signals.JOINED_HANDLER),
-    CREATED(Signals.CREATED, Signals.CREATED_HANDLER),
+    JOINED(Signals.JOINED),
+    CREATED(Signals.CREATED),
     TEXT(Signals.TEXT, Signals.TEXT_HANDLER);
 
     private String signalName;
     private String signalHandler;
+
+    Signal(String signalName) {
+        this.signalName = signalName;
+        this.signalHandler = Signals.EMPTY_HANDLER;
+    }
 
     Signal(String signalName, String signalHandler) {
         this.signalName = signalName;

@@ -1,0 +1,5 @@
+v0.0.4:
+    - Added policy to handle certain signals
+    - Expanded API of event new method content has been added (text messages can be stored in java app)
+    - Added new signal type TEXT (to transfer text messages between communication members)
+    - Delomboked project - too many questions were connected with building project

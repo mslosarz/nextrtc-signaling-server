@@ -18,8 +18,8 @@ public class BroadcastConversation extends Conversation {
     }
 
     @Override
-    public void remove(Member leaving) {
-
+    public boolean remove(Member leaving) {
+        return false;
     }
 
     @Override

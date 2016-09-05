@@ -23,6 +23,8 @@ public interface NextRTCEvent {
 
     Map<String, String> custom();
 
+    Optional<String> content();
+
     Optional<String> reason();
 
 }
