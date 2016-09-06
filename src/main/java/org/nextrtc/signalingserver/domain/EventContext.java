@@ -24,14 +24,16 @@ public class EventContext implements NextRTCEvent {
     private final Optional<NextRTCConversation> conversation;
     private final Optional<SignalingException> exception;
     private final String reason;
+    private final String content;
 
-    private EventContext(NextRTCEvents type, NextRTCMember from, NextRTCMember to, NextRTCConversation conversation, SignalingException exception, String reason) {
+    private EventContext(NextRTCEvents type, NextRTCMember from, NextRTCMember to, NextRTCConversation conversation, SignalingException exception, String reason, String content) {
         this.type = type;
         this.from = ofNullable(from);
         this.to = ofNullable(to);
         this.conversation = ofNullable(conversation);
         this.exception = ofNullable(exception);
         this.reason = reason;
+        this.content = content;
     }
 
     @Override
@@ -75,6 +77,11 @@ public class EventContext implements NextRTCEvent {
     }
 
     @Override
+    public Optional<String> content() {
+        return Optional.ofNullable(content);
+    }
+
+    @Override
     public String toString() {
         return String.format("%s (%s) <- %s -> (%s)", type, from, conversation, to);
     }
@@ -91,9 +98,15 @@ public class EventContext implements NextRTCEvent {
         private NextRTCConversation conversation;
         private SignalingException exception;
         private String reason;
+        private String content;
 
-        public EventContextBuilder reason(String reason){
+        public EventContextBuilder reason(String reason) {
             this.reason = reason;
+            return this;
+        }
+
+        public EventContextBuilder content(String content) {
+            this.content = content;
             return this;
         }
 
@@ -112,7 +125,7 @@ public class EventContext implements NextRTCEvent {
             return this;
         }
 
-        public EventContextBuilder to(NextRTCMember to){
+        public EventContextBuilder to(NextRTCMember to) {
             this.to = to;
             return this;
         }
@@ -131,7 +144,7 @@ public class EventContext implements NextRTCEvent {
             if (type == null) {
                 throw new IllegalArgumentException("Type is required");
             }
-            EventContext eventContext = new EventContext(type, from, to, conversation, exception, reason);
+            EventContext eventContext = new EventContext(type, from, to, conversation, exception, reason, content);
             if (custom != null) {
                 eventContext.custom.putAll(custom);
             }

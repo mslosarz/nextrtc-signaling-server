@@ -4,6 +4,6 @@ import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 
 public interface NextRTCHandler {
 
-	void handleEvent(NextRTCEvent event);
+    void handleEvent(NextRTCEvent event);
 
 }

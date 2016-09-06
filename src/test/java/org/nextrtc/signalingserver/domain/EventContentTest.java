@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
-@ContextConfiguration(classes = { SessionOpened.class, SessionClosed.class, UnexpectedSituation.class })
+@ContextConfiguration(classes = {SessionOpened.class, SessionClosed.class, UnexpectedSituation.class})
 public class EventContentTest extends BaseTest {
 
     @Rule
@@ -60,22 +60,22 @@ public class EventContentTest extends BaseTest {
         assertTrue(sessionOpened.get(0).from().isPresent());
         assertTrue(sessionOpened.get(1).from().isPresent());
         sessionOpened.get(0).from().ifPresent(from ->
-            assertThat(from.getId(), is("s1"))
+                assertThat(from.getId(), is("s1"))
         );
         sessionOpened.get(1).from().ifPresent(from ->
-            assertThat(from.getId(), is("s2"))
+                assertThat(from.getId(), is("s2"))
         );
 
         assertThat(sessionClosed.getEvents().size(), is(1));
         assertTrue(sessionClosed.get(0).from().isPresent());
         sessionClosed.get(0).from().ifPresent(from ->
-            assertThat(from.getId(), is("s1"))
+                assertThat(from.getId(), is("s1"))
         );
 
         assertThat(unexpectedSituation.getEvents().size(), is(1));
         assertTrue(unexpectedSituation.get(0).from().isPresent());
         unexpectedSituation.get(0).from().ifPresent(from ->
-            assertThat(from.getId(), is("s2"))
+                assertThat(from.getId(), is("s2"))
         );
     }
 }

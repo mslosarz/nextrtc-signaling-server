@@ -19,7 +19,7 @@ public enum NextRTCEvents {
     MEDIA_LOCAL_STREAM_REQUESTED,
     MEDIA_LOCAL_STREAM_CREATED,
     MEDIA_STREAMING,
-    ;
+    TEXT;
 
     public NextRTCEvent basedOn(InternalMessage message, Conversation conversation) {
         return EventContext.builder()
@@ -27,6 +27,12 @@ public enum NextRTCEvents {
                 .to(message.getTo())
                 .custom(message.getCustom())
                 .conversation(conversation)
+                .type(this)
+                .build();
+    }
+
+    public NextRTCEvent basedOn(EventContext.EventContextBuilder builder) {
+        return builder
                 .type(this)
                 .build();
     }
@@ -44,6 +50,16 @@ public enum NextRTCEvents {
                 .type(this)
                 .from(() -> session)
                 .exception(Exceptions.UNKNOWN_ERROR.exception())
+                .build();
+    }
+
+    public NextRTCEvent basedOn(InternalMessage message) {
+        return EventContext.builder()
+                .from(message.getFrom())
+                .to(message.getTo())
+                .custom(message.getCustom())
+                .content(message.getContent())
+                .type(this)
                 .build();
     }
 }

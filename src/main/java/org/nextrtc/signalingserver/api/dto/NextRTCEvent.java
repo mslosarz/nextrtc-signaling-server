@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface NextRTCEvent {
 
-	NextRTCEvents type();
+    NextRTCEvents type();
 
     DateTime published();
 
@@ -22,6 +22,8 @@ public interface NextRTCEvent {
     Optional<SignalingException> exception();
 
     Map<String, String> custom();
+
+    Optional<String> content();
 
     Optional<String> reason();
 
