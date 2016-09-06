@@ -31,6 +31,10 @@ public abstract class Conversation implements NextRTCConversation {
 
     protected abstract boolean remove(Member leaving);
 
+    protected void assignSenderToConversation(Member sender) {
+        sender.assign(this);
+    }
+
     public abstract boolean isWithoutMember();
 
     public abstract boolean has(Member from);
@@ -44,4 +48,31 @@ public abstract class Conversation implements NextRTCConversation {
     }
 
     public abstract void exchangeSignals(InternalMessage message);
+
+    protected void sendJoinedToConversation(Member sender, String id) {
+        InternalMessage.create()//
+                .to(sender)//
+                .content(id)//
+                .signal(Signal.JOINED)//
+                .build()//
+                .send();
+    }
+
+    protected void sendJoinedFrom(Member sender, Member member) {
+        InternalMessage.create()//
+                .from(sender)//
+                .to(member)//
+                .signal(Signal.JOINED)//
+                .build()//
+                .send();
+    }
+
+    protected void sendLeftMessage(Member leaving, Member recipient) {
+        InternalMessage.create()//
+                .from(leaving)//
+                .to(recipient)//
+                .signal(Signal.LEFT)//
+                .build()//
+                .send();
+    }
 }

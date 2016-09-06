@@ -7,6 +7,7 @@ import org.nextrtc.signalingserver.domain.Member;
 import static org.nextrtc.signalingserver.exception.Exceptions.INVALID_RECIPIENT;
 
 public abstract class Exchange implements SignalHandler {
+
     @Override
     public final void execute(InternalMessage message) {
         Conversation conversation = checkPrecondition(message.getFrom());

@@ -21,6 +21,8 @@ import javax.websocket.Session;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,5 +93,27 @@ public abstract class BaseTest {
                 .from(member)//
                 .content(conversationName)//
                 .build());
+    }
+
+    protected void createBroadcastConversation(String conversationName, Member member) {
+        create.execute(InternalMessage.create()//
+                .from(member)//
+                .content(conversationName)//
+                .addCustom("type", "BROADCAST")//
+                .build());
+    }
+
+    protected void joinConversation(String conversationName, Member member) {
+        join.execute(InternalMessage.create()//
+                .from(member)//
+                .content(conversationName)//
+                .build());
+    }
+
+    protected void assertMessage(MessageMatcher matcher, int number, String from, String to, String signal, String content) {
+        assertThat(matcher.getMessage(number).getFrom(), is(from));
+        assertThat(matcher.getMessage(number).getTo(), is(to));
+        assertThat(matcher.getMessage(number).getSignal(), is(signal));
+        assertThat(matcher.getMessage(number).getContent(), is(content));
     }
 }

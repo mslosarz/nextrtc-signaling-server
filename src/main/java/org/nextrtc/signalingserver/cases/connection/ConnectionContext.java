@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.function.BiPredicate;
+
 @Component
 @Scope("prototype")
 public class ConnectionContext {
@@ -29,11 +31,13 @@ public class ConnectionContext {
 
     private Member master;
     private Member slave;
+    private BiPredicate<Member, Member> filter;
 
 
-    public ConnectionContext(Member master, Member slave) {
+    public ConnectionContext(Member master, Member slave, BiPredicate<Member, Member> filter) {
         this.master = master;
         this.slave = slave;
+        this.filter = filter;
     }
 
 
@@ -45,8 +49,10 @@ public class ConnectionContext {
             finalize(message);
             setState(ConnectionState.EXCHANGE_CANDIDATES);
         } else if (is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
-            exchangeCandidates(message);
-            setState(ConnectionState.EXCHANGE_CANDIDATES);
+            if (filter.test(master, message.getFrom())) {
+                exchangeCandidates(message);
+                setState(ConnectionState.EXCHANGE_CANDIDATES);
+            }
         }
     }
 
@@ -113,10 +119,14 @@ public class ConnectionContext {
     }
 
     public Member getMaster() {
-        return this.master;
+        return master;
     }
 
     public Member getSlave() {
-        return this.slave;
+        return slave;
+    }
+
+    public ConnectionState getState() {
+        return state;
     }
 }

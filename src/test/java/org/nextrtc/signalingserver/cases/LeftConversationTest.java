@@ -4,9 +4,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
-import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
+import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,13 +22,15 @@ public class LeftConversationTest extends BaseTest {
     private Members members;
 
     @Autowired
+    private Conversations conversations;
+
+    @Autowired
     private LeftConversation leftConversation;
 
     @Test
     public void shouldThrowAnExceptionWhenConversationDoesntExists() throws Exception {
         // given
-        MessageMatcher johnMatcher = new MessageMatcher();
-        Member john = mockMember("Jan", johnMatcher);
+        Member john = mockMember("Jan");
         members.register(john);
 
         // then
@@ -44,8 +46,7 @@ public class LeftConversationTest extends BaseTest {
     @Test
     public void shouldLeaveConversation() throws Exception {
         // given
-        MessageMatcher johnMatcher = new MessageMatcher();
-        Member john = mockMember("Jan", johnMatcher);
+        Member john = mockMember("Jan");
         members.register(john);
         createConversation("conversationId", john);
 
@@ -56,5 +57,28 @@ public class LeftConversationTest extends BaseTest {
 
         // then
         assertFalse(john.getConversation().isPresent());
+    }
+
+    @Test
+    public void shouldRemoveConversationIfLastMemberLeft() throws Exception {
+        // given
+        Member john = mockMember("Jan");
+        Member stan = mockMember("Stan");
+        members.register(john);
+        createConversation("conversationId", john);
+        joinConversation("conversationId", stan);
+
+        // when
+        leftConversation.execute(create()
+                .from(john)
+                .build());
+        leftConversation.execute(create()
+                .from(stan)
+                .build());
+
+        // then
+        assertFalse(john.getConversation().isPresent());
+        assertFalse(stan.getConversation().isPresent());
+        assertFalse(conversations.findBy("conversationId").isPresent());
     }
 }

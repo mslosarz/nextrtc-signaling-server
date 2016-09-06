@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_FOUND;
 
 @Component(Signals.JOIN_HANDLER)
-public class JoinConversation {
+public class JoinConversation implements SignalHandler {
 
     @Autowired
     private Conversations conversations;

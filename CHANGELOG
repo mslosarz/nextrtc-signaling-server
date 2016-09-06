@@ -1,4 +1,6 @@
 v0.0.4:
+    - Connection context has new feature, ICE candidates can be filter out when they didn't came from broadcaster (master in connection)
+    - Added broadcast conversation type
     - Added policy to handle certain signals
     - Expanded API of event new method content has been added (text messages can be stored in java app)
     - Added new signal type TEXT (to transfer text messages between communication members)

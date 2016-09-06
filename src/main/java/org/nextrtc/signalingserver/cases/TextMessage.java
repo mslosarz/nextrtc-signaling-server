@@ -20,6 +20,9 @@ public class TextMessage implements SignalHandler {
 
     @Override
     public void execute(InternalMessage message) {
+        if (!message.getFrom().hasSameConversation(message.getTo())) {
+            return;
+        }
         InternalMessage.create()//
                 .from(message.getFrom())//
                 .to(message.getTo())//

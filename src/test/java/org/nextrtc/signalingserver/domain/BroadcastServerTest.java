@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
+import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,25 +8,22 @@ import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
-import org.nextrtc.signalingserver.exception.Exceptions;
-import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {ServerEventCheck.class, LocalStreamCreated2.class})
-public class ServerTest extends BaseTest {
+public class BroadcastServerTest extends BaseTest {
 
     @Rule
     public ExpectedException expect = ExpectedException.none();
@@ -43,34 +41,6 @@ public class ServerTest extends BaseTest {
     protected LocalStreamCreated2 eventLocalStream;
 
     @Test
-    public void shouldThrowExceptionWhenMemberDoesntExists() throws Exception {
-        // given
-        Session session = mock(Session.class);
-        when(session.getId()).thenReturn("s1");
-
-        // then
-        expect.expect(SignalingException.class);
-        expect.expectMessage(Exceptions.MEMBER_NOT_FOUND.name());
-
-        // when
-        server.handle(mock(Message.class), session);
-    }
-
-    @Test
-    public void shouldRegisterUserOnWebSocketConnection() throws Exception {
-        // given
-        Session session = mock(Session.class);
-        when(session.getId()).thenReturn("s1");
-
-        // when
-        server.register(session);
-
-        // then
-        assertTrue(members.findBy("s1").isPresent());
-
-    }
-
-    @Test
     public void shouldCreateConversationOnCreateSignal() throws Exception {
         // given
         Session session = mockSession("s1");
@@ -79,6 +49,7 @@ public class ServerTest extends BaseTest {
         // when
         server.handle(Message.create()//
                 .signal("create")//
+                .custom(broadcast())
                 .build(), session);
 
         // then
@@ -99,6 +70,7 @@ public class ServerTest extends BaseTest {
         // when
         server.handle(Message.create()//
                 .signal("create")//
+                .custom(broadcast())
                 .build(), s1);
 
         // then
@@ -120,6 +92,7 @@ public class ServerTest extends BaseTest {
         // when
         server.handle(Message.create()//
                 .signal("create")//
+                .custom(broadcast())
                 .build(), s1);
         String conversationKey = s1Matcher.getMessage().getContent();
         // s1Matcher.reset();
@@ -149,6 +122,7 @@ public class ServerTest extends BaseTest {
         server.register(s2);
 
         server.handle(Message.create()//
+                .custom(broadcast())
                 .signal("create")//
                 .build(), s1);
         String conversationKey = s1Matcher.getMessage().getContent();
@@ -189,6 +163,7 @@ public class ServerTest extends BaseTest {
 
         server.handle(Message.create()//
                 .signal("create")//
+                .custom(broadcast())
                 .build(), s1);
         String conversationKey = s1Matcher.getMessage().getContent();
         server.handle(Message.create()//
@@ -236,6 +211,7 @@ public class ServerTest extends BaseTest {
 
         server.handle(Message.create()//
                 .signal("create")//
+                .custom(broadcast())
                 .build(), s1);
         // -> created
         String conversationKey = s1Matcher.getMessage().getContent();
@@ -272,14 +248,15 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
+        Session broadcaster = mockSession("broadcaster", s1Matcher);
         Session s2 = mockSession("s2", s2Matcher);
-        server.register(s1);
+        server.register(broadcaster);
         server.register(s2);
 
         server.handle(Message.create()//
                 .signal("create")//
-                .build(), s1);
+                .custom(broadcast())
+                .build(), broadcaster);
         // -> created
         String conversationKey = s1Matcher.getMessage().getContent();
         server.handle(Message.create()//
@@ -289,7 +266,7 @@ public class ServerTest extends BaseTest {
         // -> joined
         // -> offerRequest
         server.handle(Message.create()//
-                .to("s1")//
+                .to("broadcaster")//
                 .signal("offerResponse")//
                 .content("s2 spd")//
                 .build(), s2);
@@ -297,29 +274,27 @@ public class ServerTest extends BaseTest {
         server.handle(Message.create()//
                 .to("s2")//
                 .signal("answerResponse")//
-                .content("s1 spd")//
-                .build(), s1);
+                .content("broadcaster spd")//
+                .build(), broadcaster);
         // -> finalize
         s1Matcher.reset();
         s2Matcher.reset();
         server.handle(Message.create()//
-                .to("s1")//
+                .to("broadcaster")//
                 .signal("candidate")//
                 .content("candidate s2")//
                 .build(), s2);
         server.handle(Message.create()//
                 .to("s2")//
                 .signal("candidate")//
-                .content("candidate s1")//
-                .build(), s1);
+                .content("candidate broadcaster")//
+                .build(), broadcaster);
         // when
 
         // then
-        assertThat(s1Matcher.getMessages().size(), is(1));
-        assertMessage(s1Matcher, 0, "s2", "s1", "candidate", "candidate s2");
-
+        assertThat(s1Matcher.getMessages().size(), is(0));
         assertThat(s2Matcher.getMessages().size(), is(1));
-        assertMessage(s2Matcher, 0, "s1", "s2", "candidate", "candidate s1");
+        assertMessage(s2Matcher, 0, "broadcaster", "s2", "candidate", "candidate broadcaster");
     }
 
     @Test
@@ -333,6 +308,7 @@ public class ServerTest extends BaseTest {
         server.register(s2);
 
         server.handle(Message.create()//
+                .custom(broadcast())
                 .signal("create")//
                 .build(), s1);
         // -> created
@@ -350,6 +326,12 @@ public class ServerTest extends BaseTest {
         assertThat(s1Matcher.getMessages().size(), is(0));
         assertThat(s2Matcher.getMessages().size(), is(1));
         assertMessage(s2Matcher, 0, "s1", "s2", "left", EMPTY);
+    }
+
+    private HashMap<String, String> broadcast() {
+        HashMap<String, String> custom = Maps.newHashMap();
+        custom.put("type", "BROADCAST");
+        return custom;
     }
 
     @Before

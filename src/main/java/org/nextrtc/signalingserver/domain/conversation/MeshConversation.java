@@ -32,7 +32,7 @@ public class MeshConversation extends Conversation {
     }
 
     @Override
-    public void join(Member sender) {
+    public synchronized void join(Member sender) {
         assignSenderToConversation(sender);
 
         informSenderThatHasBeenJoined(sender);
@@ -42,14 +42,10 @@ public class MeshConversation extends Conversation {
         members.add(sender);
     }
 
-    private void assignSenderToConversation(Member sender) {
-        sender.assign(this);
-    }
-
     private void informRestAndBeginSignalExchange(Member sender) {
         for (Member to : members) {
             sendJoinedFrom(sender, to);
-            exchange.begin(to, sender);
+            exchange.begin(to, sender, (m1, m2) -> true);
         }
     }
 
@@ -61,12 +57,17 @@ public class MeshConversation extends Conversation {
         }
     }
 
-    public boolean isWithoutMember() {
-        return members.size() == 0;
+    public synchronized boolean isWithoutMember() {
+        return members.isEmpty();
     }
 
-    public boolean has(Member member) {
+    public synchronized boolean has(Member member) {
         return member != null && members.contains(member);
+    }
+
+    @Override
+    public void exchangeSignals(InternalMessage message) {
+        exchange.execute(message);
     }
 
     @Override
@@ -78,29 +79,7 @@ public class MeshConversation extends Conversation {
                 sendLeftMessage(leaving, member);
             }
         }
-        return false;
-    }
-
-    public void execute(InternalMessage message) {
-        exchange.execute(message);
-    }
-
-    private void sendJoinedToConversation(Member sender, String id) {
-        InternalMessage.create()//
-                .to(sender)//
-                .content(id)//
-                .signal(Signal.JOINED)//
-                .build()//
-                .send();
-    }
-
-    private void sendJoinedFrom(Member sender, Member member) {
-        InternalMessage.create()//
-                .from(sender)//
-                .to(member)//
-                .signal(Signal.JOINED)//
-                .build()//
-                .send();
+        return remove;
     }
 
     private void sendJoinedToFirst(Member sender, String id) {
@@ -112,12 +91,4 @@ public class MeshConversation extends Conversation {
                 .send();
     }
 
-    private void sendLeftMessage(Member leaving, Member recipient) {
-        InternalMessage.create()//
-                .from(leaving)//
-                .to(recipient)//
-                .signal(Signal.LEFT)//
-                .build()//
-                .send();
-    }
 }

@@ -29,6 +29,10 @@ public class TextMessageTest extends BaseTest {
         Member stan = mockMember("Stefan", stanMatcher);
         members.register(john);
         members.register(stan);
+        createConversation("c", john);
+        joinConversation("c", stan);
+        johnMatcher.reset();
+        stanMatcher.reset();
 
         // when
         textMessage.execute(create()
@@ -46,6 +50,31 @@ public class TextMessageTest extends BaseTest {
         assertThat(stanMatcher.getMessage().getTo(), is("Stefan"));
         assertThat(stanMatcher.getMessage().getSignal(), is("text"));
         assertThat(stanMatcher.getMessage().getCustom().get("type"), is("Greeting"));
+    }
+
+    @Test
+    public void shouldSendMessageFromOneToAnotherBuInSameConversation() throws Exception {
+        // given
+        MessageMatcher johnMatcher = new MessageMatcher();
+        MessageMatcher stanMatcher = new MessageMatcher();
+        Member john = mockMember("Jan", johnMatcher);
+        Member stan = mockMember("Stefan", stanMatcher);
+        members.register(john);
+        members.register(stan);
+        createConversation("d", john);
+        johnMatcher.reset();
+
+        // when
+        textMessage.execute(create()
+                .from(john)
+                .to(stan)
+                .content("Hello!")
+                .addCustom("type", "Greeting")
+                .build());
+
+        // then
+        assertThat(johnMatcher.getMessages(), hasSize(0));
+        assertThat(stanMatcher.getMessages(), hasSize(0));
     }
 
 }

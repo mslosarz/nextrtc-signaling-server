@@ -11,6 +11,7 @@ import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.ServerEventCheck;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Conversations;
 import org.nextrtc.signalingserver.repository.Members;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
-@ContextConfiguration(classes = org.nextrtc.signalingserver.domain.ServerTest.ServerEventCheck.class)
+@ContextConfiguration(classes = ServerEventCheck.class)
 public class CreateConversationTest extends BaseTest {
 
     @Component

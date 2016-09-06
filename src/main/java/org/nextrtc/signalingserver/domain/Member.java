@@ -92,4 +92,11 @@ public class Member implements NextRTCMember {
     public Session getSession() {
         return this.session;
     }
+
+    public boolean hasSameConversation(Member to) {
+        if (to == null) {
+            return false;
+        }
+        return conversation.equals(to.conversation);
+    }
 }

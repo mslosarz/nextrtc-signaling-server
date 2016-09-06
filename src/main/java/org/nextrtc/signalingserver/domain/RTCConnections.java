@@ -7,15 +7,18 @@ import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("singleton")
 public class RTCConnections {
     private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
 
@@ -28,13 +31,14 @@ public class RTCConnections {
 
     @PostConstruct
     void cleanOldConnections() {
-        scheduler.scheduleWithFixedDelay(() -> {
-            List<ConnectionContext> oldConnections = connections.values().stream()
-                    .filter(context -> !context.isCurrent())
-                    .collect(Collectors.toList());
-            oldConnections.forEach(c -> connections.remove(c.getMaster(), c.getSlave()));
+        scheduler.scheduleWithFixedDelay(this::removeOldConnections, maxConnectionSetupTime, maxConnectionSetupTime, TimeUnit.SECONDS);
+    }
 
-        }, maxConnectionSetupTime, maxConnectionSetupTime, TimeUnit.SECONDS);
+    void removeOldConnections() {
+        List<ConnectionContext> oldConnections = connections.values().stream()
+                .filter(context -> !context.isCurrent())
+                .collect(Collectors.toList());
+        oldConnections.forEach(c -> connections.remove(c.getMaster(), c.getSlave()));
     }
 
     public void put(Member from, Member to, ConnectionContext ctx) {
@@ -42,8 +46,8 @@ public class RTCConnections {
         connections.put(to, from, ctx);
     }
 
-    public ConnectionContext get(Member from, Member to) {
-        return connections.get(from, to);
+    public Optional<ConnectionContext> get(Member from, Member to) {
+        return Optional.ofNullable(connections.get(from, to));
     }
 
 }

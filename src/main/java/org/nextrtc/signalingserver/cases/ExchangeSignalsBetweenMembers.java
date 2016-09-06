@@ -9,6 +9,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.function.BiPredicate;
+
 @Component
 @Scope("prototype")
 public class ExchangeSignalsBetweenMembers {
@@ -19,12 +21,12 @@ public class ExchangeSignalsBetweenMembers {
     @Autowired
     private ApplicationContext context;
 
-    public synchronized void begin(Member from, Member to) {
-        connections.put(from, to, context.getBean(ConnectionContext.class, from, to));
-        connections.get(from, to).begin();
+    public synchronized void begin(Member from, Member to, BiPredicate<Member, Member> filter) {
+        connections.put(from, to, context.getBean(ConnectionContext.class, from, to, filter));
+        connections.get(from, to).ifPresent(ConnectionContext::begin);
     }
 
     public synchronized void execute(InternalMessage message) {
-        connections.get(message.getFrom(), message.getTo()).process(message);
+        connections.get(message.getFrom(), message.getTo()).ifPresent(context -> context.process(message));
     }
 }
