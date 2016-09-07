@@ -1,4 +1,5 @@
 v0.0.4:
+    - Added default behavior to TEXT message, when message TEXT is sent without recipient, then message will be broadcasted to all conversation members
     - Connection context has new feature, ICE candidates can be filter out when they didn't came from broadcaster (master in connection)
     - Added broadcast conversation type
     - Added policy to handle certain signals

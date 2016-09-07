@@ -58,22 +58,15 @@ public class ConnectionContext {
 
 
     private void exchangeCandidates(InternalMessage message) {
-        InternalMessage.create()//
-                .from(message.getFrom())//
-                .to(message.getTo())//
-                .signal(Signal.CANDIDATE)//
-                .content(message.getContent())//
-                .build()//
-                .send();
+        message.copy().signal(Signal.CANDIDATE).build().send();
     }
 
 
     private void finalize(InternalMessage message) {
-        InternalMessage.create()//
+        message.copy()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.FINALIZE)//
-                .content(message.getContent())//
                 .build()//
                 .send();
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
@@ -84,11 +77,10 @@ public class ConnectionContext {
 
     private void answerRequest(InternalMessage message) {
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getSession()));
-        InternalMessage.create()//
+        message.copy()//
                 .from(master)//
                 .to(slave)//
                 .signal(Signal.ANSWER_REQUEST)//
-                .content(message.getContent())//
                 .build()//
                 .send();
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));

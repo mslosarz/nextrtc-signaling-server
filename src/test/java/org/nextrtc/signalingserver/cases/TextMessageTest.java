@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +39,7 @@ public class TextMessageTest extends BaseTest {
         textMessage.execute(create()
                 .from(john)
                 .to(stan)
+                .signal(Signal.TEXT)
                 .content("Hello!")
                 .addCustom("type", "Greeting")
                 .build());
@@ -50,6 +52,44 @@ public class TextMessageTest extends BaseTest {
         assertThat(stanMatcher.getMessage().getTo(), is("Stefan"));
         assertThat(stanMatcher.getMessage().getSignal(), is("text"));
         assertThat(stanMatcher.getMessage().getCustom().get("type"), is("Greeting"));
+    }
+
+    @Test
+    public void shouldSendMessageToAllMemberOfConversationIfToIsEmpty() throws Exception {
+        // given
+        MessageMatcher johnMatcher = new MessageMatcher();
+        MessageMatcher stanMatcher = new MessageMatcher();
+        MessageMatcher markMatcher = new MessageMatcher();
+        Member john = mockMember("Jan", johnMatcher);
+        Member stan = mockMember("Stefan", stanMatcher);
+        Member mark = mockMember("Marek", markMatcher);
+        members.register(john);
+        members.register(stan);
+        members.register(mark);
+        createConversation("c", john);
+        joinConversation("c", stan);
+        joinConversation("c", mark);
+        johnMatcher.reset();
+        stanMatcher.reset();
+        markMatcher.reset();
+
+        // when
+        textMessage.execute(create()
+                .from(john)
+                .signal(Signal.TEXT)
+                .content("Hello!")
+                .addCustom("type", "Greeting")
+                .build());
+
+        // then
+        assertThat(johnMatcher.getMessages(), hasSize(0));
+        assertThat(stanMatcher.getMessages(), hasSize(1));
+        assertThat(markMatcher.getMessages(), hasSize(1));
+        assertMessage(stanMatcher, 0, "Jan", "Stefan", "text", "Hello!");
+        assertThat(stanMatcher.getMessage().getCustom().get("type"), is("Greeting"));
+        assertMessage(markMatcher, 0, "Jan", "Marek", "text", "Hello!");
+        assertThat(stanMatcher.getMessage().getCustom().get("type"), is("Greeting"));
+
     }
 
     @Test
@@ -68,6 +108,7 @@ public class TextMessageTest extends BaseTest {
         textMessage.execute(create()
                 .from(john)
                 .to(stan)
+                .signal(Signal.TEXT)
                 .content("Hello!")
                 .addCustom("type", "Greeting")
                 .build());

@@ -80,6 +80,24 @@ public class BroadcastConversation extends Conversation {
         exchange.execute(message);
     }
 
+    @Override
+    public void broadcast(Member from, InternalMessage message) {
+        audience.stream()
+                .filter(member -> !member.equals(from))
+                .forEach(to -> message.copy()
+                        .from(from)
+                        .to(to)
+                        .build()
+                        .send());
+        if (from != broadcaster) {
+            message.copy()
+                    .from(from)
+                    .to(broadcaster)
+                    .build()
+                    .send();
+        }
+    }
+
     private void informSenderThatHasBeenJoined(Member sender) {
         if (isWithoutMember()) {
             broadcaster = sender;

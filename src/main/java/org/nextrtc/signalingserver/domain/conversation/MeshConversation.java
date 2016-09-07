@@ -71,6 +71,17 @@ public class MeshConversation extends Conversation {
     }
 
     @Override
+    public void broadcast(Member from, InternalMessage message) {
+        members.stream()
+                .filter(member -> !member.equals(from))
+                .forEach(to -> message.copy()
+                        .from(from)
+                        .to(to)
+                        .build()
+                        .send());
+    }
+
+    @Override
     public synchronized boolean remove(Member leaving) {
         boolean remove = members.remove(leaving);
         if (remove) {

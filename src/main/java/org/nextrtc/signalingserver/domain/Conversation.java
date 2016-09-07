@@ -75,4 +75,6 @@ public abstract class Conversation implements NextRTCConversation {
                 .build()//
                 .send();
     }
+
+    public abstract void broadcast(Member from, InternalMessage message);
 }

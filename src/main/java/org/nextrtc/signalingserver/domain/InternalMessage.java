@@ -32,6 +32,10 @@ public class InternalMessage {
         return new InternalMessageBuilder();
     }
 
+    public InternalMessageBuilder copy() {
+        return new InternalMessageBuilder().from(from).to(to).content(content).custom(custom).signal(signal);
+    }
+
     /**
      * Method will send message to recipient (member To)
      */
