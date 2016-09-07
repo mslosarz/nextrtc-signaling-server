@@ -160,6 +160,9 @@ function NextRTC(config) {
         if(nextRTC.localStream != null){
             nextRTC.localStream.stop();
         }
+        if(nextRTC.remoteStream != null){
+            nextRTC.remoteStream.stop();
+        }
     };
 
     this.leave = function(){
@@ -168,6 +171,9 @@ function NextRTC(config) {
         nextRTC.signaling.close();
         if(nextRTC.localStream != null){
             nextRTC.localStream.stop();
+        }
+        if(nextRTC.remoteStream != null){
+            nextRTC.remoteStream.stop();
         }
     };
 
