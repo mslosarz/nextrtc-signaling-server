@@ -1,4 +1,5 @@
 v0.0.4:
+    - New signal 'newJoined' added to separate two case when member is joined to conversation and when new member is joined
     - Added js leave method which close websocket connection and stop streaming
     - Added default behavior to TEXT message, when message TEXT is sent without recipient, then message will be broadcasted to all conversation members
     - Connection context has new feature, ICE candidates can be filter out when they didn't came from broadcaster (master in connection)

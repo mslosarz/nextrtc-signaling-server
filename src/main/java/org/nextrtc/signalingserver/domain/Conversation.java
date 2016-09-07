@@ -62,7 +62,8 @@ public abstract class Conversation implements NextRTCConversation {
         InternalMessage.create()//
                 .from(sender)//
                 .to(member)//
-                .signal(Signal.JOINED)//
+                .signal(Signal.NEW_JOINED)//
+                .content(sender.getId())
                 .build()//
                 .send();
     }

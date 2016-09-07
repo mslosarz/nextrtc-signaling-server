@@ -3,11 +3,11 @@
  */
 // 'use strict';
 
-function Message(signal, to, content, parameters) {
+function Message(signal, to, content, custom) {
 	this.signal = signal;
 	this.to = to;
 	this.content = content;
-	this.parameters = parameters;
+	this.custom = custom;
 };
 
 function NextRTC(config) {
@@ -50,19 +50,19 @@ function NextRTC(config) {
 		}, error);
 	};
 
-	this.create = function(convId) {
+	this.create = function(convId, custom) {
 		var nextRTC = this;
 		navigator.mediaDevices.getUserMedia(nextRTC.mediaConfig).then(function(stream) {
 			nextRTC.localStream = stream;
 			nextRTC.call('localStream', {
 				stream : stream
 			});
-			nextRTC.request('create', null, convId);
+			nextRTC.request('create', null, convId, custom);
 		}, error);
 	};
 
-	this.request = function(signal, to, convId) {
-		var req = JSON.stringify(new Message(signal, to, convId));
+	this.request = function(signal, to, convId, custom) {
+		var req = JSON.stringify(new Message(signal, to, convId, custom));
 		console.log("res: " + req);
 		this.signaling.send(req);
 	};
@@ -155,14 +155,14 @@ function NextRTC(config) {
 		});
     };
 
-	this.close = function(nextRTC, event) {
-		nextRTC.signaling.close();
-		if(nextRTC.localStream != null){
-		    nextRTC.localStream.stop();
-		}
-	};
+    this.close = function(nextRTC, event) {
+        nextRTC.signaling.close();
+        if(nextRTC.localStream != null){
+            nextRTC.localStream.stop();
+        }
+    };
 
-	this.leave = function(){
+    this.leave = function(){
         var nextRTC = NextRTC.instance;
         nextRTC.request('left');
         nextRTC.signaling.close();

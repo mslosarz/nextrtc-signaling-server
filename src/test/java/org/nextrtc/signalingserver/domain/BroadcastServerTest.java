@@ -104,7 +104,7 @@ public class BroadcastServerTest extends BaseTest {
         // then
         assertThat(s1Matcher.getMessages().size(), is(3));
         assertMessage(s1Matcher, 0, EMPTY, "s1", "created", conversationKey);
-        assertMessage(s1Matcher, 1, "s2", "s1", "joined", EMPTY);
+        assertMessage(s1Matcher, 1, "s2", "s1", "newJoined", "s2");
         assertMessage(s1Matcher, 2, "s2", "s1", "offerRequest", EMPTY);
 
         assertThat(s2Matcher.getMessages().size(), is(1));

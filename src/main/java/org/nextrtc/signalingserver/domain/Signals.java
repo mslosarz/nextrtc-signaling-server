@@ -23,4 +23,5 @@ public interface Signals {
     String CREATED = "created";
     String TEXT = "text";
     String TEXT_HANDLER = "nextRTC_TEXT";
+    String NEW_JOINED = "newJoined";
 }

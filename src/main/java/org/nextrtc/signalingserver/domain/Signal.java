@@ -13,6 +13,7 @@ public enum Signal {
     JOIN(Signals.JOIN, Signals.JOIN_HANDLER),
     CREATE(Signals.CREATE, Signals.CREATE_HANDLER),
     JOINED(Signals.JOINED),
+    NEW_JOINED(Signals.NEW_JOINED),
     CREATED(Signals.CREATED),
     TEXT(Signals.TEXT, Signals.TEXT_HANDLER);
 
