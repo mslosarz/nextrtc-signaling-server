@@ -157,7 +157,19 @@ function NextRTC(config) {
 
 	this.close = function(nextRTC, event) {
 		nextRTC.signaling.close();
+		if(nextRTC.localStream != null){
+		    nextRTC.localStream.stop();
+		}
 	};
+
+	this.leave = function(){
+        var nextRTC = NextRTC.instance;
+        nextRTC.request('left');
+        nextRTC.signaling.close();
+        if(nextRTC.localStream != null){
+            nextRTC.localStream.stop();
+        }
+    };
 
 	this.candidate = function(nextRTC, signal) {
 	    var pc = nextRTC.preparePeerConnection(nextRTC, signal.from);
