@@ -1,3 +1,5 @@
+v0.0.5:
+    - removed js file from this project (new project for js will be created)
 v0.0.4:
     - New signal 'newJoined' added to separate two case when someone has joined to conversation and to inform rest of people from conversation about new joiner
     - Added js leave method which close websocket connection and stop streaming
