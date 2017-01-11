@@ -69,6 +69,32 @@ public class CreateConversationTest extends BaseTest {
         Conversation conv = optional.get();
         assertThat(conv.has(member), is(true));
         assertThat(match.getMessage().getSignal(), is("created"));
+        assertThat(match.getMessage().getCustom().get("type"), is("MESH"));
+        assertThat(eventCall.getEvents().size(), is(1));
+        assertThat(eventCall.getEvents().get(0).type(), is(NextRTCEvents.CONVERSATION_CREATED));
+    }
+
+    @Test
+    public void shouldCreateConversation_BROADCAST() throws Exception {
+        // given
+        MessageMatcher match = new MessageMatcher();
+        Member member = mockMember("Jan", match);
+        members.register(member);
+
+        // when
+        create.execute(InternalMessage.create()//
+                .from(member)//
+                .content("new conversation")//
+                .addCustom("type", "BROADCAST")
+                .build());
+
+        // then
+        Optional<Conversation> optional = conversations.findBy("new conversation");
+        assertThat(optional.isPresent(), is(true));
+        Conversation conv = optional.get();
+        assertThat(conv.has(member), is(true));
+        assertThat(match.getMessage().getSignal(), is("created"));
+        assertThat(match.getMessage().getCustom().get("type"), is("BROADCAST"));
         assertThat(eventCall.getEvents().size(), is(1));
         assertThat(eventCall.getEvents().get(0).type(), is(NextRTCEvents.CONVERSATION_CREATED));
     }

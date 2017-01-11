@@ -78,4 +78,9 @@ public abstract class Conversation implements NextRTCConversation {
     }
 
     public abstract void broadcast(Member from, InternalMessage message);
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + ": " + id;
+    }
 }

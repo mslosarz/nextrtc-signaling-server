@@ -97,6 +97,7 @@ public class MeshConversation extends Conversation {
         InternalMessage.create()//
                 .to(sender)//
                 .signal(Signal.CREATED)//
+                .addCustom("type", "MESH")
                 .content(id)//
                 .build()//
                 .send();

@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.api;
 
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
+import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.EventContext;
 import org.nextrtc.signalingserver.domain.InternalMessage;
@@ -39,7 +40,7 @@ public enum NextRTCEvents {
 
     public NextRTCEvent occurFor(Session session, String reason) {
         return EventContext.builder()
-                .from(() -> session)
+                .from(new InternalMember(session))
                 .type(this)
                 .reason(reason)
                 .build();
@@ -48,7 +49,7 @@ public enum NextRTCEvents {
     public NextRTCEvent occurFor(Session session) {
         return EventContext.builder()
                 .type(this)
-                .from(() -> session)
+                .from(new InternalMember(session))
                 .exception(Exceptions.UNKNOWN_ERROR.exception())
                 .build();
     }
@@ -61,5 +62,32 @@ public enum NextRTCEvents {
                 .content(message.getContent())
                 .type(this)
                 .build();
+    }
+
+    private static class InternalMember implements NextRTCMember {
+
+        private final Session session;
+
+        InternalMember(Session session) {
+            this.session = session;
+        }
+
+        @Override
+        public Session getSession() {
+            return session;
+        }
+
+        @Override
+        public String getId() {
+            if (session == null) {
+                return null;
+            }
+            return session.getId();
+        }
+
+        @Override
+        public String toString() {
+            return getId();
+        }
     }
 }

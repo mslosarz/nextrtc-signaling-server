@@ -1,4 +1,8 @@
 v0.0.5:
+    - Added ERROR signal. Improved exception handling. When exception occurs it'll be convert to normal message and connection will be broken
+    - Improved logging (Overridden toString)
+    - CREATE signal will return in custom type of created conversation
+    - JOIN signal works in the same way as CREATE signal when conversation doesn't not exists
     - removed js file from this project (new project for js will be created)
 v0.0.4:
     - New signal 'newJoined' added to separate two case when someone has joined to conversation and to inform rest of people from conversation about new joiner

@@ -62,6 +62,21 @@ public class Member implements NextRTCMember {
         this.conversation = null;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    public Session getSession() {
+        return this.session;
+    }
+
+    public boolean hasSameConversation(Member to) {
+        if (to == null) {
+            return false;
+        }
+        return conversation.equals(to.conversation);
+    }
+
     @Override
     public String toString() {
         return String.format("%s", id);
@@ -83,20 +98,5 @@ public class Member implements NextRTCMember {
         return new HashCodeBuilder()//
                 .append(id)//
                 .build();
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public Session getSession() {
-        return this.session;
-    }
-
-    public boolean hasSameConversation(Member to) {
-        if (to == null) {
-            return false;
-        }
-        return conversation.equals(to.conversation);
     }
 }

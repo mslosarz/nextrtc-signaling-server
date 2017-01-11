@@ -1,14 +1,10 @@
 package org.nextrtc.signalingserver.domain;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
-import org.nextrtc.signalingserver.exception.Exceptions;
-import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,9 +23,6 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {ServerEventCheck.class, LocalStreamCreated2.class})
 public class ServerTest extends BaseTest {
 
-    @Rule
-    public ExpectedException expect = ExpectedException.none();
-
     @Autowired
     private Server server;
 
@@ -43,17 +36,20 @@ public class ServerTest extends BaseTest {
     protected LocalStreamCreated2 eventLocalStream;
 
     @Test
-    public void shouldThrowExceptionWhenMemberDoesntExists() throws Exception {
+    public void shouldSendExceptionMessageWhenMemberDoesntExists() throws Exception {
         // given
-        Session session = mock(Session.class);
-        when(session.getId()).thenReturn("s1");
-
-        // then
-        expect.expect(SignalingException.class);
-        expect.expectMessage(Exceptions.MEMBER_NOT_FOUND.name());
+        MessageMatcher match = new MessageMatcher();
+        Session session = mockSession("s1", match);
 
         // when
         server.handle(mock(Message.class), session);
+
+        // then
+        assertThat(match.getMessage().getTo(), is("s1"));
+        assertThat(match.getMessage().getContent(), is("0001: MEMBER_NOT_FOUND"));
+        assertThat(match.getMessage().getSignal(), is("error"));
+        assertThat(match.getMessage().getCustom().size(), is(1));
+        assertTrue(match.getMessage().getCustom().containsKey("stackTrace"));
     }
 
     @Test
@@ -84,6 +80,25 @@ public class ServerTest extends BaseTest {
         // then
         List<NextRTCEvent> events = eventCheckerCall.getEvents();
         assertThat(events.size(), is(2));
+    }
+
+    @Test
+    public void shouldCreateConversationOnJoinSignal_WhenConversationDoesntExists() throws Exception {
+        // given
+        MessageMatcher s1Matcher = new MessageMatcher();
+        Session session = mockSession("s1", s1Matcher);
+        server.register(session);
+
+        // when
+        server.handle(Message.create()//
+                .signal("join")//
+                .build(), session);
+
+        // then
+        List<NextRTCEvent> events = eventCheckerCall.getEvents();
+        assertThat(events.size(), is(2));
+        assertThat(s1Matcher.getMessage().getTo(), is("s1"));
+        assertThat(s1Matcher.getMessage().getSignal(), is("created"));
     }
 
     @Test

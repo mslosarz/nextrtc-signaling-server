@@ -122,8 +122,10 @@ public class BroadcastConversation extends Conversation {
         InternalMessage.create()//
                 .to(sender)//
                 .signal(Signal.CREATED)//
+                .addCustom("type", "BROADCAST")
                 .content(id)//
                 .build()//
                 .send();
     }
+
 }

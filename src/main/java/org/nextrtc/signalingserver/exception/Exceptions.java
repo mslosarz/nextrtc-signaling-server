@@ -11,7 +11,6 @@ public enum Exceptions {
     UNKNOWN_ERROR("0501"),;
 
     private String code;
-    private String message;
 
     Exceptions(String code) {
         this.code = code;

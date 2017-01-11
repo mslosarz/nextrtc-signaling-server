@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.function.Consumer;
 
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
@@ -28,14 +31,18 @@ public class Server {
     @Autowired
     private RegisterMember register;
 
-    public void register(Session session) {
-        register.incoming(session);
+    public void register(Session s) {
+        doSaveExecution(s, session ->
+                register.incoming(session)
+        );
     }
 
-    public void handle(Message external, Session session) {
-        Pair<Signal, SignalHandler> resolve = resolver.resolve(external.getSignal());
-        InternalMessage internalMessage = buildInternalMessage(external, resolve.getKey(), session);
-        processMessage(resolve.getValue(), internalMessage);
+    public void handle(Message external, Session s) {
+        doSaveExecution(s, session -> {
+            Pair<Signal, SignalHandler> resolve = resolver.resolve(external.getSignal());
+            InternalMessage internalMessage = buildInternalMessage(external, resolve.getKey(), session);
+            processMessage(resolve.getValue(), internalMessage);
+        });
     }
 
     private void processMessage(SignalHandler handler, InternalMessage message) {
@@ -59,13 +66,46 @@ public class Server {
         return members.findBy(session.getId()).orElseThrow(() -> new SignalingException(MEMBER_NOT_FOUND));
     }
 
-    public void unregister(Session session, CloseReason reason) {
-        members.unregisterBy(session, reason.getReasonPhrase());
+    public void unregister(Session s, CloseReason reason) {
+        doSaveExecution(s, session ->
+                members.unregisterBy(session, reason.getReasonPhrase())
+        );
     }
 
 
-    public void handleError(Session session, Throwable exception) {
-        members.dropOutAfterException(session, exception.getMessage());
+    public void handleError(Session s, Throwable exception) {
+        doSaveExecution(s, session ->
+                members.dropOutAfterException(session, exception.getMessage())
+        );
+    }
+
+    private void doSaveExecution(Session session, Consumer<Session> action) {
+        try {
+            action.accept(session);
+        } catch (Exception e) {
+            log.warn("Server will try to handle this exception and send information as normal message through websocket", e);
+            sendErrorOverWebSocket(session, e);
+        }
+    }
+
+    private void sendErrorOverWebSocket(Session session, Exception e) {
+        try {
+            InternalMessage.create()
+                    .to(new Member(session, null))
+                    .signal(Signal.ERROR)
+                    .content(e.getMessage())
+                    .addCustom("stackTrace", writeStackTraceToString(e))
+                    .build()
+                    .send();
+        } catch (Exception resendException) {
+            log.error("Something goes wrong during resend! Exception omitted", resendException);
+        }
+    }
+
+    private String writeStackTraceToString(Exception e) {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        return errors.toString();
     }
 
 }
