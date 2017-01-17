@@ -43,11 +43,11 @@ public class ConnectionContext {
 
     public void process(InternalMessage message) {
         if (is(message, ConnectionState.OFFER_REQUESTED)) {
-            answerRequest(message);
             setState(ConnectionState.ANSWER_REQUESTED);
+            answerRequest(message);
         } else if (is(message, ConnectionState.ANSWER_REQUESTED)) {
-            finalize(message);
             setState(ConnectionState.EXCHANGE_CANDIDATES);
+            finalize(message);
         } else if (is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
             if (filter.test(master, message.getFrom())) {
                 exchangeCandidates(message);
@@ -91,13 +91,13 @@ public class ConnectionContext {
     }
 
     public void begin() {
+        setState(ConnectionState.OFFER_REQUESTED);
         InternalMessage.create()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.OFFER_REQUEST)
                 .build()//
                 .send();
-        setState(ConnectionState.OFFER_REQUESTED);
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
     }
 

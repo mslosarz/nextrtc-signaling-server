@@ -44,6 +44,7 @@ public class BroadcastConversation extends Conversation {
         if (broadcaster.equals(leaving)) {
             for (Member member : audience) {
                 sendLeftMessage(broadcaster, member);
+                sendEndMessage(broadcaster, member);
                 member.unassignConversation(this);
             }
             audience.clear();
@@ -59,6 +60,16 @@ public class BroadcastConversation extends Conversation {
         return remove;
     }
 
+    private void sendEndMessage(Member leaving, Member recipient) {
+        InternalMessage.create()//
+                .from(leaving)//
+                .to(recipient)//
+                .signal(Signal.END)//
+                .content(id)//
+                .build()//
+                .send();
+    }
+
     @Override
     public synchronized boolean isWithoutMember() {
         if (broadcaster != null) {
@@ -69,6 +80,9 @@ public class BroadcastConversation extends Conversation {
 
     @Override
     public synchronized boolean has(Member from) {
+        if (broadcaster == null) {
+            return false;
+        }
         if (broadcaster.equals(from)) {
             return true;
         }

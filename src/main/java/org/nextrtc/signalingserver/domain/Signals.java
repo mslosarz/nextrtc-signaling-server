@@ -25,4 +25,5 @@ public interface Signals {
     String TEXT_HANDLER = "nextRTC_TEXT";
     String NEW_JOINED = "newJoined";
     String ERROR = "error";
+    String END = "end";
 }

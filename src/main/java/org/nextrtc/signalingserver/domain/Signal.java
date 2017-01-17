@@ -16,7 +16,8 @@ public enum Signal {
     NEW_JOINED(Signals.NEW_JOINED),
     CREATED(Signals.CREATED),
     TEXT(Signals.TEXT, Signals.TEXT_HANDLER),
-    ERROR(Signals.ERROR);
+    ERROR(Signals.ERROR),
+    END(Signals.END);
 
     private String signalName;
     private String signalHandler;

@@ -324,8 +324,40 @@ public class BroadcastServerTest extends BaseTest {
 
         // then
         assertThat(s1Matcher.getMessages().size(), is(0));
-        assertThat(s2Matcher.getMessages().size(), is(1));
+        assertThat(s2Matcher.getMessages().size(), is(2));
         assertMessage(s2Matcher, 0, "s1", "s2", "left", EMPTY);
+    }
+
+    @Test
+    public void shouldInformAudienceAboutMissingBroadcaster() throws Exception {
+        // given
+        MessageMatcher s1Matcher = new MessageMatcher();
+        MessageMatcher s2Matcher = new MessageMatcher();
+        Session s1 = mockSession("s1", s1Matcher);
+        Session s2 = mockSession("s2", s2Matcher);
+        server.register(s1);
+        server.register(s2);
+
+        server.handle(Message.create()//
+                .custom(broadcast())
+                .signal("create")//
+                .build(), s1);
+        // -> created
+        String conversationKey = s1Matcher.getMessage().getContent();
+        server.handle(Message.create()//
+                .signal("join")//
+                .content(conversationKey)//
+                .build(), s2);
+        s1Matcher.reset();
+        s2Matcher.reset();
+        server.unregister(s1, mock(CloseReason.class));
+        // when
+
+        // then
+        assertThat(s1Matcher.getMessages().size(), is(0));
+        assertThat(s2Matcher.getMessages().size(), is(2));
+        assertMessage(s2Matcher, 0, "s1", "s2", "left", EMPTY);
+        assertMessage(s2Matcher, 1, "s1", "s2", "end", conversationKey);
     }
 
     private HashMap<String, String> broadcast() {

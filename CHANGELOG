@@ -1,4 +1,6 @@
 v0.0.5:
+    - Added new signal END which is send when broadcaster will exit from broadcast conversation
+    - Prepared ActorTests where Actor play role of js client
     - Added ERROR signal. Improved exception handling. When exception occurs it'll be convert to normal message and connection will be broken
     - Improved logging (Overridden toString)
     - CREATE signal will return in custom type of created conversation
