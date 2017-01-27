@@ -103,9 +103,12 @@ public class Server {
     }
 
     private String writeStackTraceToString(Exception e) {
-        StringWriter errors = new StringWriter();
-        e.printStackTrace(new PrintWriter(errors));
-        return errors.toString();
+        if (log.isDebugEnabled()) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            return errors.toString();
+        }
+        return e.getCause() + " - " + e.getMessage();
     }
 
 }
