@@ -1,3 +1,5 @@
+v0.0.6:
+    -
 v0.0.5:
     - Added new signal END which is send when broadcaster will exit from broadcast conversation
     - Prepared ActorTests where Actor play role of js client
