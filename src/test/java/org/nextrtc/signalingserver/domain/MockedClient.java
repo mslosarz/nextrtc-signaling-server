@@ -26,6 +26,9 @@ public class MockedClient extends ArgumentMatcher<Message> {
         });
         behavior.put(Signals.LEFT, (message) -> {
         });
+        behavior.put(Signals.TEXT, (message) -> {
+            log.info("text message: " + message);
+        });
         behavior.put(Signals.END, (message) -> {
         });
         behavior.put(Signals.ERROR, (message) -> {

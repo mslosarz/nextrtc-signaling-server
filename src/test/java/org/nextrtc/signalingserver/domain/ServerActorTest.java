@@ -178,6 +178,72 @@ public class ServerActorTest extends BaseTest {
         assertNoErrors(alice);
     }
 
+    @Test
+    public void shouldSendTextMessageToOtherAudience() throws Exception {
+        // given
+        TestClientActor john = new TestClientActor("John", server);
+        TestClientActor bob = new TestClientActor("Bob", server);
+        TestClientActor alice = new TestClientActor("Alice", server);
+
+        alice.openSocket();
+        bob.openSocket();
+        john.openSocket();
+
+        john.create("AAA", "MESH");
+        Conversation conversation = conversations.findBy("AAA").get();
+        bob.join("AAA");
+        alice.join("AAA");
+
+        // when
+        john.sendToServer(Message.create()
+                .to(bob.asMember().getId())
+                .signal(Signals.TEXT)
+                .content("Hello")
+                .build());
+
+        // then
+        List<Message> messages = bob.getMessages();
+        Message message = messages.get(messages.size() - 1);
+        message.getContent().equals("Hello");
+
+        assertNoErrors(john);
+        assertNoErrors(bob);
+        assertNoErrors(alice);
+    }
+
+    @Test
+    public void shouldSendTextMessageToOtherAudience_BROADCAST() throws Exception {
+        // given
+        TestClientActor john = new TestClientActor("John", server);
+        TestClientActor bob = new TestClientActor("Bob", server);
+        TestClientActor alice = new TestClientActor("Alice", server);
+
+        alice.openSocket();
+        bob.openSocket();
+        john.openSocket();
+
+        john.create("AAA", "BROADCAST");
+        Conversation conversation = conversations.findBy("AAA").get();
+        bob.join("AAA");
+        alice.join("AAA");
+
+        // when
+        john.sendToServer(Message.create()
+                .to(bob.asMember().getId())
+                .signal(Signals.TEXT)
+                .content("Hello")
+                .build());
+
+        // then
+        List<Message> messages = bob.getMessages();
+        Message message = messages.get(messages.size() - 1);
+        message.getContent().equals("Hello");
+
+        assertNoErrors(john);
+        assertNoErrors(bob);
+        assertNoErrors(alice);
+    }
+
 
     private void assertNoErrors(TestClientActor john) {
         assertTrue(john.getMessages().stream().allMatch(m -> !m.getSignal().equals(Signals.ERROR)));

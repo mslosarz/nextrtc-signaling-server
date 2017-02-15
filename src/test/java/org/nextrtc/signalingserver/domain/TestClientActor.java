@@ -61,6 +61,10 @@ public class TestClientActor {
                 .build(), session);
     }
 
+    public void sendToServer(Message msg) {
+        server.handle(msg, session);
+    }
+
     public Member asMember() {
         return new Member(session, null);
     }
@@ -68,4 +72,5 @@ public class TestClientActor {
     public List<Message> getMessages() {
         return client.getMessages();
     }
+
 }
