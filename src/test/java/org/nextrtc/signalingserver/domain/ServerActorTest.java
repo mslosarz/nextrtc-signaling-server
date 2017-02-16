@@ -17,19 +17,17 @@ import static org.junit.Assert.*;
 public class ServerActorTest extends BaseTest {
 
     @Autowired
-    private Server server;
-
-    @Autowired
-    private Members members;
-
-    @Autowired
-    private Conversations conversations;
-
-    @Autowired
     protected ServerEventCheck eventCheckerCall;
-
     @Autowired
     protected LocalStreamCreated2 eventLocalStream;
+    @Autowired
+    private Server server;
+    @Autowired
+    private Members members;
+    @Autowired
+    private Conversations conversations;
+    @Autowired
+    private SignalResolver resolver;
 
     @Test
     public void shouldExchangeSignalsBetweenActors() throws Exception {
@@ -110,7 +108,6 @@ public class ServerActorTest extends BaseTest {
         assertNoErrors(john);
         assertNoErrors(bob);
     }
-
 
     @Test
     public void shouldCheckBehaviorWhenBroadcasterWillEndConnectionFirst() throws Exception {
@@ -242,6 +239,30 @@ public class ServerActorTest extends BaseTest {
         assertNoErrors(john);
         assertNoErrors(bob);
         assertNoErrors(alice);
+    }
+
+    @Test
+    public void shouldBeAbleToHandleCustomSignal() throws Exception {
+        // given
+        resolver.addCustomHandler(Signal.fromString("upperCase"), (message) -> InternalMessage.create()//
+                .to(message.getFrom())
+                .content(message.getContent().toUpperCase())
+                .signal(Signal.fromString("upperCase"))
+                .build()
+                .send());
+
+        TestClientActor john = new TestClientActor("John", server);
+        john.openSocket();
+
+        // when
+        john.sendToServer(Message.create()
+                .signal("upperCase")
+                .content("Hello")
+                .build());
+
+        // then
+        assertThat(john.getMessages().get(0).getContent(), is("HELLO"));
+        assertNoErrors(john);
     }
 
 

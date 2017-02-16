@@ -66,6 +66,8 @@ public class MockedClient extends ArgumentMatcher<Message> {
                         .build(), session);
             }
         });
+        behavior.put("upperCase", (message) -> {
+        });
     }
 
     public MockedClient(Server server, Session session) {

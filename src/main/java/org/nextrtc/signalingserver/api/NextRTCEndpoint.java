@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.apache.log4j.Logger;
 import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,14 +12,15 @@ import javax.websocket.*;
 import java.util.Set;
 
 @Component
-public class NextRTCEndpoint {
+public class NextRTCEndpoint implements InitializingBean {
 
     private static final Logger log = Logger.getLogger(NextRTCEndpoint.class);
     private Server server;
 
     private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();
 
-    public NextRTCEndpoint() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         endpoints.add(this);
         log.info("Created " + this);
         endpoints.stream().filter(e -> e.server != null).findFirst().ifPresent(s -> this.setServer(s.server));
