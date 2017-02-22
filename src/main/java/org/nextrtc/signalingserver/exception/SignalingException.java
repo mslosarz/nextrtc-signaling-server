@@ -35,6 +35,10 @@ public class SignalingException extends RuntimeException {
         return StringUtils.defaultString(customMessage);
     }
 
+    public void throwException() {
+        throw this;
+    }
+
     @Override
     public String toString() {
         return format("Signaling Exception (CODE: %s) %s [%s]", getErrorCode(), getMessage(), getCustomMessage());

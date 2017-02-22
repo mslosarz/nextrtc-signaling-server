@@ -7,12 +7,14 @@ import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
 
 public class JoinConversationTest extends BaseTest {
 
@@ -71,8 +73,7 @@ public class JoinConversationTest extends BaseTest {
     @Test
     public void shouldJoinMemberToConversation() throws Exception {
         // given
-        MessageMatcher match = new MessageMatcher();
-        Member member = mockMember("Jan", match);
+        Member member = mockMember("Jan");
         members.register(member);
         Member stach = mockMember("Stach");
         members.register(stach);
@@ -86,6 +87,33 @@ public class JoinConversationTest extends BaseTest {
 
         // then
         assertTrue(member.getConversation().isPresent());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserIsInOtherConversation() throws Exception {
+        // given
+        Member jan = mockMember("Jan");
+        members.register(jan);
+        Member stach = mockMember("Stach");
+        members.register(stach);
+        Member stefan = mockMember("Stefan");
+        members.register(stefan);
+        createConversation("conv", stach);
+        createConversation("conv2", stefan);
+        joinConversation.execute(InternalMessage.create()//
+                .from(jan)//
+                .content("conv2")//
+                .build());
+
+        // then
+        exception.expect(SignalingException.class);
+        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.getErrorCode());
+
+        // when
+        joinConversation.execute(InternalMessage.create()//
+                .from(jan)//
+                .content("conv")//
+                .build());
     }
 
 }

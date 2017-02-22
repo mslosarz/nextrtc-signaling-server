@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
+import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
 
 @ContextConfiguration(classes = ServerEventCheck.class)
 public class CreateConversationTest extends BaseTest {
@@ -102,6 +103,30 @@ public class CreateConversationTest extends BaseTest {
     @Test
     public void shouldThrowExceptionWhenConversationExists() throws Exception {
         // given
+        Member other = mockMember("Other");
+        members.register(other);
+        create.execute(InternalMessage.create()//
+                .from(other)//
+                .content("new conversation")//
+                .build());
+
+        Member member = mockMember("Jan");
+        members.register(member);
+
+        // then
+        exception.expect(SignalingException.class);
+        exception.expectMessage(CONVERSATION_NAME_OCCUPIED.getErrorCode());
+
+        // when
+        create.execute(InternalMessage.create()//
+                .from(member)//
+                .content("new conversation")//
+                .build());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUserIsInOtherConversation() throws Exception {
+        // given
         MessageMatcher match = new MessageMatcher();
         Member member = mockMember("Jan", match);
         members.register(member);
@@ -112,12 +137,12 @@ public class CreateConversationTest extends BaseTest {
 
         // then
         exception.expect(SignalingException.class);
-        exception.expectMessage(CONVERSATION_NAME_OCCUPIED.getErrorCode());
+        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.getErrorCode());
 
         // when
         create.execute(InternalMessage.create()//
                 .from(member)//
-                .content("new conversation")//
+                .content("second conversation")//
                 .build());
     }
 }

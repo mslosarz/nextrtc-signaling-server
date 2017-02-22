@@ -45,6 +45,10 @@ public class Conversations {
         return Optional.ofNullable(conversations.get(id));
     }
 
+    public Optional<Conversation> findBy(Member from) {
+        return conversations.values().stream().filter(conversation -> conversation.has(from)).findAny();
+    }
+
     public void remove(String id, Member sender) {
         eventBus.post(CONVERSATION_DESTROYED.basedOn(
                 builder()
