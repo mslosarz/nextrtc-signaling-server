@@ -292,9 +292,10 @@ public class BroadcastServerTest extends BaseTest {
         // when
 
         // then
-        assertThat(s1Matcher.getMessages().size(), is(0));
+        assertThat(s1Matcher.getMessages().size(), is(1));
         assertThat(s2Matcher.getMessages().size(), is(1));
         assertMessage(s2Matcher, 0, "broadcaster", "s2", "candidate", "candidate broadcaster");
+        assertMessage(s1Matcher, 0, "s2", "broadcaster", "candidate", "candidate s2");
     }
 
     @Test

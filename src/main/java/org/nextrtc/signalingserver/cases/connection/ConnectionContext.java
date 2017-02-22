@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.function.BiPredicate;
-
 @Component
 @Scope("prototype")
 public class ConnectionContext {
@@ -31,13 +29,10 @@ public class ConnectionContext {
 
     private Member master;
     private Member slave;
-    private BiPredicate<Member, Member> filter;
 
-
-    public ConnectionContext(Member master, Member slave, BiPredicate<Member, Member> filter) {
+    public ConnectionContext(Member master, Member slave) {
         this.master = master;
         this.slave = slave;
-        this.filter = filter;
     }
 
 
@@ -49,10 +44,7 @@ public class ConnectionContext {
             setState(ConnectionState.EXCHANGE_CANDIDATES);
             finalize(message);
         } else if (is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
-            if (filter.test(master, message.getFrom())) {
-                exchangeCandidates(message);
-                setState(ConnectionState.EXCHANGE_CANDIDATES);
-            }
+            exchangeCandidates(message);
         }
     }
 
@@ -101,11 +93,6 @@ public class ConnectionContext {
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
     }
 
-    private void setState(ConnectionState state) {
-        this.state = state;
-        lastUpdated = DateTime.now();
-    }
-
     public boolean isCurrent() {
         return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(DateTime.now());
     }
@@ -120,5 +107,10 @@ public class ConnectionContext {
 
     public ConnectionState getState() {
         return state;
+    }
+
+    private void setState(ConnectionState state) {
+        this.state = state;
+        lastUpdated = DateTime.now();
     }
 }

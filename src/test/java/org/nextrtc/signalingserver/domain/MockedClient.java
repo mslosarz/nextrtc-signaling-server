@@ -16,7 +16,7 @@ public class MockedClient extends ArgumentMatcher<Message> {
     private Server server;
     private Session session;
     private List<Message> messages = Lists.newLinkedList();
-    private AtomicInteger candidates = new AtomicInteger();
+    private Map<String, AtomicInteger> candidates = new HashMap<>();
     private Map<String, Consumer<Message>> behavior = new HashMap<>();
 
     {
@@ -58,7 +58,9 @@ public class MockedClient extends ArgumentMatcher<Message> {
                     .build(), session);
         });
         behavior.put(Signals.CANDIDATE, (message) -> {
-            if (candidates.getAndIncrement() < 1) {
+            candidates.computeIfAbsent(message.getFrom(), k -> new AtomicInteger());
+            AtomicInteger atomicInteger = candidates.get(message.getFrom());
+            if (atomicInteger.getAndIncrement() < 1) {
                 server.handle(Message.create()
                         .to(message.getFrom())
                         .signal(Signals.CANDIDATE)

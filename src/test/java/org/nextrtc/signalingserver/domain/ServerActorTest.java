@@ -144,35 +144,42 @@ public class ServerActorTest extends BaseTest {
         TestClientActor john = new TestClientActor("John", server);
         TestClientActor bob = new TestClientActor("Bob", server);
         TestClientActor alice = new TestClientActor("Alice", server);
+        TestClientActor mike = new TestClientActor("Mike", server);
 
         // when
         alice.openSocket();
+        mike.openSocket();
 
         john.openSocket();
         john.create("AAA", "BROADCAST");
-        Conversation conversation = conversations.findBy("AAA").get();
 
         bob.openSocket();
         bob.join("AAA");
         alice.join("AAA");
+        mike.join("AAA");
 
         john.closeSocket();
         bob.closeSocket();
         alice.closeSocket();
+        mike.closeSocket();
 
         // then
         assertThat(bob.getMessages().size(), is(alice.getMessages().size()));
         List<Message> bobMessages = bob.getMessages();
         List<Message> aliceMessages = alice.getMessages();
+        List<Message> mikeMessages = mike.getMessages();
         for (int i = 0; i < bobMessages.size(); i++) {
             Message bobMsg = bobMessages.get(i);
             Message aliceMsg = aliceMessages.get(i);
+            Message mikeMsg = mikeMessages.get(i);
             assertTrue(bobMsg.getSignal().equals(aliceMsg.getSignal()));
+            assertTrue(mikeMsg.getSignal().equals(aliceMsg.getSignal()));
         }
 
         assertNoErrors(john);
         assertNoErrors(bob);
         assertNoErrors(alice);
+        assertNoErrors(mike);
     }
 
     @Test

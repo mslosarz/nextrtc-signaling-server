@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
-import java.util.function.BiPredicate;
 
 @Component
 @Scope("prototype")
@@ -124,12 +123,8 @@ public class BroadcastConversation extends Conversation {
     private void beginSignalExchangeBetweenBroadcasterAndNewAudience(Member sender) {
         if (!sender.equals(broadcaster)) {
             sendJoinedFrom(sender, broadcaster);
-            exchange.begin(broadcaster, sender, allowCandidateExchangeOnlyFromBroadcaster());
+            exchange.begin(broadcaster, sender);
         }
-    }
-
-    private BiPredicate<Member, Member> allowCandidateExchangeOnlyFromBroadcaster() {
-        return (broadcaster, from) -> broadcaster.equals(from);
     }
 
     private void sendJoinedToBroadcaster(Member sender, String id) {

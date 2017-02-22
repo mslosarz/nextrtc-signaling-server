@@ -9,15 +9,12 @@ import org.nextrtc.signalingserver.domain.RTCConnections;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
-import java.util.function.BiPredicate;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 
 public class ExchangeSignalsBetweenMembersTest extends BaseTest {
-
-    private static final BiPredicate<Member, Member> ALLOW_ALL = (m, m2) -> true;
 
     @Autowired
     private ExchangeSignalsBetweenMembers exchange1;
@@ -37,8 +34,8 @@ public class ExchangeSignalsBetweenMembersTest extends BaseTest {
 
         // when
 
-        exchange1.begin(john, stan, ALLOW_ALL);
-        exchange2.begin(john, ed, ALLOW_ALL);
+        exchange1.begin(john, stan);
+        exchange2.begin(john, ed);
 
         // then
         Optional<ConnectionContext> first = connections.get(john, stan);
