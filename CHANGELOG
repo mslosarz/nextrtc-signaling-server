@@ -1,4 +1,5 @@
 v0.0.6:
+    - Improved logging for unexpected situation, stacktrace will be in logs in DEBUG level
     - One member will be able to create or join to only one conversation
     - Candidates will be exchanged even for broadcast conversation
     - Added new method to SignalResolver (addCustomHandler) which allows you to add your custom signal

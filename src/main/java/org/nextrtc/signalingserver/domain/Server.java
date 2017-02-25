@@ -108,7 +108,7 @@ public class Server {
             e.printStackTrace(new PrintWriter(errors));
             return errors.toString();
         }
-        return e.getCause() + " - " + e.getMessage();
+        return e.getClass().getSimpleName() + " - " + e.getMessage();
     }
 
 }

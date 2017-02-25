@@ -44,8 +44,8 @@ public class NextRTCEndpoint {
 
     @OnError
     public void onError(Session session, Throwable exception) {
-        log.info("Occured exception for session: " + session.getId());
-        log.error("Endpoint exception: ", exception);
+        log.error("Occured exception for session: " + session.getId() + ", reason: " + exception.getMessage());
+        log.debug("Endpoint exception: ", exception);
         server.handleError(session, exception);
     }
 
