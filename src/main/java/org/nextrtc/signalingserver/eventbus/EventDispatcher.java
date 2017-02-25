@@ -2,6 +2,7 @@ package org.nextrtc.signalingserver.eventbus;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
+import org.apache.log4j.Logger;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
@@ -23,6 +24,7 @@ import static org.springframework.core.annotation.AnnotationUtils.getValue;
 @Scope("singleton")
 @NextRTCEventListener
 public class EventDispatcher {
+    private static final Logger log = Logger.getLogger(EventDispatcher.class);
 
     @Autowired
     private ApplicationContext context;
@@ -32,9 +34,16 @@ public class EventDispatcher {
     public void handle(NextRTCEvent event) {
         getNextRTCEventListeners().stream()
                 .filter(listener -> isNextRTCHandler(listener) && supportsCurrentEvent(listener, event))
-                .forEach(listener -> {
-                    ((NextRTCHandler) listener).handleEvent(event);
-                });
+                .forEach(listener -> doTry(() -> ((NextRTCHandler) listener).handleEvent(event)));
+
+    }
+
+    private void doTry(Runnable action) {
+        try {
+            action.run();
+        } catch (Exception e) {
+            log.error("Handler throws an exception", e);
+        }
     }
 
     private boolean isNextRTCHandler(Object listener) {

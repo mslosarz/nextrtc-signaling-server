@@ -1,4 +1,5 @@
 v0.0.6:
+    - EventDispatcher will catch all Exception, and allow to process rest of handlers (now handlers were executed to the first exception in chain)
     - Improved logging for unexpected situation, stacktrace will be in logs in DEBUG level
     - One member will be able to create or join to only one conversation
     - Candidates will be exchanged even for broadcast conversation
