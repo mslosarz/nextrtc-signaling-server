@@ -4,17 +4,27 @@ import com.google.common.collect.Lists;
 import org.mockito.ArgumentMatcher;
 import org.nextrtc.signalingserver.domain.Message;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MessageMatcher extends ArgumentMatcher<Message> {
 
+    private final List<String> filter;
     private List<Message> messages = Lists.newLinkedList();
+
+    public MessageMatcher() {
+        this.filter = Arrays.asList("ping");
+    }
+
+    public MessageMatcher(String... filter) {
+        this.filter = Arrays.asList(filter);
+    }
 
     @Override
     public boolean matches(Object argument) {
         if (argument instanceof Message) {
             Message msg = (Message) argument;
-            if (!"ping".equals(msg.getSignal())) {
+            if (!filter.contains(msg.getSignal())) {
                 messages.add(msg);
             }
             return true;

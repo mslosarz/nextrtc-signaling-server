@@ -16,7 +16,7 @@ public class PingTask implements Runnable {
                 .to(to)//
                 .signal(Signal.PING)//
                 .build()//
-                .send();
+                .sendCarefully();
     }
 
 }

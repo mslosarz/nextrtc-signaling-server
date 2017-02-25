@@ -46,6 +46,14 @@ public class InternalMessage {
         getRemotePeer().sendObject(transformToExternalMessage());
     }
 
+    public void sendCarefully() {
+        if (to.getSession().isOpen()) {
+            getRemotePeer().sendObject(transformToExternalMessage());
+        } else {
+            log.debug("Unable to send message: " + transformToExternalMessage() + " session is broken!");
+        }
+    }
+
     private Message transformToExternalMessage() {
         return Message.create()//
                 .from(fromNullable(from))//
