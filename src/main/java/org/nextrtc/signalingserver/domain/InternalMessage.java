@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 
 import javax.websocket.RemoteEndpoint.Async;
+
+import java.io.IOException;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -44,6 +46,11 @@ public class InternalMessage {
             log.info("Outgoing: " + toString());
         }
         getRemotePeer().sendObject(transformToExternalMessage());
+        try {
+			getRemotePeer().flushBatch();
+		} catch (IOException e) {
+            log.debug("Unable to send message: " + transformToExternalMessage() + " error on flush!");
+		}
     }
 
     public void sendCarefully() {
