@@ -54,7 +54,7 @@ public class InternalMessage {
 
     public void sendCarefully() {
         if (to.getSession().isOpen()) {
-            getRemotePeer().sendObject(transformToExternalMessage());
+            send();
         } else {
             log.debug("Unable to send message: " + transformToExternalMessage() + " session is broken!");
         }
@@ -150,7 +150,7 @@ public class InternalMessage {
         }
 
         public String toString() {
-            return "org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder(from=" + this.from + ", to=" + this.to + ", signal=" + this.signal + ", content=" + this.content + ", custom=" + this.custom + ")";
+            return "InternalMessageBuilder(from=" + this.from + ", to=" + this.to + ", signal=" + this.signal + ", content=" + this.content + ", custom=" + this.custom + ")";
         }
     }
 }
