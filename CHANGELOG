@@ -1,5 +1,5 @@
 v0.0.7:
-    -
+    - Fixed problem with flushing server responses
 v0.0.6:
     - PingTask will not send a messages when session is closed (now it could sometimes)
     - EventDispatcher will catch all Exception, and allow to process rest of handlers (now handlers were executed to the first exception in chain)
