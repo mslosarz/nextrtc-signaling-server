@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.cases.connection;
 
-import org.joda.time.DateTime;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
+
 @Component
 @Scope("prototype")
 public class ConnectionContext {
@@ -21,7 +22,7 @@ public class ConnectionContext {
     private int maxConnectionSetupTime;
 
     private ConnectionState state = ConnectionState.NOT_INITIALIZED;
-    private DateTime lastUpdated = DateTime.now();
+    private ZonedDateTime lastUpdated = ZonedDateTime.now();
 
     @Autowired
     @Qualifier(Names.EVENT_BUS)
@@ -94,7 +95,7 @@ public class ConnectionContext {
     }
 
     public boolean isCurrent() {
-        return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(DateTime.now());
+        return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(ZonedDateTime.now());
     }
 
     public Member getMaster() {
@@ -111,6 +112,6 @@ public class ConnectionContext {
 
     private void setState(ConnectionState state) {
         this.state = state;
-        lastUpdated = DateTime.now();
+        lastUpdated = ZonedDateTime.now();
     }
 }

@@ -1,9 +1,9 @@
 package org.nextrtc.signalingserver.api.dto;
 
-import org.joda.time.DateTime;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.exception.SignalingException;
 
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,7 +11,7 @@ public interface NextRTCEvent {
 
     NextRTCEvents type();
 
-    DateTime published();
+    ZonedDateTime published();
 
     Optional<NextRTCMember> from();
 

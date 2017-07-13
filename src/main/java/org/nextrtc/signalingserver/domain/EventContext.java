@@ -1,13 +1,13 @@
 package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.Maps;
-import org.joda.time.DateTime;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.exception.SignalingException;
 
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,7 +17,7 @@ import static java.util.Optional.ofNullable;
 public class EventContext implements NextRTCEvent {
 
     private final NextRTCEvents type;
-    private final DateTime published = DateTime.now();
+    private final ZonedDateTime published = ZonedDateTime.now();
     private final Map<String, String> custom = Maps.newHashMap();
     private final Optional<NextRTCMember> from;
     private final Optional<NextRTCMember> to;
@@ -42,7 +42,7 @@ public class EventContext implements NextRTCEvent {
     }
 
     @Override
-    public DateTime published() {
+    public ZonedDateTime published() {
         return published;
     }
 
