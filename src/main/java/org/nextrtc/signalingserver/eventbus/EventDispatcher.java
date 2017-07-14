@@ -2,7 +2,7 @@ package org.nextrtc.signalingserver.eventbus;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
@@ -20,12 +20,11 @@ import java.util.Map;
 
 import static org.springframework.core.annotation.AnnotationUtils.getValue;
 
+@Log4j
 @Component(Names.EVENT_DISPATCHER)
 @Scope("singleton")
 @NextRTCEventListener
 public class EventDispatcher {
-    private static final Logger log = Logger.getLogger(EventDispatcher.class);
-
     @Autowired
     private ApplicationContext context;
 

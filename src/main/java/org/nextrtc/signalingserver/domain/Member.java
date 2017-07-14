@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
+import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.nextrtc.signalingserver.Names;
@@ -18,6 +19,7 @@ import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_JOINED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.MEMBER_LEFT;
 import static org.nextrtc.signalingserver.domain.EventContext.builder;
 
+@Getter
 @Component
 @Scope("prototype")
 public class Member implements NextRTCMember {
@@ -60,14 +62,6 @@ public class Member implements NextRTCMember {
                         .conversation(conversation)
                         .from(this)));
         this.conversation = null;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public Session getSession() {
-        return this.session;
     }
 
     public boolean hasSameConversation(Member to) {

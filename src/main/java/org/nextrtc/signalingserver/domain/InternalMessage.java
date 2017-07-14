@@ -1,7 +1,8 @@
 package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.Maps;
-import org.apache.log4j.Logger;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j;
 
 import javax.websocket.RemoteEndpoint.Async;
 import java.io.IOException;
@@ -10,9 +11,10 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+@Log4j
+@Getter
 public class InternalMessage {
 
-    private static final Logger log = Logger.getLogger(InternalMessage.class);
     private Member from;
     private Member to;
     private Signal signal;
@@ -81,26 +83,6 @@ public class InternalMessage {
     @Override
     public String toString() {
         return String.format("(%s -> %s)[%s]: %s |%s", from, to, signal != null ? signal.ordinaryName() : null, content, custom);
-    }
-
-    public Member getFrom() {
-        return this.from;
-    }
-
-    public Member getTo() {
-        return this.to;
-    }
-
-    public Signal getSignal() {
-        return this.signal;
-    }
-
-    public String getContent() {
-        return this.content;
-    }
-
-    public Map<String, String> getCustom() {
-        return this.custom;
     }
 
     public static class InternalMessageBuilder {

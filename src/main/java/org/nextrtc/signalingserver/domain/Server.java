@@ -1,7 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.log4j.Logger;
 import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.cases.SignalHandler;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
@@ -18,10 +18,10 @@ import java.util.function.Consumer;
 
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
+@Log4j
 @Component
 public class Server {
 
-    private static final Logger log = Logger.getLogger(Server.class);
     @Autowired
     private Members members;
 

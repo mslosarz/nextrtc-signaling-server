@@ -1,7 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.Lists;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.mockito.ArgumentMatcher;
 
 import javax.websocket.Session;
@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+@Log4j
 public class MockedClient extends ArgumentMatcher<Message> {
-    private static final Logger log = Logger.getLogger(Server.class);
     private Server server;
     private Session session;
     private List<Message> messages = Lists.newLinkedList();

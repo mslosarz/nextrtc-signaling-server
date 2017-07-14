@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.cases.connection;
 
+import lombok.Getter;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 
+@Getter
 @Component
 @Scope("prototype")
 public class ConnectionContext {
@@ -96,18 +98,6 @@ public class ConnectionContext {
 
     public boolean isCurrent() {
         return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(ZonedDateTime.now());
-    }
-
-    public Member getMaster() {
-        return master;
-    }
-
-    public Member getSlave() {
-        return slave;
-    }
-
-    public ConnectionState getState() {
-        return state;
     }
 
     private void setState(ConnectionState state) {
