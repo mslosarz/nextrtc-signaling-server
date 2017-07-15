@@ -2,6 +2,7 @@ package org.nextrtc.signalingserver.cases.connection;
 
 import lombok.Getter;
 import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.InternalMessage;
@@ -9,7 +10,6 @@ import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +20,11 @@ import java.time.ZonedDateTime;
 @Scope("prototype")
 public class ConnectionContext {
 
-    @Value(Names.MAX_CONNECTION_SETUP_TIME)
-    private int maxConnectionSetupTime;
-
     private ConnectionState state = ConnectionState.NOT_INITIALIZED;
     private ZonedDateTime lastUpdated = ZonedDateTime.now();
+
+    @Autowired
+    private NextRTCProperties properties;
 
     @Autowired
     @Qualifier(Names.EVENT_BUS)
@@ -97,7 +97,7 @@ public class ConnectionContext {
     }
 
     public boolean isCurrent() {
-        return lastUpdated.plusSeconds(maxConnectionSetupTime).isAfter(ZonedDateTime.now());
+        return lastUpdated.plusSeconds(properties.getMaxConnectionSetupTime()).isAfter(ZonedDateTime.now());
     }
 
     private void setState(ConnectionState state) {

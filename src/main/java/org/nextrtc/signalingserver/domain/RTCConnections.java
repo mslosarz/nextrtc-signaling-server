@@ -3,10 +3,10 @@ package org.nextrtc.signalingserver.domain;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +26,15 @@ public class RTCConnections {
     @Qualifier(Names.SCHEDULER_NAME)
     private ScheduledExecutorService scheduler;
 
-    @Value(Names.MAX_CONNECTION_SETUP_TIME)
-    private int maxConnectionSetupTime;
+    @Autowired
+    private NextRTCProperties properties;
 
     @PostConstruct
     void cleanOldConnections() {
-        scheduler.scheduleWithFixedDelay(this::removeOldConnections, maxConnectionSetupTime, maxConnectionSetupTime, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(this::removeOldConnections,
+                properties.getMaxConnectionSetupTime(),
+                properties.getMaxConnectionSetupTime(),
+                TimeUnit.SECONDS);
     }
 
     void removeOldConnections() {

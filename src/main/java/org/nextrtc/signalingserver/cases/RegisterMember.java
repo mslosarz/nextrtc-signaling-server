@@ -1,12 +1,12 @@
 package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.PingTask;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Component()
 public class RegisterMember {
 
-    @Value(Names.SCHEDULED_PERIOD)
-    private int period;
+    @Autowired
+    private NextRTCProperties properties;
 
     @Autowired
     private Members members;
@@ -36,7 +36,8 @@ public class RegisterMember {
     }
 
     private ScheduledFuture<?> ping(Session session) {
-        return scheduler.scheduleAtFixedRate(new PingTask(session), period, period, TimeUnit.SECONDS);
+        return scheduler.scheduleAtFixedRate(new PingTask(session), 0,
+                properties.getPeriod(), TimeUnit.SECONDS);
     }
 
 }
