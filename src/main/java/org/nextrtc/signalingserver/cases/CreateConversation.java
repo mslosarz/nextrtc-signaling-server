@@ -1,20 +1,35 @@
 package org.nextrtc.signalingserver.cases;
 
+import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Signals;
 import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.repository.Conversations;
+import org.nextrtc.signalingserver.factory.ConversationFactory;
+import org.nextrtc.signalingserver.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
 
 @Component(Signals.CREATE_HANDLER)
 public class CreateConversation implements SignalHandler {
 
     @Autowired
-    private Conversations conversations;
+    @Qualifier(Names.EVENT_BUS)
+    private NextRTCEventBus eventBus;
+
+    @Autowired
+    private ConversationRepository conversations;
+
+    @Autowired
+    private ConversationFactory factory;
 
     public void execute(InternalMessage context) {
         conversations.findBy(context.getFrom())
@@ -23,7 +38,10 @@ public class CreateConversation implements SignalHandler {
                 .ifPresent(SignalingException::throwException);
 
 
-        Conversation conversation = conversations.create(context);
+        String id = context.getContent();
+        Optional<String> type = ofNullable(context.getCustom().get("type"));
+        Conversation conversation = conversations.save(factory.create(id, type));
+        eventBus.post(CONVERSATION_CREATED.basedOn(context, conversation));
 
         conversation.join(context.getFrom());
     }

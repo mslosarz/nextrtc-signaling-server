@@ -371,8 +371,5 @@ public class BroadcastServerTest extends BaseTest {
     public void resetObjects() {
         eventCheckerCall.reset();
         eventLocalStream.reset();
-        members.unregisterBy(mockSession("s1"), null);
-        members.unregisterBy(mockSession("s2"), null);
-        members.unregisterBy(mockSession("s3"), null);
     }
 }

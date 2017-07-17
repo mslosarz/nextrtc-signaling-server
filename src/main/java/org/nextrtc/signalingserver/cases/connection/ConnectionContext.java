@@ -53,7 +53,10 @@ public class ConnectionContext {
 
 
     private void exchangeCandidates(InternalMessage message) {
-        message.copy().signal(Signal.CANDIDATE).build().send();
+        message.copy()
+                .signal(Signal.CANDIDATE)
+                .build()
+                .send();
     }
 
 

@@ -4,7 +4,7 @@ import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Signals;
 import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.repository.Conversations;
+import org.nextrtc.signalingserver.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_C
 public class JoinConversation implements SignalHandler {
 
     @Autowired
-    private Conversations conversations;
+    private ConversationRepository conversations;
 
     @Autowired
     @Qualifier(Signals.CREATE_HANDLER)

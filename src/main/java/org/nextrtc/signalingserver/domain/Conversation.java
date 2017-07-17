@@ -1,11 +1,17 @@
 package org.nextrtc.signalingserver.domain;
 
 import lombok.Getter;
+import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
-import org.nextrtc.signalingserver.repository.Conversations;
+import org.nextrtc.signalingserver.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_DESTROYED;
+import static org.nextrtc.signalingserver.domain.EventContext.builder;
 
 @Getter
 @Component
@@ -15,7 +21,11 @@ public abstract class Conversation implements NextRTCConversation {
     protected final String id;
 
     @Autowired
-    private Conversations conversations;
+    @Qualifier(Names.EVENT_BUS)
+    private NextRTCEventBus eventBus;
+
+    @Autowired
+    private ConversationRepository conversations;
 
     public Conversation(String id) {
         this.id = id;
@@ -42,7 +52,11 @@ public abstract class Conversation implements NextRTCConversation {
     public abstract boolean has(Member from);
 
     private void unregisterConversation(Member sender, Conversation conversation) {
-        conversations.remove(conversation.getId(), sender);
+        eventBus.post(CONVERSATION_DESTROYED.basedOn(
+                builder()
+                        .conversation(conversations.remove(conversation.getId()))
+                        .from(sender)));
+        ;
     }
 
     public abstract void exchangeSignals(InternalMessage message);

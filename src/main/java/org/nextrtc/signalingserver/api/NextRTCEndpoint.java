@@ -1,6 +1,8 @@
 package org.nextrtc.signalingserver.api;
 
 import com.google.common.collect.Sets;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Log4j
@@ -16,13 +19,18 @@ public class NextRTCEndpoint {
 
     private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();
 
+    @Getter(AccessLevel.PRIVATE)
     private Server server;
 
     public NextRTCEndpoint() {
         NextRTCEndpoint endpoint = getEndpoint();
         endpoints.add(endpoint);
         log.info("Created " + endpoint);
-        endpoints.stream().filter(e -> e.server != null).findFirst().ifPresent(s -> this.setServer(s.server));
+        endpoints.stream()
+                .map(NextRTCEndpoint::getServer)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(this::setServer);
     }
 
     private NextRTCEndpoint getEndpoint() {

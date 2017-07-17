@@ -2,12 +2,15 @@ package org.nextrtc.signalingserver.domain;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.cases.SignalHandler;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
 import org.nextrtc.signalingserver.exception.SignalingException;
-import org.nextrtc.signalingserver.repository.Members;
+import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.CloseReason;
@@ -16,6 +19,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.function.Consumer;
 
+import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
 @Log4j
@@ -23,7 +28,11 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 public class Server {
 
     @Autowired
-    private Members members;
+    @Qualifier(Names.EVENT_BUS)
+    private NextRTCEventBus eventBus;
+
+    @Autowired
+    private MemberRepository members;
 
     @Autowired
     private SignalResolver resolver;
@@ -67,15 +76,19 @@ public class Server {
     }
 
     public void unregister(Session s, CloseReason reason) {
-        doSaveExecution(s, session ->
-                members.unregisterBy(session, reason.getReasonPhrase())
+        doSaveExecution(s, session -> {
+                    members.unregister(session.getId());
+                    eventBus.post(SESSION_CLOSED.occurFor(session, reason.getReasonPhrase()));
+                }
         );
     }
 
 
     public void handleError(Session s, Throwable exception) {
-        doSaveExecution(s, session ->
-                members.dropOutAfterException(session, exception.getMessage())
+        doSaveExecution(s, session -> {
+                    members.unregister(session.getId());
+                    eventBus.post(UNEXPECTED_SITUATION.occurFor(session, exception.getMessage()));
+                }
         );
     }
 

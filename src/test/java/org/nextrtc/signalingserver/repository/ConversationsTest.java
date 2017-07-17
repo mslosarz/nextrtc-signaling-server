@@ -1,20 +1,17 @@
 package org.nextrtc.signalingserver.repository;
 
-import com.google.common.collect.Maps;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.conversation.BroadcastConversation;
-import org.nextrtc.signalingserver.domain.conversation.MeshConversation;
+import org.nextrtc.signalingserver.factory.ConversationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Map;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
@@ -23,29 +20,16 @@ public class ConversationsTest extends BaseTest {
     @Autowired
     private Conversations conversations;
 
+    @Autowired
+    private ConversationFactory conversationFactory;
+
     @Rule
     public ExpectedException expect = ExpectedException.none();
 
     @Test
-    public void shouldCreateConversation() throws Exception {
-        // given
-
-        // when
-        Conversation createdConversation = conversations.create(InternalMessage.create()
-                .content(null)
-                .build());
-
-        // then
-        assertNotNull(createdConversation);
-        assertNotNull(createdConversation.getId());
-    }
-
-    @Test
     public void shouldFindExistingConversation() throws Exception {
         // given
-        Conversation conversation = conversations.create(InternalMessage.create()
-                .content("new")
-                .build());
+        Conversation conversation = conversations.save(conversationFactory.create("new", Optional.empty()));
 
         // when
         Optional<Conversation> found = conversations.findBy("new");
@@ -58,86 +42,55 @@ public class ConversationsTest extends BaseTest {
     }
 
     @Test
-    public void shouldCreateConversationWithRandomNameOnEmptyConversationName() throws Exception {
-        // given
-
-        // then
-        final Conversation conversation = conversations.create(InternalMessage.create()
-                .content("")
-                .build());
-
-        // when
-        assertNotNull(conversation);
-        assertThat(conversation.getId(), not(nullValue()));
-
-    }
-
-    @Test
     public void shouldThrowExceptionWhenConversationNameIsOccupied() throws Exception {
         // given
-        conversations.create(InternalMessage.create()
-                .content("aaaa")
-                .build());
+        Conversation conversation = conversationFactory.create("aaaa", Optional.empty());
+        conversations.save(conversation);
 
         // then
         expect.expectMessage(containsString(CONVERSATION_NAME_OCCUPIED.getErrorCode()));
 
         // when
-        conversations.create(InternalMessage.create()
-                .content("aaaa")
-                .build());
+        conversations.save(conversation);
     }
 
     @Test
-    public void shouldCreateBroadcastConversationWhenInCustomPayloadTypeIsBroadcast() throws Exception {
+    public void shouldRemoveConversation() {
         // given
-        Map<String, String> custom = Maps.newHashMap();
-        custom.put("type", "BROADCAST");
+        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
 
         // when
-        conversations.create(InternalMessage.create()//
-                .content("new conversation")//
-                .custom(custom)
-                .build());
+        Conversation removed = conversations.remove("new");
 
         // then
-        Optional<Conversation> optional = conversations.findBy("new conversation");
-        assertThat(optional.isPresent(), is(true));
-        assertTrue(optional.get() instanceof BroadcastConversation);
+        assertThat(removed, is(saved));
+        assertFalse(conversations.findBy("new").isPresent());
+
     }
 
     @Test
-    public void shouldCreateMeshConversationWhenInCustomPayloadTypeIsMesh() throws Exception {
+    public void shouldNotFindConversationWhenMemberIsDifferent() {
         // given
-        Map<String, String> custom = Maps.newHashMap();
-        custom.put("type", "MESH");
-
+        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
+        saved.join(mockMember("BBBB"));
         // when
-        conversations.create(InternalMessage.create()//
-                .content("new conversation")//
-                .custom(custom)
-                .build());
+        Optional<Conversation> member = conversations.findBy(mockMember("AAAA"));
 
         // then
-        Optional<Conversation> optional = conversations.findBy("new conversation");
-        assertThat(optional.isPresent(), is(true));
-        assertTrue(optional.get() instanceof MeshConversation);
+        assertFalse(member.isPresent());
     }
 
     @Test
-    public void shouldCreateMeshConversationByDefault() throws Exception {
+    public void shouldFindConversationWhenMemberIsInConversation() {
         // given
-
+        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
+        saved.join(mockMember("BBBB"));
+        saved.join(mockMember("AAAA"));
         // when
-        conversations.create(InternalMessage.create()//
-                .content("new conversation")//
-                .build());
+        Optional<Conversation> member = conversations.findBy(mockMember("AAAA"));
 
         // then
-        Optional<Conversation> optional = conversations.findBy("new conversation");
-        assertThat(optional.isPresent(), is(true));
-        assertTrue(optional.get() instanceof MeshConversation);
+        assertTrue(member.isPresent());
     }
-
 
 }

@@ -60,7 +60,7 @@ public class MembersTest extends BaseTest {
         assertTrue(members.findBy("s1").isPresent());
 
         // when
-        members.unregisterBy(session, null);
+        members.unregister(session.getId());
 
         // then
         assertFalse(members.findBy("s1").isPresent());

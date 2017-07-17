@@ -52,10 +52,10 @@ public abstract class BaseTest {
     public void reset() {
 
         for (String id : conversations.getAllIds()) {
-            conversations.remove(id, null);
+            conversations.remove(id);
         }
         for (String id : members.getAllIds()) {
-            members.unregisterBy(mockSession(id), null);
+            members.unregister(id);
         }
         for (EventChecker checker : checkers) {
             checker.reset();
