@@ -19,19 +19,19 @@ public class EventContext implements NextRTCEvent {
     private final NextRTCEvents type;
     private final ZonedDateTime published = ZonedDateTime.now();
     private final Map<String, String> custom = Maps.newHashMap();
-    private final Optional<NextRTCMember> from;
-    private final Optional<NextRTCMember> to;
-    private final Optional<NextRTCConversation> conversation;
-    private final Optional<SignalingException> exception;
+    private final NextRTCMember from;
+    private final NextRTCMember to;
+    private final NextRTCConversation conversation;
+    private final SignalingException exception;
     private final String reason;
     private final String content;
 
     private EventContext(NextRTCEvents type, NextRTCMember from, NextRTCMember to, NextRTCConversation conversation, SignalingException exception, String reason, String content) {
         this.type = type;
-        this.from = ofNullable(from);
-        this.to = ofNullable(to);
-        this.conversation = ofNullable(conversation);
-        this.exception = ofNullable(exception);
+        this.from = from;
+        this.to = to;
+        this.conversation = conversation;
+        this.exception = exception;
         this.reason = reason;
         this.content = content;
     }
@@ -48,22 +48,22 @@ public class EventContext implements NextRTCEvent {
 
     @Override
     public Optional<NextRTCMember> from() {
-        return from;
+        return ofNullable(from);
     }
 
     @Override
     public Optional<NextRTCMember> to() {
-        return to;
+        return ofNullable(to);
     }
 
     @Override
     public Optional<NextRTCConversation> conversation() {
-        return conversation;
+        return ofNullable(conversation);
     }
 
     @Override
     public Optional<SignalingException> exception() {
-        return exception;
+        return ofNullable(exception);
     }
 
     @Override

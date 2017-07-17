@@ -2,6 +2,7 @@ package org.nextrtc.signalingserver.domain.conversation;
 
 import com.google.common.collect.Sets;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
+import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
@@ -15,14 +16,20 @@ import java.util.Set;
 @Component
 @Scope("prototype")
 public class BroadcastConversation extends Conversation {
-    @Autowired
-    private ExchangeSignalsBetweenMembers exchange;
 
+    private ExchangeSignalsBetweenMembers exchange;
     private Member broadcaster;
     private Set<Member> audience = Sets.newConcurrentHashSet();
 
     public BroadcastConversation(String id) {
         super(id);
+    }
+
+    public BroadcastConversation(String id,
+                                 LeftConversation left,
+                                 ExchangeSignalsBetweenMembers exchange) {
+        super(id, left);
+        this.exchange = exchange;
     }
 
     @Override
@@ -71,21 +78,13 @@ public class BroadcastConversation extends Conversation {
 
     @Override
     public synchronized boolean isWithoutMember() {
-        if (broadcaster != null) {
-            return false;
-        }
-        return audience.isEmpty();
+        return broadcaster == null && audience.isEmpty();
     }
 
     @Override
     public synchronized boolean has(Member from) {
-        if (broadcaster == null) {
-            return false;
-        }
-        if (broadcaster.equals(from)) {
-            return true;
-        }
-        return audience.contains(from);
+        return broadcaster != null
+                && (broadcaster.equals(from) || audience.contains(from));
     }
 
     @Override
@@ -137,4 +136,8 @@ public class BroadcastConversation extends Conversation {
                 .send();
     }
 
+    @Autowired
+    public void setExchange(ExchangeSignalsBetweenMembers exchange) {
+        this.exchange = exchange;
+    }
 }

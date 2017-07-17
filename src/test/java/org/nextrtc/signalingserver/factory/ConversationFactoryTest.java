@@ -9,9 +9,6 @@ import org.nextrtc.signalingserver.domain.conversation.BroadcastConversation;
 import org.nextrtc.signalingserver.domain.conversation.MeshConversation;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
-
-import static java.util.Optional.of;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -28,7 +25,7 @@ public class ConversationFactoryTest extends BaseTest {
         // given
 
         // when
-        Conversation createdConversation = conversationFactory.create(null, Optional.empty());
+        Conversation createdConversation = conversationFactory.create(null, null);
 
         // then
         assertNotNull(createdConversation);
@@ -40,7 +37,7 @@ public class ConversationFactoryTest extends BaseTest {
         // given
 
         // then
-        final Conversation conversation = conversationFactory.create("", Optional.empty());
+        final Conversation conversation = conversationFactory.create("", null);
 
         // when
         assertNotNull(conversation);
@@ -53,7 +50,7 @@ public class ConversationFactoryTest extends BaseTest {
         // given
 
         // when
-        Conversation conversation = conversationFactory.create("new conversation", of("BROADCAST"));
+        Conversation conversation = conversationFactory.create("new conversation", "BROADCAST");
 
         // then
         assertThat(conversation.getId(), is("new conversation"));
@@ -65,7 +62,7 @@ public class ConversationFactoryTest extends BaseTest {
         // given
 
         // when
-        Conversation conversation = conversationFactory.create("new conversation", of("MESH"));
+        Conversation conversation = conversationFactory.create("new conversation", "MESH");
 
         // then
         assertThat(conversation.getId(), is("new conversation"));
@@ -77,7 +74,7 @@ public class ConversationFactoryTest extends BaseTest {
         // given
 
         // when
-        Conversation conversation = conversationFactory.create("new conversation", Optional.empty());
+        Conversation conversation = conversationFactory.create("new conversation", null);
 
         // then
         assertNotNull(conversation.getId());

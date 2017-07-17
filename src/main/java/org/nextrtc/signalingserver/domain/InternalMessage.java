@@ -54,7 +54,7 @@ public class InternalMessage {
         }
     }
 
-    public void sendCarefully() {
+    void sendCarefully() {
         if (to.getSession().isOpen()) {
             send();
         } else {

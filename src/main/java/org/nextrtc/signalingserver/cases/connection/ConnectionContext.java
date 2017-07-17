@@ -23,11 +23,7 @@ public class ConnectionContext {
     private ConnectionState state = ConnectionState.NOT_INITIALIZED;
     private ZonedDateTime lastUpdated = ZonedDateTime.now();
 
-    @Autowired
     private NextRTCProperties properties;
-
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus bus;
 
     private Member master;
@@ -106,5 +102,16 @@ public class ConnectionContext {
     private void setState(ConnectionState state) {
         this.state = state;
         lastUpdated = ZonedDateTime.now();
+    }
+
+    @Autowired
+    @Qualifier(Names.EVENT_BUS)
+    public void setBus(NextRTCEventBus bus) {
+        this.bus = bus;
+    }
+
+    @Autowired
+    public void setProperties(NextRTCProperties properties) {
+        this.properties = properties;
     }
 }

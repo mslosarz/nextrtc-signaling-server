@@ -2,7 +2,6 @@ package org.nextrtc.signalingserver.domain;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.cases.SignalHandler;
@@ -10,7 +9,6 @@ import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.CloseReason;
@@ -27,18 +25,21 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 @Component
 public class Server {
 
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus eventBus;
-
-    @Autowired
     private MemberRepository members;
-
-    @Autowired
     private SignalResolver resolver;
+    private RegisterMember register;
 
     @Autowired
-    private RegisterMember register;
+    public Server(NextRTCEventBus eventBus,
+                  MemberRepository members,
+                  SignalResolver resolver,
+                  RegisterMember register) {
+        this.eventBus = eventBus;
+        this.members = members;
+        this.resolver = resolver;
+        this.register = register;
+    }
 
     public void register(Session s) {
         doSaveExecution(s, session ->

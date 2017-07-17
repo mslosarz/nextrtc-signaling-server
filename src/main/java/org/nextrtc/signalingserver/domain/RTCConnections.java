@@ -2,11 +2,9 @@ package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +20,15 @@ import java.util.stream.Collectors;
 public class RTCConnections {
     private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
 
-    @Autowired
-    @Qualifier(Names.SCHEDULER_NAME)
     private ScheduledExecutorService scheduler;
 
-    @Autowired
     private NextRTCProperties properties;
+
+    @Autowired
+    public RTCConnections(ScheduledExecutorService scheduler, NextRTCProperties properties) {
+        this.scheduler = scheduler;
+        this.properties = properties;
+    }
 
     @PostConstruct
     void cleanOldConnections() {

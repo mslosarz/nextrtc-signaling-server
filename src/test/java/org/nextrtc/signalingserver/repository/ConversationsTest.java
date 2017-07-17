@@ -29,7 +29,7 @@ public class ConversationsTest extends BaseTest {
     @Test
     public void shouldFindExistingConversation() throws Exception {
         // given
-        Conversation conversation = conversations.save(conversationFactory.create("new", Optional.empty()));
+        Conversation conversation = conversations.save(conversationFactory.create("new", null));
 
         // when
         Optional<Conversation> found = conversations.findBy("new");
@@ -44,7 +44,7 @@ public class ConversationsTest extends BaseTest {
     @Test
     public void shouldThrowExceptionWhenConversationNameIsOccupied() throws Exception {
         // given
-        Conversation conversation = conversationFactory.create("aaaa", Optional.empty());
+        Conversation conversation = conversationFactory.create("aaaa", null);
         conversations.save(conversation);
 
         // then
@@ -57,7 +57,7 @@ public class ConversationsTest extends BaseTest {
     @Test
     public void shouldRemoveConversation() {
         // given
-        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
+        Conversation saved = conversations.save(conversationFactory.create("new", null));
 
         // when
         Conversation removed = conversations.remove("new");
@@ -71,7 +71,7 @@ public class ConversationsTest extends BaseTest {
     @Test
     public void shouldNotFindConversationWhenMemberIsDifferent() {
         // given
-        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
+        Conversation saved = conversations.save(conversationFactory.create("new", null));
         saved.join(mockMember("BBBB"));
         // when
         Optional<Conversation> member = conversations.findBy(mockMember("AAAA"));
@@ -83,7 +83,7 @@ public class ConversationsTest extends BaseTest {
     @Test
     public void shouldFindConversationWhenMemberIsInConversation() {
         // given
-        Conversation saved = conversations.save(conversationFactory.create("new", Optional.empty()));
+        Conversation saved = conversations.save(conversationFactory.create("new", null));
         saved.join(mockMember("BBBB"));
         saved.join(mockMember("AAAA"));
         // when

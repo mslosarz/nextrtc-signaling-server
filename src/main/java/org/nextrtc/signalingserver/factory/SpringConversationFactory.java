@@ -7,31 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Component
-public class SpringConversationFactory implements ConversationFactory {
-    @Autowired
+public class SpringConversationFactory extends AbstractConversationFactory {
     private ApplicationContext context;
 
-    @Override
-    public Conversation create(String id, Optional<String> optionalType) {
-        String conversationName = getConversationName(id);
-        String type = optionalType.orElse("MESH");
-        Conversation conversation = null;
-        if (type.equalsIgnoreCase("BROADCAST")) {
-            conversation = context.getBean(BroadcastConversation.class, conversationName);
-        } else if (type.equalsIgnoreCase("MESH")) {
-            conversation = context.getBean(MeshConversation.class, conversationName);
-        }
-        return conversation;
+    @Autowired
+    public SpringConversationFactory(ApplicationContext context) {
+        this.context = context;
     }
 
-    private String getConversationName(String name) {
-        return isBlank(name) ? UUID.randomUUID().toString() : name;
+    @Override
+    protected Conversation createMesh(String conversationName) {
+        return context.getBean(MeshConversation.class, conversationName);
+    }
+
+    @Override
+    protected Conversation createBroadcast(String conversationName) {
+        return context.getBean(BroadcastConversation.class, conversationName);
     }
 
 }

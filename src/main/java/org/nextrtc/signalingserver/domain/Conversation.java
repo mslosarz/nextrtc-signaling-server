@@ -1,17 +1,11 @@
 package org.nextrtc.signalingserver.domain;
 
 import lombok.Getter;
-import org.nextrtc.signalingserver.Names;
-import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
-import org.nextrtc.signalingserver.repository.ConversationRepository;
+import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_DESTROYED;
-import static org.nextrtc.signalingserver.domain.EventContext.builder;
 
 @Getter
 @Component
@@ -21,23 +15,22 @@ public abstract class Conversation implements NextRTCConversation {
     protected final String id;
 
     @Autowired
-    @Qualifier(Names.EVENT_BUS)
-    private NextRTCEventBus eventBus;
-
-    @Autowired
-    private ConversationRepository conversations;
+    private LeftConversation leftConversation;
 
     public Conversation(String id) {
         this.id = id;
     }
 
+    public Conversation(String id, LeftConversation leftConversation) {
+        this.id = id;
+        this.leftConversation = leftConversation;
+    }
+
     public abstract void join(Member sender);
 
     public void left(Member sender) {
-        if (remove(sender)) {
-            if (isWithoutMember()) {
-                unregisterConversation(sender, this);
-            }
+        if (remove(sender) && isWithoutMember()) {
+            leftConversation.destroy(this, sender);
         }
     }
 
@@ -50,14 +43,6 @@ public abstract class Conversation implements NextRTCConversation {
     public abstract boolean isWithoutMember();
 
     public abstract boolean has(Member from);
-
-    private void unregisterConversation(Member sender, Conversation conversation) {
-        eventBus.post(CONVERSATION_DESTROYED.basedOn(
-                builder()
-                        .conversation(conversations.remove(conversation.getId()))
-                        .from(sender)));
-        ;
-    }
 
     public abstract void exchangeSignals(InternalMessage message);
 

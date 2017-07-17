@@ -12,9 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
 
@@ -39,8 +36,8 @@ public class CreateConversation implements SignalHandler {
 
 
         String id = context.getContent();
-        Optional<String> type = ofNullable(context.getCustom().get("type"));
-        Conversation conversation = conversations.save(factory.create(id, type));
+
+        Conversation conversation = conversations.save(factory.create(id, context.getCustom().get("type")));
         eventBus.post(CONVERSATION_CREATED.basedOn(context, conversation));
 
         conversation.join(context.getFrom());

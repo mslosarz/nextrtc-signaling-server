@@ -1,15 +1,13 @@
 package org.nextrtc.signalingserver.domain.conversation;
 
 import com.google.common.collect.Sets;
-import org.nextrtc.signalingserver.Names;
-import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
+import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +16,17 @@ import java.util.Set;
 @Component
 @Scope("prototype")
 public class MeshConversation extends Conversation {
-    @Autowired
     private ExchangeSignalsBetweenMembers exchange;
-
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
-    private NextRTCEventBus eventBus;
 
     private Set<Member> members = Sets.newConcurrentHashSet();
 
     public MeshConversation(String id) {
         super(id);
+    }
+
+    public MeshConversation(String id, LeftConversation left, ExchangeSignalsBetweenMembers exchange) {
+        super(id, left);
+        this.exchange = exchange;
     }
 
     @Override
@@ -103,4 +101,8 @@ public class MeshConversation extends Conversation {
                 .send();
     }
 
+    @Autowired
+    public void setExchange(ExchangeSignalsBetweenMembers exchange) {
+        this.exchange = exchange;
+    }
 }

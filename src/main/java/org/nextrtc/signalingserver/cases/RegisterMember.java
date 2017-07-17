@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_OPENED;
 
-@Component()
+@Component
 public class RegisterMember {
 
     @Autowired

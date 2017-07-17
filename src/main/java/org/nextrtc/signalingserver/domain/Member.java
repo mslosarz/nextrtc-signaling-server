@@ -28,8 +28,6 @@ public class Member implements NextRTCMember {
     private Session session;
     private Conversation conversation;
 
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus eventBus;
 
     private ScheduledFuture<?> ping;
@@ -48,7 +46,7 @@ public class Member implements NextRTCMember {
         ping.cancel(true);
     }
 
-    public void assign(Conversation conversation) {
+    void assign(Conversation conversation) {
         this.conversation = conversation;
         eventBus.post(MEMBER_JOINED.basedOn(
                 builder()
@@ -65,10 +63,13 @@ public class Member implements NextRTCMember {
     }
 
     public boolean hasSameConversation(Member to) {
-        if (to == null) {
-            return false;
-        }
-        return conversation.equals(to.conversation);
+        return to != null && conversation.equals(to.conversation);
+    }
+
+    @Autowired
+    @Qualifier(Names.EVENT_BUS)
+    public void setEventBus(NextRTCEventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     @Override
