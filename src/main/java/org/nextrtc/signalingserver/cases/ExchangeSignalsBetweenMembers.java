@@ -4,23 +4,27 @@ import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.RTCConnections;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.nextrtc.signalingserver.factory.ConnectionContextFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 @Scope("prototype")
 public class ExchangeSignalsBetweenMembers {
 
-    @Autowired
     private RTCConnections connections;
+    private ConnectionContextFactory factory;
 
-    @Autowired
-    private ApplicationContext context;
+    @Inject
+    public ExchangeSignalsBetweenMembers(RTCConnections connections, ConnectionContextFactory factory) {
+        this.connections = connections;
+        this.factory = factory;
+    }
 
     public synchronized void begin(Member from, Member to) {
-        connections.put(from, to, context.getBean(ConnectionContext.class, from, to));
+        connections.put(from, to, factory.create(from, to));
         connections.get(from, to).ifPresent(ConnectionContext::begin);
     }
 

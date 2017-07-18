@@ -3,14 +3,12 @@ package org.nextrtc.signalingserver.domain;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.websocket.Session;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
@@ -66,8 +64,7 @@ public class Member implements NextRTCMember {
         return to != null && conversation.equals(to.conversation);
     }
 
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
+    @Inject
     public void setEventBus(NextRTCEventBus eventBus) {
         this.eventBus = eventBus;
     }

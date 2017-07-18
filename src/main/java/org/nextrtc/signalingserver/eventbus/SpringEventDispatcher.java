@@ -1,0 +1,27 @@
+package org.nextrtc.signalingserver.eventbus;
+
+import lombok.extern.log4j.Log4j;
+import org.nextrtc.signalingserver.Names;
+import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Map;
+
+@Log4j
+@Component(Names.EVENT_DISPATCHER)
+@Scope("singleton")
+@NextRTCEventListener
+public class SpringEventDispatcher extends AbstractEventDispatcher {
+    @Autowired
+    private ApplicationContext context;
+
+    protected Collection<Object> getNextRTCEventListeners() {
+        Map<String, Object> beans = context.getBeansWithAnnotation(NextRTCEventListener.class);
+        beans.remove(Names.EVENT_DISPATCHER);
+        return beans.values();
+    }
+}

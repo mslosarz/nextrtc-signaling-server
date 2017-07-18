@@ -8,9 +8,9 @@ import org.nextrtc.signalingserver.cases.SignalHandler;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 import java.io.PrintWriter;
@@ -30,7 +30,7 @@ public class Server {
     private SignalResolver resolver;
     private RegisterMember register;
 
-    @Autowired
+    @Inject
     public Server(NextRTCEventBus eventBus,
                   MemberRepository members,
                   SignalResolver resolver,

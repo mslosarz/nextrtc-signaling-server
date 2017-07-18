@@ -7,10 +7,10 @@ import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Set;
 
 @Component
@@ -136,7 +136,7 @@ public class BroadcastConversation extends Conversation {
                 .send();
     }
 
-    @Autowired
+    @Inject
     public void setExchange(ExchangeSignalsBetweenMembers exchange) {
         this.exchange = exchange;
     }

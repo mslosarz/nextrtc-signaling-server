@@ -1,18 +1,16 @@
 package org.nextrtc.signalingserver.cases.connection;
 
 import lombok.Getter;
-import org.nextrtc.signalingserver.Names;
-import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.Signal;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -104,13 +102,12 @@ public class ConnectionContext {
         lastUpdated = ZonedDateTime.now();
     }
 
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
+    @Inject
     public void setBus(NextRTCEventBus bus) {
         this.bus = bus;
     }
 
-    @Autowired
+    @Inject
     public void setProperties(NextRTCProperties properties) {
         this.properties = properties;
     }

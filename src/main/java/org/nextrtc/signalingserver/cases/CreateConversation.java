@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.cases;
 
-import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.InternalMessage;
@@ -8,9 +7,9 @@ import org.nextrtc.signalingserver.domain.Signals;
 import org.nextrtc.signalingserver.exception.SignalingException;
 import org.nextrtc.signalingserver.factory.ConversationFactory;
 import org.nextrtc.signalingserver.repository.ConversationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 import static org.nextrtc.signalingserver.api.NextRTCEvents.CONVERSATION_CREATED;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
@@ -18,15 +17,19 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_C
 @Component(Signals.CREATE_HANDLER)
 public class CreateConversation implements SignalHandler {
 
-    @Autowired
-    @Qualifier(Names.EVENT_BUS)
     private NextRTCEventBus eventBus;
-
-    @Autowired
     private ConversationRepository conversations;
-
-    @Autowired
     private ConversationFactory factory;
+
+    @Inject
+    public CreateConversation(NextRTCEventBus eventBus,
+                              ConversationRepository conversations,
+                              ConversationFactory factory) {
+        this.eventBus = eventBus;
+        this.conversations = conversations;
+        this.factory = factory;
+    }
+
 
     public void execute(InternalMessage context) {
         conversations.findBy(context.getFrom())

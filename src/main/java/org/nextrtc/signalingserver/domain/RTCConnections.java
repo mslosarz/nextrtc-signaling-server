@@ -2,13 +2,13 @@ package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import org.nextrtc.signalingserver.NextRTCProperties;
 import org.nextrtc.signalingserver.cases.connection.ConnectionContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,10 +21,9 @@ public class RTCConnections {
     private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
 
     private ScheduledExecutorService scheduler;
-
     private NextRTCProperties properties;
 
-    @Autowired
+    @Inject
     public RTCConnections(ScheduledExecutorService scheduler, NextRTCProperties properties) {
         this.scheduler = scheduler;
         this.properties = properties;

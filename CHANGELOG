@@ -1,5 +1,9 @@
-v0.0.8:
-    -
+v1.0.0:
+    - NextRTC can be run as Spring app or as Standalone server
+    - Daggered project
+    - Refactored way of creation beans - Added factories, extracted interfaces and prepared 2 configuration. First for manual - standalone mode, second for Spring mode
+    - Lomboked again project
+    - Removed joda-time from dependency (Zoned Date time is used instead)
 v0.0.7:
     - Fixed problem with flushing server responses
 v0.0.6:

@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,7 +35,7 @@ public class NextRTCConfig {
     public ScheduledExecutorService scheduler() {
         ScheduledExecutorFactoryBean factoryBean = new ScheduledExecutorFactoryBean();
         factoryBean.setThreadNamePrefix("NextRTCConfig");
-        factoryBean.setPoolSize(properties.getSize());
+        factoryBean.setPoolSize(properties.getSchedulerPoolSize());
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
     }

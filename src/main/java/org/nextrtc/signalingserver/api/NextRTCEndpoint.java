@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import javax.websocket.*;
 import java.util.Objects;
 import java.util.Set;
@@ -67,7 +67,7 @@ public class NextRTCEndpoint {
         server.handleError(session, exception);
     }
 
-    @Autowired
+    @Inject
     public void setServer(Server server) {
         log.info("Setted server: " + server + " to " + this);
         this.server = server;
