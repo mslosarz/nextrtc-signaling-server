@@ -6,7 +6,7 @@ NextRTC is a rich java library providing [WebRTC signaling](https://www.html5roc
 
 ### What is needed to build this library on your own
 
-NextRTC project use Lombok, so please be aware that you have to install lombok plugin to you IDE.
+NextRTC project use Lombok, so please be aware that you have to install Lombok plugin to you IDE.
 
 # How to add NextRTC to your project?
 
@@ -115,7 +115,7 @@ If you want to use NextRTC in standalone mode you have to add it as a Maven depe
     </dependency>
 </dependencies>
 ```
-Latests version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server). Then you have to create Endpoint with @ServerEndpoint annotation (it comes from JSR 356), and implement method manualConfiguration. Builder provided in parameter has method to build up default implementation. But if you want to increase ping latency and so on, you should setup this values before you create endpoint.
+Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server). Then you have to create Endpoint with @ServerEndpoint annotation (it comes from JSR 356), and implement method manualConfiguration. Builder provided in parameter has method to build up default implementation. But if you want to increase ping latency and so on, you should setup this values before you create endpoint.
 ```java
 @ServerEndpoint(value = "/signaling",
         decoders = MessageDecoder.class,
@@ -225,7 +225,7 @@ custom can contains only string properties, deeper nesting will produce error. V
 ```
 Custom is used to determine version of conversation. When you are creating new conversation you can add to `custom` field `type` with value `MESH` or `BROADCAST`. Depending on value in type field signaling server will create different conversation type.
 
-##### field `signal`
+### Field `signal`
 In signal field you can pass one of default defined signals:
 - create
 - join
