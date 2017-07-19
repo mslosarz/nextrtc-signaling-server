@@ -1,5 +1,8 @@
 package org.nextrtc.signalingserver.domain;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class Signal {
@@ -49,10 +52,6 @@ public class Signal {
         return signalName;
     }
 
-    public String handlerName() {
-        return signalHandler;
-    }
-
     public static Signal fromString(String string) {
         String signalName = defaultString(string);
         for (Signal existing : signals) {
@@ -63,8 +62,29 @@ public class Signal {
         return new Signal(signalName);
     }
 
+    public static Signal byHandlerName(String string) {
+        String handlerName = defaultString(string);
+        Optional<Signal> signal = Arrays.stream(signals)
+                .filter(s -> s.signalHandler.equals(handlerName))
+                .findFirst();
+        if (signal.isPresent()) {
+            return signal.get();
+        }
+        for (Signal existing : signals) {
+            if (existing.signalName.equalsIgnoreCase(handlerName)) {
+                return existing;
+            }
+        }
+        return Signal.EMPTY;
+    }
+
     public static Signal[] values() {
         return signals;
+    }
+
+    @Override
+    public String toString() {
+        return signalName;
     }
 
     @Override

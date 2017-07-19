@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver;
+package org.nextrtc.signalingserver.modules;
 
 import dagger.Binds;
 import dagger.Module;
@@ -42,13 +42,18 @@ public abstract class NextRTCBeans {
 
     @Provides
     @Singleton
-    static SignalResolver ManualSignalResolver(Map<String, SignalHandler> signals) {
+    static ManualSignalResolver ManualSignalResolver(Map<String, SignalHandler> signals) {
         return new ManualSignalResolver(signals);
     }
 
+    @Binds
+    abstract SignalResolver signalResolver(ManualSignalResolver manualSignalResolver);
+
     @Provides
     @Singleton
-    static ManualEventDispatcher ManualEventDispatcher() {
-        return new ManualEventDispatcher();
+    static ManualEventDispatcher ManualEventDispatcher(NextRTCEventBus eventBus) {
+        ManualEventDispatcher manualEventDispatcher = new ManualEventDispatcher(eventBus);
+        eventBus.register(manualEventDispatcher);
+        return manualEventDispatcher;
     }
 }

@@ -5,14 +5,9 @@ import com.google.common.eventbus.Subscribe;
 import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
-import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
 
 import java.util.Collection;
-
-import static org.springframework.core.annotation.AnnotationUtils.getValue;
 
 @Log4j
 public abstract class AbstractEventDispatcher implements EventDispatcher {
@@ -20,7 +15,7 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
     @Subscribe
     @AllowConcurrentEvents
     public void handle(NextRTCEvent event) {
-        getNextRTCEventListeners().stream()
+        getNextRTCEventListeners().parallelStream()
                 .filter(listener -> isNextRTCHandler(listener) && supportsCurrentEvent(listener, event))
                 .forEach(listener -> doTry(() -> ((NextRTCHandler) listener).handleEvent(event)));
 
@@ -42,6 +37,9 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
 
     private boolean supportsCurrentEvent(Object listener, NextRTCEvent event) {
         NextRTCEvents[] events = getSupportedEvents(listener);
+        if (events == null) {
+            return false;
+        }
         for (NextRTCEvents supportedEvent : events) {
             if (isSupporting(event, supportedEvent)) {
                 return true;
@@ -54,14 +52,5 @@ public abstract class AbstractEventDispatcher implements EventDispatcher {
         return supportedEvent.equals(msg.type());
     }
 
-    private NextRTCEvents[] getSupportedEvents(Object listener) {
-        try {
-            if (AopUtils.isJdkDynamicProxy(listener)) {
-                listener = ((Advised) listener).getTargetSource().getTarget();
-            }
-        } catch (Exception e) {
-            return new NextRTCEvents[0];
-        }
-        return (NextRTCEvents[]) getValue(listener.getClass().getAnnotation(NextRTCEventListener.class));
-    }
+    protected abstract NextRTCEvents[] getSupportedEvents(Object listener);
 }

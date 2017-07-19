@@ -6,19 +6,22 @@ import org.nextrtc.signalingserver.cases.SignalHandler;
 import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.domain.SignalResolver;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
 public abstract class AbstractSignalResolver implements SignalResolver {
 
-    protected Map<String, SignalHandler> handlers;
-    private Map<Signal, SignalHandler> customHandlers = new HashMap<>();
+    private final Map<Signal, SignalHandler> customHandlers = new ConcurrentHashMap<>();
 
     public AbstractSignalResolver(Map<String, SignalHandler> handlers) {
-        this.handlers = handlers;
+        customHandlers.put(Signal.EMPTY, (msg) -> {
+        });
+        Map<Signal, SignalHandler> collect = handlers.entrySet().stream().collect(Collectors.toMap(k -> Signal.byHandlerName(k.getKey()), Map.Entry::getValue));
+        customHandlers.putAll(collect);
     }
 
     @Override
@@ -27,7 +30,7 @@ public abstract class AbstractSignalResolver implements SignalResolver {
         if (customHandlers.containsKey(signal)) {
             return new ImmutablePair<>(signal, customHandlers.get(signal));
         }
-        return new ImmutablePair<>(Signal.EMPTY, handlers.get(Signal.EMPTY.handlerName()));
+        return new ImmutablePair<>(Signal.EMPTY, customHandlers.get(Signal.EMPTY));
     }
 
     @Override
@@ -41,11 +44,12 @@ public abstract class AbstractSignalResolver implements SignalResolver {
 
     protected void initByDefault() {
         for (Signal signal : Signal.values()) {
-            addCustomHandler(signal, getHandler(signal));
+            SignalHandler handler = getHandler(signal);
+            addCustomHandler(signal, handler);
         }
     }
 
     private SignalHandler getHandler(Signal signal) {
-        return ofNullable(handlers.get(signal.handlerName())).orElse(handlers.get(Signal.EMPTY.handlerName()));
+        return ofNullable(customHandlers.get(signal)).orElse(customHandlers.get(Signal.EMPTY));
     }
 }

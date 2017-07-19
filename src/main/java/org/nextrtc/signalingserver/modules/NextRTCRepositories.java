@@ -1,4 +1,4 @@
-package org.nextrtc.signalingserver;
+package org.nextrtc.signalingserver.modules;
 
 import dagger.Binds;
 import dagger.Module;

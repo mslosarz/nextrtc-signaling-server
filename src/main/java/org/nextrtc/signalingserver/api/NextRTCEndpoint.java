@@ -19,6 +19,8 @@ public class NextRTCEndpoint {
 
     private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();
 
+    private static volatile NextRTCEndpoint staticManualEndpoint = null;
+
     @Getter(AccessLevel.PRIVATE)
     private Server server;
 
@@ -33,12 +35,18 @@ public class NextRTCEndpoint {
                 .ifPresent(this::setServer);
     }
 
-    private NextRTCEndpoint getEndpoint() {
-        NextRTCEndpoint manuallyConfigured = manualConfiguration(new ConfigurationBuilder());
-        return manuallyConfigured == null ? this : manuallyConfigured;
+    private synchronized NextRTCEndpoint getEndpoint() {
+        if (staticManualEndpoint != null) {
+            return staticManualEndpoint;
+        }
+        ConfigurationBuilder builder = manualConfiguration(new ConfigurationBuilder());
+        if (builder == null) {
+            return this;
+        }
+        return staticManualEndpoint = builder.build(this);
     }
 
-    protected NextRTCEndpoint manualConfiguration(final ConfigurationBuilder builder) {
+    protected ConfigurationBuilder manualConfiguration(final ConfigurationBuilder builder) {
         return null;
     }
 

@@ -3,6 +3,9 @@ package org.nextrtc.signalingserver.api;
 import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.DaggerNextRTCComponent;
 import org.nextrtc.signalingserver.NextRTCComponent;
+import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
+import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
+import org.nextrtc.signalingserver.property.ManualNextRTCProperties;
 
 @Log4j
 public class ConfigurationBuilder {
@@ -14,10 +17,21 @@ public class ConfigurationBuilder {
         return this;
     }
 
-    public NextRTCEndpoint build() {
-        NextRTCEndpoint nextRTCEndpoint = new NextRTCEndpoint();
+    public NextRTCEndpoint build(NextRTCEndpoint endpoint) {
         log.info("Injecting dependencies...");
-        component.inject(nextRTCEndpoint);
-        return nextRTCEndpoint;
+        component.inject(endpoint);
+        return endpoint;
+    }
+
+    public ManualNextRTCProperties nextRTCProperties() {
+        return component.manualProperties();
+    }
+
+    public ManualSignalResolver signalResolver() {
+        return component.manualSignalResolver();
+    }
+
+    public ManualEventDispatcher eventDispatcher() {
+        return component.manualEventDispatcher();
     }
 }
