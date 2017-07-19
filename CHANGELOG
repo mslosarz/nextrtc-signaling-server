@@ -1,4 +1,5 @@
 v1.0.0:
+    - Updated README.md
     - NextRTC can be run as Spring app or as Standalone server
     - Daggered project
     - Refactored way of creation beans - Added factories, extracted interfaces and prepared 2 configuration. First for manual - standalone mode, second for Spring mode
