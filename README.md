@@ -42,7 +42,7 @@ Then you have to create
 public class MyEndpoint extends NextRTCEndpoint {
 }
 ```
-And add to your configuration import to NextRTCConfig bean
+And add to your configuration import to `NextRTCConfig` bean
 ```java
 @Configuration
 @Import(NextRTCConfig.class)
@@ -62,7 +62,7 @@ class Config {
     private SignalResolver resolver;
 }
 ```
-Then in the same Config file you have to add bean which will add your handler to signal resolver. Handler has to implement interface `SignalHandler`. This interface has only one method with one parameter. This parameter has type InternalMessage. In parameter of this method you will always have `from` field with member that sent message. If your client provides in request destination member, field `to` will be filled with appropriate member.
+Then in the same Config file you have to add bean which will add your handler to signal resolver. Handler has to implement interface `SignalHandler`. This interface has only one method with one parameter. This parameter has type `InternalMessage`. In parameter of this method you will always have `from` field with member that sent message. If your client provides in request destination member, field `to` will be filled with appropriate member.
 
 That interface has only one method, so I this example I'll inline it to lambda expression:
 ```java
@@ -136,8 +136,8 @@ In standalone mode you probably have to add to your project directory `webapp/WE
          version="3.1">
 </web-app>
 ```
-Without web.xml servlet container sometimes doesn't scan classes and your Endpoint can be omitted during class loading.
-You can find working example [here](https://github.com/mslosarz/nextrtc-example-wo-spring)
+Without `web.xml` servlet container sometimes doesn't scan classes and your Endpoint can be omitted during class loading.
+You can find working example [here](https://github.com/mslosarz/nextrtc-example-wo-spring).
 
 ## How to send messages to client
 
