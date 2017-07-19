@@ -10,7 +10,7 @@ NextRTC project use Lombok, so please be aware that you have to install Lombok p
 
 # How to add NextRTC to your project?
 
-NextRTC can be used in two modes **Standalone** or as a **Spring module**. Both mode setup is described below.
+NextRTC can be used in two modes **Standalone** or as a **Spring module**. Details about frontend client can be found [here](https://github.com/mslosarz/nextrtc-js-client). Both mode setup is described below.
 
 ## Spring module mode
 If you want to use NextRTC as a module of existing Spring based solution you have to add to you pom.xml file following entry:
