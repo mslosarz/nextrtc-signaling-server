@@ -249,3 +249,6 @@ Server can send to messages with default predefined signals or with custom defin
 - ping
 - error
 - end
+
+# Changes
+If you want to check what has been done you can check [CHANGELOG](https://github.com/mslosarz/nextrtc-signaling-server/blob/master/CHANGELOG)
