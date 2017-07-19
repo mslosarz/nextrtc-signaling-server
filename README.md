@@ -53,7 +53,7 @@ public class MyEndpoint extends NextRTCEndpoint {
 
 }
 ```
-In standalone mode you probably have to add to your project directory webapp/WEB-INF/web.xml with content is similar to this provided below:
+In standalone mode you probably have to add to your project directory `webapp/WEB-INF/web.xml` with content is similar to this provided below:
 ```xml
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -188,3 +188,4 @@ Server can send to messages with default predefined signals or with custom defin
 - ping
 - error
 - end
+
