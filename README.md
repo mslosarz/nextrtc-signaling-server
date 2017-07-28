@@ -136,8 +136,8 @@ Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact
         decoders = MessageDecoder.class,
         encoders = MessageEncoder.class)
 public class MyEndpoint extends NextRTCEndpoint {
-    protected NextRTCEndpoint manualConfiguration(ConfigurationBuilder builder) {
-        return builder.createDefaultEndpoint().build();
+    protected EndpointConfiguration manualConfiguration(ConfigurationBuilder builder) {
+        return builder.createDefaultEndpoint();
     }
 
 }
