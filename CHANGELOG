@@ -1,4 +1,5 @@
 v1.0.0:
+    - Extracted EndpointConfiguration
     - Updated README.md
     - NextRTC can be run as Spring app or as Standalone server
     - Daggered project

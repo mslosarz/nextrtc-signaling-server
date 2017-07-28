@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface SignalResolver {
     Pair<Signal, SignalHandler> resolve(String string);
 
-    Optional<Pair<Signal, SignalHandler>> addCustomHandler(Signal signal, SignalHandler handler);
+    Optional<Pair<Signal, SignalHandler>> addCustomSignal(Signal signal, SignalHandler handler);
 }

@@ -86,6 +86,21 @@ class Config {
  
 In this example new handler (upperCase) will take a content of incoming message and resend the content to sender with uppercase letters.
 
+### How to react on events
+If you want to handle event that comes from server you have to create class that implements interface implements `NextRTCHandler`, and give annotation `@NextRTCEventListener(<event>)`. Class that implements interface and has EventListener annotation has to be registered in Spring container. Here is example with basic handler.
+```java
+@Component
+@NextRTCEventListener(UNEXPECTED_SITUATION)
+public class ExceptionHandler implements NextRTCHandler {
+    private static final Logger log = Logger.getLogger(ExceptionHandler.class);
+    @Override
+    public void handleEvent(NextRTCEvent nextRTCEvent) {
+        log.error(nextRTCEvent);
+    }
+}
+```
+
+
 ## Standalone mode
 If you want to use NextRTC in standalone mode you have to add it as a Maven dependency
 ```xml
@@ -138,6 +153,52 @@ In standalone mode you probably have to add to your project directory `webapp/WE
 ```
 Without `web.xml` servlet container sometimes doesn't scan classes and your Endpoint can be omitted during class loading.
 You can find working example [here](https://github.com/mslosarz/nextrtc-example-wo-spring).
+
+### How to register own signal
+
+In manualConfiguration method you have to create context using builder provided as method parameter:
+```java
+EndpointConfiguration configuration = builder.createDefaultEndpoint();
+```
+Configuration object provides you ability to modify properties `configuration.nextRTCProperties()`, and it also provides you `configuration.signalResolver()`. To add your own signal you have to just add to signal resolver your own signal
+ ```java
+class MyEndpoint implements NextRTCEndpoint {
+    protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
+        EndpointConfiguration configuration = builder.createDefaultEndpoint();
+        configuration.addCustomSignal(Signal.fromString("upperCase"), 
+                    (msg)-> 
+                           InternalMessage.create()
+                                   .to(msg.getFrom())
+                                   .content(msg.getContent().toUpperCase())
+                                   .signal(Signal.fromString("upperCase"))
+                                   .build()
+                                   .send());
+        return configuration;
+    }
+}
+```
+In this example new handler (upperCase) will take a content of incoming message and resend the content to sender with uppercase letters.
+
+### How to react on events
+If you want to handle event that comes from server you have to create class that implements interface implements `NextRTCHandler`, and give annotation `@NextRTCEventListener(<event>)`. Class that implements interface and has EventListener annotation has to be registered during manual configuration. Here is example with basic handler.
+```java
+@NextRTCEventListener(UNEXPECTED_SITUATION)
+public class ExceptionHandler implements NextRTCHandler {
+    private static final Logger log = Logger.getLogger(ExceptionHandler.class);
+    @Override
+    public void handleEvent(NextRTCEvent nextRTCEvent) {
+        log.error(nextRTCEvent);
+    }
+}
+
+class MyEndpoint implements NextRTCEndpoint {
+    protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
+        EndpointConfiguration configuration = builder.createDefaultEndpoint();
+        configuration.eventDispatcher().addListener(new ExceptionHandler());
+        return configuration;
+    }
+}
+```
 
 ## How to send messages to client
 
@@ -193,9 +254,9 @@ You can react on following events:
 - MEDIA_LOCAL_STREAM_CREATED
     * Is posted when signal offerResponse / answerResponse arrives to server
 - MEDIA_STREAMING
-    * Is posted when clients exchanded all required signals to connect themselves by WebRTC
+    * Is posted when clients exchanged all required signals to connect themselves by WebRTC
 - TEXT
-    * Is posted on each text message comming from client
+    * Is posted on each text message coming from client
 
  To be able to react on event you have to write java class which implements `NextRTCHandler` and has annotation `@NextRTCEventListener`. You can customize on what certain event your handler will react by giving it name to annotation `@NextRTCEventListener(UNEXPECTED_SITUATION)`. If you are using NextRTC with Spring then your handler should be also annotated with one of Spring stereotype annotations (@Service, @Component ...)
 

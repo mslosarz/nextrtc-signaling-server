@@ -39,14 +39,14 @@ public class NextRTCEndpoint {
         if (staticManualEndpoint != null) {
             return staticManualEndpoint;
         }
-        ConfigurationBuilder builder = manualConfiguration(new ConfigurationBuilder());
-        if (builder == null) {
+        EndpointConfiguration configuration = manualConfiguration(new ConfigurationBuilder());
+        if (configuration == null) {
             return this;
         }
-        return staticManualEndpoint = builder.build(this);
+        return staticManualEndpoint = configuration.injectContext(this);
     }
 
-    protected ConfigurationBuilder manualConfiguration(final ConfigurationBuilder builder) {
+    protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
         return null;
     }
 

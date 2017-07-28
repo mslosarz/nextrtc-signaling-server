@@ -34,7 +34,7 @@ public abstract class AbstractSignalResolver implements SignalResolver {
     }
 
     @Override
-    public Optional<Pair<Signal, SignalHandler>> addCustomHandler(Signal signal, SignalHandler handler) {
+    public Optional<Pair<Signal, SignalHandler>> addCustomSignal(Signal signal, SignalHandler handler) {
         SignalHandler oldValue = customHandlers.put(signal, handler);
         if (oldValue == null) {
             return Optional.empty();
@@ -45,7 +45,7 @@ public abstract class AbstractSignalResolver implements SignalResolver {
     protected void initByDefault() {
         for (Signal signal : Signal.values()) {
             SignalHandler handler = getHandler(signal);
-            addCustomHandler(signal, handler);
+            addCustomSignal(signal, handler);
         }
     }
 

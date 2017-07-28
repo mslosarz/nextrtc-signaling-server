@@ -251,7 +251,7 @@ public class ServerActorTest extends BaseTest {
     @Test
     public void shouldBeAbleToHandleCustomSignal() throws Exception {
         // given
-        resolver.addCustomHandler(Signal.fromString("upperCase"), (message) -> InternalMessage.create()//
+        resolver.addCustomSignal(Signal.fromString("upperCase"), (message) -> InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
