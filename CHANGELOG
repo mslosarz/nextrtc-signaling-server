@@ -1,4 +1,6 @@
-v1.0.0:
+v1.0.0-RC2:
+    -
+v1.0.0-RC1:
     - Extracted EndpointConfiguration
     - Updated README.md
     - NextRTC can be run as Spring app or as Standalone server
