@@ -1,5 +1,5 @@
 v1.0.0-RC2:
-    -
+    - Changed pom version policy
 v1.0.0-RC1:
     - Extracted EndpointConfiguration
     - Updated README.md
