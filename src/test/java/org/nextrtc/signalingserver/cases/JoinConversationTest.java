@@ -8,12 +8,17 @@ import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.exception.SignalingException;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
+import org.nextrtc.signalingserver.repository.ConversationRepository;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NOT_FOUND;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_IN_OTHER_CONVERSATION;
 
 public class JoinConversationTest extends BaseTest {
@@ -23,6 +28,9 @@ public class JoinConversationTest extends BaseTest {
 
     @Autowired
     private Members members;
+
+    @Autowired
+    private ConversationRepository conversations;
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -107,7 +115,7 @@ public class JoinConversationTest extends BaseTest {
 
         // then
         exception.expect(SignalingException.class);
-        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.getErrorCode());
+        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.name());
 
         // when
         joinConversation.execute(InternalMessage.create()//
@@ -115,5 +123,26 @@ public class JoinConversationTest extends BaseTest {
                 .content("conv")//
                 .build());
     }
+
+    @Test
+    public void shouldThrownAnExceptionWhenJoinToExistingConversationIsSetToTrueAndConversationDoesntExist() throws Exception {
+        // given
+        NextRTCProperties properties = mock(NextRTCProperties.class);
+        when(properties.isJoinOnlyToExisting()).thenReturn(true);
+        Member jan = mockMember("Jan");
+        members.register(jan);
+
+        // then
+        exception.expect(SignalingException.class);
+        exception.expectMessage(CONVERSATION_NOT_FOUND.name());
+
+        // when
+        new JoinConversation(conversations, null, properties).execute(InternalMessage.create()//
+                .from(jan)//
+                .content("conv")//
+                .build());
+    }
+
+
 
 }

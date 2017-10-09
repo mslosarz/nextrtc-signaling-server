@@ -8,4 +8,5 @@ public interface Names {
     String SCHEDULER_NAME = "nextRTCPingScheduler";
     String SCHEDULED_PERIOD = "${nextrtc.ping_period:3}";
     String MAX_CONNECTION_SETUP_TIME = "${nextrtc.max_connection_setup_time:30}";
+    String JOIN_ONLY_TO_EXISTING = "${nextrtc.join_only_to_existing:false}";
 }

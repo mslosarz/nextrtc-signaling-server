@@ -1,4 +1,6 @@
 v1.0.0-RC2:
+    - Changed structure of Exceptions
+    - Added property nextrtc.join_only_to_existing to decide whether join conversation should thrown an exception when conversation exists or create a new one.
     - Changed pom version policy
 v1.0.0-RC1:
     - Extracted EndpointConfiguration

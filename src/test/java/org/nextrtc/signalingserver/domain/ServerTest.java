@@ -46,7 +46,7 @@ public class ServerTest extends BaseTest {
 
         // then
         assertThat(match.getMessage().getTo(), is("s1"));
-        assertThat(match.getMessage().getContent(), is("0001: MEMBER_NOT_FOUND"));
+        assertThat(match.getMessage().getContent(), is("MEMBER_NOT_FOUND"));
         assertThat(match.getMessage().getSignal(), is("error"));
         assertThat(match.getMessage().getCustom().size(), is(1));
         assertTrue(match.getMessage().getCustom().containsKey("stackTrace"));

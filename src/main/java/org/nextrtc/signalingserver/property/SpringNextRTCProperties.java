@@ -17,4 +17,7 @@ public class SpringNextRTCProperties implements NextRTCProperties {
 
     @Value(Names.SCHEDULER_SIZE)
     private int schedulerPoolSize;
+
+    @Value(Names.JOIN_ONLY_TO_EXISTING)
+    private boolean joinOnlyToExisting;
 }

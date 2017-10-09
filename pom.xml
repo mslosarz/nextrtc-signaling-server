@@ -4,7 +4,7 @@
 
     <groupId>org.nextrtc.signalingserver</groupId>
     <artifactId>nextrtc-signaling-server</artifactId>
-    <version>1.0.0-RC2-SNAPSHOT</version>
+    <version>1.0.0-RC2</version>
     <packaging>jar</packaging>
 
     <name>nextrtc-signaling-server</name>
@@ -180,7 +180,6 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
-
 
         <dependency>
             <groupId>com.googlecode.zohhak</groupId>

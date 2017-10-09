@@ -6,4 +6,6 @@ public interface NextRTCProperties {
     int getPingPeriod();
 
     int getSchedulerPoolSize();
+
+    boolean isJoinOnlyToExisting();
 }

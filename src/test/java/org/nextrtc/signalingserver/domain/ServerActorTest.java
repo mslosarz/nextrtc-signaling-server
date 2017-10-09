@@ -1,10 +1,11 @@
 package org.nextrtc.signalingserver.domain;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.cases.JoinConversation;
 import org.nextrtc.signalingserver.repository.Conversations;
-import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -23,7 +24,7 @@ public class ServerActorTest extends BaseTest {
     @Autowired
     private Server server;
     @Autowired
-    private Members members;
+    private JoinConversation joinConversation;
     @Autowired
     private Conversations conversations;
     @Autowired
@@ -272,6 +273,34 @@ public class ServerActorTest extends BaseTest {
         assertNoErrors(john);
     }
 
+    @Test
+    public void shouldOverrideExistingSignal() throws Exception {
+        // given
+        resolver.addCustomSignal(Signal.fromString("join"), (message) -> InternalMessage.create()//
+                .to(message.getFrom())
+                .content(message.getContent().toUpperCase())
+                .signal(Signal.fromString("upperCase"))
+                .build()
+                .send());
+
+        TestClientActor john = new TestClientActor("John", server);
+        john.openSocket();
+
+        // when
+        john.sendToServer(Message.create()
+                .signal("join")
+                .content("Hello")
+                .build());
+
+        // then
+        assertThat(john.getMessages().get(0).getContent(), is("HELLO"));
+        assertNoErrors(john);
+    }
+
+    @After
+    public void removeOverrides() {
+        resolver.addCustomSignal(Signal.JOIN, joinConversation);
+    }
 
     private void assertNoErrors(TestClientActor john) {
         assertTrue(john.getMessages().stream().allMatch(m -> !m.getSignal().equals(Signals.ERROR)));

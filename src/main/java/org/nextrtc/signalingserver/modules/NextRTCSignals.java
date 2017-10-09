@@ -8,6 +8,7 @@ import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.*;
 import org.nextrtc.signalingserver.domain.Signals;
 import org.nextrtc.signalingserver.factory.ConversationFactory;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.nextrtc.signalingserver.repository.ConversationRepository;
 
 import javax.inject.Singleton;
@@ -53,8 +54,9 @@ public abstract class NextRTCSignals {
     @IntoMap
     @StringKey(Signals.JOIN_HANDLER)
     static SignalHandler JoinConversation(ConversationRepository conversations,
-                                          CreateConversation create) {
-        return new JoinConversation(conversations, create);
+                                          CreateConversation create,
+                                          NextRTCProperties properties) {
+        return new JoinConversation(conversations, create, properties);
     }
 
     @Provides

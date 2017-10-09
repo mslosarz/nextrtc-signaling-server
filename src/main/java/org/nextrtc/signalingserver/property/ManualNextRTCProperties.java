@@ -16,4 +16,6 @@ public class ManualNextRTCProperties implements NextRTCProperties {
     private int pingPeriod = 3;
     @Builder.Default
     private int schedulerPoolSize = 10;
+    @Builder.Default
+    private boolean joinOnlyToExisting = false;
 }

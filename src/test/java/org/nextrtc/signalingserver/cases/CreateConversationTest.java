@@ -115,7 +115,7 @@ public class CreateConversationTest extends BaseTest {
 
         // then
         exception.expect(SignalingException.class);
-        exception.expectMessage(CONVERSATION_NAME_OCCUPIED.getErrorCode());
+        exception.expectMessage(CONVERSATION_NAME_OCCUPIED.name());
 
         // when
         create.execute(InternalMessage.create()//
@@ -137,7 +137,7 @@ public class CreateConversationTest extends BaseTest {
 
         // then
         exception.expect(SignalingException.class);
-        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.getErrorCode());
+        exception.expectMessage(MEMBER_IN_OTHER_CONVERSATION.name());
 
         // when
         create.execute(InternalMessage.create()//

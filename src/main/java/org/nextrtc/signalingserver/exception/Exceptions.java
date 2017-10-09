@@ -1,25 +1,15 @@
 package org.nextrtc.signalingserver.exception;
 
 public enum Exceptions {
-    MEMBER_NOT_FOUND("0001"), //
-    INVALID_RECIPIENT("0002"), //
-    MEMBER_IN_OTHER_CONVERSATION("0003"),
+    MEMBER_NOT_FOUND,
+    INVALID_RECIPIENT,
+    MEMBER_IN_OTHER_CONVERSATION,
 
-    INVALID_CONVERSATION_NAME("0101"), //
-    CONVERSATION_NAME_OCCUPIED("0102"), //
-    CONVERSATION_NOT_FOUND("0103"), //
+    INVALID_CONVERSATION_NAME,
+    CONVERSATION_NAME_OCCUPIED,
+    CONVERSATION_NOT_FOUND,
 
-    UNKNOWN_ERROR("0501"),;
-
-    private String code;
-
-    Exceptions(String code) {
-        this.code = code;
-    }
-
-    public String getErrorCode() {
-        return code;
-    }
+    UNKNOWN_ERROR;
 
     public SignalingException exception() {
         return new SignalingException(this);

@@ -48,7 +48,7 @@ public class ConversationsTest extends BaseTest {
         conversations.save(conversation);
 
         // then
-        expect.expectMessage(containsString(CONVERSATION_NAME_OCCUPIED.getErrorCode()));
+        expect.expectMessage(containsString(CONVERSATION_NAME_OCCUPIED.name()));
 
         // when
         conversations.save(conversation);
