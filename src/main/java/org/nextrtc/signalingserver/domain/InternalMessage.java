@@ -4,8 +4,7 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 
-import javax.websocket.RemoteEndpoint.Async;
-import java.io.IOException;
+import javax.websocket.RemoteEndpoint.Basic;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -42,19 +41,18 @@ public class InternalMessage {
     /**
      * Method will send message to recipient (member To)
      */
-    public void send() {
+    public synchronized void send() {
         if (signal != Signal.PING) {
             log.info("Outgoing: " + toString());
         }
-        getRemotePeer().sendObject(transformToExternalMessage());
         try {
-            getRemotePeer().flushBatch();
-        } catch (IOException e) {
-            log.debug("Unable to send message: " + transformToExternalMessage() + " error on flush!");
+            getRemotePeer().sendObject(transformToExternalMessage());
+        } catch (Exception e) {
+            log.debug("Unable to send message: " + transformToExternalMessage() + " error during sending!");
         }
     }
 
-    void sendCarefully() {
+    synchronized void sendCarefully() {
         if (to.getSession().isOpen()) {
             send();
         } else {
@@ -76,8 +74,8 @@ public class InternalMessage {
         return member == null ? EMPTY : member.getId();
     }
 
-    private Async getRemotePeer() {
-        return to.getSession().getAsyncRemote();
+    private Basic getRemotePeer() {
+        return to.getSession().getBasicRemote();
     }
 
     @Override

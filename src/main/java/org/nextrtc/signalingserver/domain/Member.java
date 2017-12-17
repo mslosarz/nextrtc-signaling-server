@@ -74,6 +74,10 @@ public class Member implements NextRTCMember {
         return String.format("%s", id);
     }
 
+    public synchronized Session getSession() {
+        return session;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Member)) {
