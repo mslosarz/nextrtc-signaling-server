@@ -10,13 +10,16 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 public class MockedClient {
     @OnWebSocketClose
     public void onClose(int statusCode, String reason) {
+        System.out.println("CLOSED: " + statusCode + " -> " + reason);
     }
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
+        System.out.println("STARTED: " + session);
     }
 
     @OnWebSocketMessage
     public void onMessage(String msg) {
+        System.out.println("MSG: " + msg);
     }
 }

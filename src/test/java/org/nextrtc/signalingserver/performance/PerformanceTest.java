@@ -1,14 +1,12 @@
 package org.nextrtc.signalingserver.performance;
 
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
 
 
-@Ignore
+//@Ignore
 public class PerformanceTest {
 
     @Test
@@ -19,7 +17,7 @@ public class PerformanceTest {
         URI uri = new URI("ws://localhost:8080/signaling");
         try {
             client.start();
-            Session session = client.connect(socket, uri).get();
+            client.connect(socket, uri).get();
         } finally {
             client.stop();
         }
