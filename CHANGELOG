@@ -1,5 +1,7 @@
 v1.0.0-RC3:
-    -
+    - Fixed version of dependencies
+    - Performance tests
+    - Hanging connections #27
 v1.0.0-RC2:
     - Changed structure of Exceptions
     - Added property nextrtc.join_only_to_existing to decide whether join conversation should thrown an exception when conversation exists or create a new one.

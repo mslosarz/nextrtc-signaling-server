@@ -24,12 +24,12 @@ public class NextRTCEndpoint {
     public NextRTCEndpoint() {
         if (INSTANCE == null) {
             synchronized (NextRTCEndpoint.class) {
-                if (INSTANCE == null) {
+                if (INSTANCE == null && getEndpoint().getServer() != null) {
                     INSTANCE = getEndpoint();
                 }
             }
         }
-        this.setServer(INSTANCE.getServer());
+        this.setServer(INSTANCE == null ? null : INSTANCE.getServer());
     }
 
     private NextRTCEndpoint getEndpoint() {
