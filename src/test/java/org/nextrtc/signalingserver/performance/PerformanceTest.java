@@ -18,12 +18,20 @@ import static java.util.stream.Collectors.toList;
 
 //@Ignore
 public class PerformanceTest {
+    private ExecutorService service = Executors.newFixedThreadPool(4);
+    private URI uri = uri();
+
+    private URI uri() {
+        try {
+            return new URI("ws://localhost:8080/signaling");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void shouldBeAbleToOpen3000Sessions() throws Exception {
         // given
-        ExecutorService service = Executors.newFixedThreadPool(4);
-
         List<Future<WebSocketClient>> clients = new ArrayList<>();
         for (int i = 0; i < 30; i++)
             clients.add(service.submit(this::open100Sessions));
@@ -32,7 +40,7 @@ public class PerformanceTest {
         List<WebSocketClient> webClients = clients.stream().map(f -> doTry(f::get)).collect(toList());
 
         // then
-        Thread.sleep(1000000);
+        Thread.sleep(100000);
         webClients.forEach(w -> {
             try {
                 w.stop();
@@ -42,11 +50,19 @@ public class PerformanceTest {
         });
     }
 
+    @Test
+    public void scenario1_meshConversationWith100Participant() throws Exception {
+        // given
+
+        // when
+
+        // then
+    }
+
     private WebSocketClient open100Sessions() {
         WebSocketClient client = new WebSocketClient();
         MockedClient socket = new MockedClient();
         try {
-            URI uri = new URI("ws://localhost:8080/signaling");
             List<Future<Session>> sessions = new LinkedList<>();
             client.start();
             IntStream.range(1, 100).forEach(i -> doTry(() -> sessions.add(client.connect(socket, uri))));
