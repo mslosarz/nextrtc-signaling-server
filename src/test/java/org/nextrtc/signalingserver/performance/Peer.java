@@ -11,13 +11,14 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.nextrtc.signalingserver.domain.Message;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
+import static java.util.Collections.synchronizedList;
 import static org.nextrtc.signalingserver.domain.Message.create;
 
 @WebSocket
@@ -28,11 +29,11 @@ public class Peer {
     private String name;
     private Session session;
     private String joinedTo;
-    private Map<String, Action> actions = new HashMap<>();
-    private Map<String, List<String>> candidates = new HashMap<>();
-    private List<String> joined = new ArrayList<>();
-    private List<String> errors = new ArrayList<>();
-    private List<Message> log = new ArrayList<>();
+    private Map<String, Action> actions = new ConcurrentHashMap<>();
+    private Map<String, List<String>> candidates = new ConcurrentHashMap<>();
+    private List<String> joined = synchronizedList(new ArrayList<>());
+    private List<String> errors = synchronizedList(new ArrayList<>());
+    private List<Message> log = synchronizedList(new ArrayList<>());
 
     public Peer(int i) {
         actions.put("created", (s, msg) -> {
@@ -61,17 +62,22 @@ public class Peer {
             send(create()
                     .to(msg.getFrom())
                     .signal("candidate")
-                    .content("candidate from" + name)
+                    .content("local candidate from " + name)
+                    .build());
+            send(create()
+                    .to(msg.getFrom())
+                    .signal("candidate")
+                    .content("remote candidate from " + name)
                     .build());
         });
         actions.put("candidate", (s, msg) -> {
             candidates.computeIfAbsent(msg.getFrom(), k -> new ArrayList<>());
             candidates.get(msg.getFrom()).add(msg.getContent());
-            if (candidates.get(msg.getFrom()).size() < 1) {
+            if (!msg.getContent().contains("answer")) {
                 send(create()
                         .to(msg.getFrom())
                         .signal("candidate")
-                        .content("candidate from" + name)
+                        .content("answer from " + name + " on " + msg.getContent())
                         .build());
             }
         });
@@ -145,13 +151,17 @@ public class Peer {
         });
     }
 
-    private void waitUtil(Predicate<Peer> predicate) {
+    void waitUtil(Predicate<Peer> predicate) {
+        int waitingTime = 0;
         while (!predicate.test(this)) {
             try {
                 Thread.sleep(100);
+                waitingTime += 100;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if (waitingTime >= 1 * 1000)
+                break;
         }
     }
 
