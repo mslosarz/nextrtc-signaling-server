@@ -42,15 +42,25 @@ Then you have to create
 public class MyEndpoint extends NextRTCEndpoint {
 }
 ```
-And add to your configuration import to `NextRTCConfig` bean
+Add to your configuration import to `NextRTCConfig` bean. In configuration you have to define your endpoint as a bean and provides ServerEndpointExporter.   
 ```java
 @Configuration
 @Import(NextRTCConfig.class)
 public class EndpointConfig {
+        @Bean
+        public MyEndpoint myEndpoint() {
+            return new MyEndpoint();
+        }
+    
+        @Bean
+        public ServerEndpointExporter serverEndpointExporter() {
+            return new ServerEndpointExporter();
+        }
 }
 ```
 
-That is all what you need to make NextRTC up and running (from the back-end point of view)
+That is all what you need to make NextRTC up and running (from the back-end point of view).
+You can find working example [here](https://github.com/mslosarz/nextrtc-example-videochat).
 
 ### How to register own signal
 

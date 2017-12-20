@@ -24,7 +24,7 @@ public class NextRTCEndpoint {
     public NextRTCEndpoint() {
         if (INSTANCE == null) {
             synchronized (NextRTCEndpoint.class) {
-                if (INSTANCE == null && getEndpoint().getServer() != null) {
+                if (INSTANCE == null && getEndpoint() != null) {
                     INSTANCE = getEndpoint();
                 }
             }
@@ -75,8 +75,11 @@ public class NextRTCEndpoint {
     }
 
     @Inject
-    public void setServer(Server server) {
+    public final void setServer(Server server) {
         log.info("Setted server: " + server + " to " + this);
+        if (INSTANCE != null && INSTANCE != this && INSTANCE.getServer() == null) {
+            INSTANCE.setServer(server);
+        }
         this.server = server;
     }
 }
