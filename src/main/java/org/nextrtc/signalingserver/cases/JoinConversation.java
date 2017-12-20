@@ -30,7 +30,7 @@ public class JoinConversation implements SignalHandler {
         this.properties = properties;
     }
 
-    public void execute(InternalMessage context) {
+    public synchronized void execute(InternalMessage context) {
         conversations.findBy(context.getFrom())
                 .map(Conversation::getId)
                 .map(MEMBER_IN_OTHER_CONVERSATION::exception)

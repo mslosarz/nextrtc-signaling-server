@@ -43,7 +43,7 @@ public class InternalMessage {
      */
     public synchronized void send() {
         if (signal != Signal.PING) {
-            log.info("Outgoing: " + toString());
+            log.debug("Outgoing: " + toString());
         }
         try {
             getRemotePeer().sendObject(transformToExternalMessage());

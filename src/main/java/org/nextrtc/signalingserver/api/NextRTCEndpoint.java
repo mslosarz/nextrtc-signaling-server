@@ -57,7 +57,7 @@ public class NextRTCEndpoint {
 
     @OnMessage
     public void onMessage(Message message, Session session) {
-        log.info("Handling message from: " + session.getId());
+        log.debug("Handling message from: " + session.getId());
         server.handle(message, session);
     }
 

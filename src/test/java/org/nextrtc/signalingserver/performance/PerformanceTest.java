@@ -36,7 +36,7 @@ public class PerformanceTest {
         peers.forEach(p -> p.getSocket().join("x"));
 
         // then
-        while (true)
+//        while (true)
             Thread.sleep(100);
     }
 

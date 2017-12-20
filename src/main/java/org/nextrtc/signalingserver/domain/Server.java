@@ -56,7 +56,7 @@ public class Server {
     }
 
     private void processMessage(SignalHandler handler, InternalMessage message) {
-        log.info("Incoming: " + message);
+        log.debug("Incoming: " + message);
         if (handler != null) {
             handler.execute(message);
         }

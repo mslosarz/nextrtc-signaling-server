@@ -1,4 +1,6 @@
 v1.0.0-RC3:
+    - Changed log level
+    - Synchronization on join signal
     - Fixed version of dependencies
     - Performance tests
     - Used Synchronous communication instead of Asynchronous
