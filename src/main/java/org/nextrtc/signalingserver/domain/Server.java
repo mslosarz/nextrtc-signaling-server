@@ -86,7 +86,7 @@ public class Server {
 
 
     public void handleError(Session s, Throwable exception) {
-        doSaveExecution(new SessionWrapper(s), session -> {
+        doSaveExecution(s, session -> {
                     members.unregister(session.getId());
                     eventBus.post(UNEXPECTED_SITUATION.occurFor(session, exception.getMessage()));
                 }

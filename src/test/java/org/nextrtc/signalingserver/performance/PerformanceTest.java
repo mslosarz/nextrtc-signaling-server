@@ -25,7 +25,7 @@ public class PerformanceTest {
 
 
     @Test
-    public void scenario1_meshConversationWith100Participant() throws Exception {
+    public void scenario1_meshConversationWith64Participant() throws Exception {
         // given
         List<Tuple<Peer>> peers = IntStream.range(0, 64)
                 .mapToObj(Peer::new)
@@ -33,9 +33,7 @@ public class PerformanceTest {
                 .collect(toList());
 
         // when
-        Thread.sleep(1000);
         peers.forEach(p -> p.getSocket().join("x"));
-        Thread.sleep(10000);
 
         // then
         while (true)
