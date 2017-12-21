@@ -20,7 +20,7 @@ public class PerformanceTest {
 
     private URI uri() {
         try {
-            return new URI("ws://localhost:8080/signaling");
+            return new URI("ws://localhost:8090/signaling");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -30,8 +30,8 @@ public class PerformanceTest {
     @Test
     public void scenario1_meshConversationWith64Participant() throws Exception {
         // given
-        int size = 64;
-        List<Tuple<Peer>> peers = IntStream.range(0, size + 1)
+        int size = 9;
+        List<Tuple<Peer>> peers = IntStream.range(0, size)
                 .mapToObj(Peer::new)
                 .map(this::openSession)
                 .collect(toList());
@@ -40,11 +40,11 @@ public class PerformanceTest {
         peers.forEach(p -> p.getSocket().join("x"));
 
         // then
-        peers.forEach(p -> p.getSocket().waitUtil(s -> s.getJoined().size() == size));
+        peers.forEach(p -> p.getSocket().waitUtil(s -> s.getJoined().size() == size - 1));
         List<Peer> result = peers.stream().map(Tuple::getSocket).collect(toList());
         List<String> allNames = result.stream().map(Peer::getName).collect(toList());
-        result.forEach(p -> assertThat("Some members were missed", p.getJoined(), containsInAnyOrder(without(allNames, p.getName()))));
-        result.forEach(p -> assertThat(p.getName() + " doesn't have all participant!", p.getJoined(), hasSize(size)));
+        result.forEach(p -> assertThat(p.getName() + ": Some members were missed", p.getJoined(), containsInAnyOrder(without(allNames, p.getName()))));
+        result.forEach(p -> assertThat(p.getName() + " doesn't have all participant!", p.getJoined(), hasSize(size - 1)));
         result.forEach(p -> assertThat(p.getName() + " has joined to himself!", p.getJoined(), not(containsInAnyOrder(p.getName()))));
         peers.forEach(this::stop);
     }

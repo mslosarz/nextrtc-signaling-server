@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Getter
 @Component
 @Scope("prototype")
 public abstract class Conversation implements NextRTCConversation {
-
+    protected static final ExecutorService parallel = Executors.newCachedThreadPool();
     protected final String id;
 
     @Autowired

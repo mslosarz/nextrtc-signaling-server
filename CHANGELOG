@@ -1,4 +1,5 @@
 v1.0.0-RC3:
+    - Introduce parallel model inside conversation
     - Changed log level
     - Synchronization on join signal
     - Fixed version of dependencies

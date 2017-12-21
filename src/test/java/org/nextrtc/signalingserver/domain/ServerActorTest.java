@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -39,8 +40,8 @@ public class ServerActorTest extends BaseTest {
         // when
         john.openSocket();
         john.create("AAA", "MESH");
-
         // then
+        await().until(() -> conversations.findBy("AAA").isPresent());
         assertTrue(conversations.findBy("AAA").isPresent());
         Conversation conversation = conversations.findBy("AAA").get();
         assertTrue(conversation.has(john.asMember()));
@@ -48,6 +49,7 @@ public class ServerActorTest extends BaseTest {
         // when
         bob.openSocket();
         bob.join("AAA");
+        await().until(() -> conversation.has(bob.asMember()));
 
         // then
         assertTrue(conversation.has(john.asMember()));
@@ -55,13 +57,14 @@ public class ServerActorTest extends BaseTest {
 
         // when
         bob.closeSocket();
+        await().until(() -> !conversation.has(bob.asMember()));
 
         // then
         assertFalse(conversation.has(bob.asMember()));
 
         // when
         john.closeSocket();
-
+        await().until(() -> !conversation.has(john.asMember()));
         // then
         assertFalse(conversation.has(john.asMember()));
         assertFalse(conversations.findBy("AAA").isPresent());

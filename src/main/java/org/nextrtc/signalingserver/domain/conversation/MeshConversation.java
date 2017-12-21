@@ -42,8 +42,11 @@ public class MeshConversation extends Conversation {
 
     private void informRestAndBeginSignalExchange(Member sender) {
         for (Member to : members) {
-            sendJoinedFrom(sender, to);
-            exchange.begin(to, sender);
+            parallel.execute(() -> {
+                sendJoinedFrom(sender, to);
+                sendJoinedFrom(to, sender);
+                exchange.begin(to, sender);
+            });
         }
     }
 

@@ -1,16 +1,20 @@
 package org.nextrtc.signalingserver;
 
-import com.google.common.collect.Lists;
+import lombok.extern.log4j.Log4j;
 import org.mockito.ArgumentMatcher;
 import org.nextrtc.signalingserver.domain.Message;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
+@Log4j
 public class MessageMatcher extends ArgumentMatcher<Message> {
 
     private final List<String> filter;
-    private List<Message> messages = Lists.newLinkedList();
+    private List<Message> messages = Collections.synchronizedList(new ArrayList<>());
 
     public MessageMatcher() {
         this.filter = Arrays.asList("ping");
@@ -59,5 +63,28 @@ public class MessageMatcher extends ArgumentMatcher<Message> {
 
     public List<Message> getMessages() {
         return this.messages;
+    }
+
+    public CheckMessage has(Predicate<Message> condition) {
+        return new CheckMessage().has(condition);
+    }
+
+    public class CheckMessage {
+        private List<Predicate<Message>> predicates = new ArrayList<>();
+
+        public CheckMessage has(Predicate<Message> condition) {
+            predicates.add(condition);
+            return this;
+        }
+
+        public boolean check() {
+            return messages.stream()
+                    .filter(this::matchAllPredicates)
+                    .count() > 0;
+        }
+
+        private boolean matchAllPredicates(final Message m) {
+            return predicates.stream().filter(p -> p.test(m)).count() == predicates.size();
+        }
     }
 }
