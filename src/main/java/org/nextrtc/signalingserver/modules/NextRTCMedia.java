@@ -3,6 +3,7 @@ package org.nextrtc.signalingserver.modules;
 import dagger.Module;
 import dagger.Provides;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
+import org.nextrtc.signalingserver.domain.DefaultMessageSender;
 import org.nextrtc.signalingserver.domain.RTCConnections;
 import org.nextrtc.signalingserver.factory.ConnectionContextFactory;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
@@ -12,6 +13,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @Module
 public abstract class NextRTCMedia {
+
+    @Provides
+    static DefaultMessageSender defaultMessageSender() {
+        return new DefaultMessageSender();
+    }
 
     @Provides
     @Singleton

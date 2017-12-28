@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
@@ -12,10 +11,6 @@ import javax.websocket.Session;
 @Scope("singleton")
 @Log4j
 public class DefaultMessageSender implements MessageSender {
-
-    @Inject
-    public DefaultMessageSender() {
-    }
 
     @Override
     public void send(InternalMessage message) {
