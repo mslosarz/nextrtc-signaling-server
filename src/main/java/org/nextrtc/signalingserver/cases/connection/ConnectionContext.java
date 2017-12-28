@@ -5,6 +5,7 @@ import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +24,7 @@ public class ConnectionContext {
 
     private NextRTCProperties properties;
     private NextRTCEventBus bus;
+    private MessageSender sender;
 
     private Member master;
     private Member slave;
@@ -47,20 +49,19 @@ public class ConnectionContext {
 
 
     private void exchangeCandidates(InternalMessage message) {
-        message.copy()
+        sender.send(message.copy()
                 .signal(Signal.CANDIDATE)
                 .build()
-                .send();
+        );
     }
 
 
     private void finalize(InternalMessage message) {
-        message.copy()//
+        sender.send(message.copy()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.FINALIZE)//
-                .build()//
-                .send();
+                .build());
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
         bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(master.getSession()));
         bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(slave.getSession()));
@@ -69,12 +70,12 @@ public class ConnectionContext {
 
     private void answerRequest(InternalMessage message) {
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getSession()));
-        message.copy()//
+        sender.send(message.copy()//
                 .from(master)//
                 .to(slave)//
                 .signal(Signal.ANSWER_REQUEST)//
                 .build()//
-                .send();
+        );
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));
     }
 
@@ -84,12 +85,12 @@ public class ConnectionContext {
 
     public void begin() {
         setState(ConnectionState.OFFER_REQUESTED);
-        InternalMessage.create()//
+        sender.send(InternalMessage.create()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.OFFER_REQUEST)
                 .build()//
-                .send();
+        );
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
     }
 
@@ -110,5 +111,10 @@ public class ConnectionContext {
     @Inject
     public void setProperties(NextRTCProperties properties) {
         this.properties = properties;
+    }
+
+    @Inject
+    public void setSender(MessageSender sender) {
+        this.sender = sender;
     }
 }

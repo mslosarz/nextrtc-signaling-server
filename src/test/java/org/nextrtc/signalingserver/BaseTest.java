@@ -69,6 +69,7 @@ public abstract class BaseTest {
     protected Session mockSession(String id, ArgumentMatcher<Message> match) {
         Session s = mock(Session.class);
         when(s.getId()).thenReturn(id);
+        when(s.isOpen()).thenReturn(true);
         Async mockAsync = mockAsync(match);
         RemoteEndpoint.Basic mockBasic = mockBasic(match);
         when(s.getAsyncRemote()).thenReturn(mockAsync);

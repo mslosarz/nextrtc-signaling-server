@@ -16,19 +16,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Predicate;
 
 import static java.util.Collections.synchronizedList;
+import static org.awaitility.Awaitility.await;
 import static org.nextrtc.signalingserver.domain.Message.create;
 
 @WebSocket
 @Getter
 public class Peer {
-    private final static ExecutorService service = Executors.newFixedThreadPool(4);
+    private final static ExecutorService service = Executors.newCachedThreadPool();
     private final Gson gson = new GsonBuilder().create();
-    private String name;
     private Session session;
+    private String name;
     private String joinedTo;
+    private List<Message> offerRequests = synchronizedList(new ArrayList<>());
+    private List<Message> answerRequests = synchronizedList(new ArrayList<>());
+    private List<Message> finalized = synchronizedList(new ArrayList<>());
     private Map<String, Action> actions = new ConcurrentHashMap<>();
     private Map<String, List<String>> candidates = new ConcurrentHashMap<>();
     private List<String> joined = synchronizedList(new ArrayList<>());
@@ -45,6 +48,7 @@ public class Peer {
             joinedTo = msg.getContent();
         });
         actions.put("offerrequest", (s, msg) -> {
+            offerRequests.add(msg);
             send(create()
                     .to(msg.getFrom())
                     .signal("offerResponse")
@@ -52,6 +56,7 @@ public class Peer {
                     .build());
         });
         actions.put("answerrequest", (s, msg) -> {
+            answerRequests.add(msg);
             send(create()
                     .to(msg.getFrom())
                     .signal("answerResponse")
@@ -59,6 +64,7 @@ public class Peer {
                     .build());
         });
         actions.put("finalize", (s, msg) -> {
+            finalized.add(msg);
             send(create()
                     .to(msg.getFrom())
                     .signal("candidate")
@@ -142,27 +148,13 @@ public class Peer {
     private void send(Message message) {
         log.add(message);
         service.submit(() -> {
-            waitUtil(m -> m.getSession() != null);
+            await().until(() -> getSession() != null);
             try {
                 session.getRemote().sendString(gson.toJson(message));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    void waitUtil(Predicate<Peer> predicate) {
-        int waitingTime = 0;
-        while (!predicate.test(this)) {
-            try {
-                Thread.sleep(100);
-                waitingTime += 100;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (waitingTime >= 1 * 1000)
-                break;
-        }
     }
 
     private interface Action {

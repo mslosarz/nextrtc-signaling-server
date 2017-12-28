@@ -24,6 +24,7 @@ public class TestClientActor {
         Session session = mock(Session.class);
         this.client = new MockedClient(server, session);
         when(session.getId()).thenReturn(name);
+        when(session.isOpen()).thenReturn(true);
         RemoteEndpoint.Async async = mockAsync(session);
         RemoteEndpoint.Basic basic = mockBasic();
         when(session.getAsyncRemote()).thenReturn(async);

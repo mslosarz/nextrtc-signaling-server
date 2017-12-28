@@ -29,16 +29,19 @@ public class Server {
     private MemberRepository members;
     private SignalResolver resolver;
     private RegisterMember register;
+    private MessageSender sender;
 
     @Inject
     public Server(NextRTCEventBus eventBus,
                   MemberRepository members,
                   SignalResolver resolver,
-                  RegisterMember register) {
+                  RegisterMember register,
+                  MessageSender sender) {
         this.eventBus = eventBus;
         this.members = members;
         this.resolver = resolver;
         this.register = register;
+        this.sender = sender;
     }
 
     public void register(Session s) {
@@ -104,13 +107,13 @@ public class Server {
 
     private void sendErrorOverWebSocket(Session session, Exception e) {
         try {
-            InternalMessage.create()
+            sender.send(InternalMessage.create()
                     .to(new Member(session, null))
                     .signal(Signal.ERROR)
                     .content(e.getMessage())
                     .addCustom("stackTrace", writeStackTraceToString(e))
                     .build()
-                    .send();
+            );
         } catch (Exception resendException) {
             log.error("Something goes wrong during resend! Exception omitted", resendException);
         }

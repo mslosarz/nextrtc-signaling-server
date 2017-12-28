@@ -25,6 +25,8 @@ public class ServerActorTest extends BaseTest {
     @Autowired
     private Server server;
     @Autowired
+    private MessageSender sender;
+    @Autowired
     private JoinConversation joinConversation;
     @Autowired
     private Conversations conversations;
@@ -255,12 +257,13 @@ public class ServerActorTest extends BaseTest {
     @Test
     public void shouldBeAbleToHandleCustomSignal() throws Exception {
         // given
-        resolver.addCustomSignal(Signal.fromString("upperCase"), (message) -> InternalMessage.create()//
+        resolver.addCustomSignal(Signal.fromString("upperCase"), (message) ->
+                sender.send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
                 .build()
-                .send());
+                ));
 
         TestClientActor john = new TestClientActor("John", server);
         john.openSocket();
@@ -279,12 +282,13 @@ public class ServerActorTest extends BaseTest {
     @Test
     public void shouldOverrideExistingSignal() throws Exception {
         // given
-        resolver.addCustomSignal(Signal.fromString("join"), (message) -> InternalMessage.create()//
+        resolver.addCustomSignal(Signal.fromString("join"), (message) ->
+                sender.send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
                 .build()
-                .send());
+                ));
 
         TestClientActor john = new TestClientActor("John", server);
         john.openSocket();

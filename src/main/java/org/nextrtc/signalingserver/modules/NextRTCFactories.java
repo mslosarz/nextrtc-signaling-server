@@ -6,6 +6,7 @@ import dagger.Provides;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.factory.*;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
 
@@ -17,8 +18,9 @@ public abstract class NextRTCFactories {
     @Provides
     @Singleton
     static ManualConversationFactory ManualConversationFactory(LeftConversation left,
+                                                               MessageSender sender,
                                                                ExchangeSignalsBetweenMembers exchange) {
-        return new ManualConversationFactory(left, exchange);
+        return new ManualConversationFactory(left, exchange, sender);
     }
 
     @Provides
@@ -31,8 +33,9 @@ public abstract class NextRTCFactories {
     @Singleton
     static ManualConnectionContextFactory ManualConnectionContextFactory(
             NextRTCProperties properties,
-            NextRTCEventBus eventBus) {
-        return new ManualConnectionContextFactory(properties, eventBus);
+            NextRTCEventBus eventBus,
+            MessageSender sender) {
+        return new ManualConnectionContextFactory(properties, eventBus, sender);
     }
 
     @Binds

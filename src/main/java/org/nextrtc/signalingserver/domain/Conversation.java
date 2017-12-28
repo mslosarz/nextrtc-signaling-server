@@ -3,10 +3,10 @@ package org.nextrtc.signalingserver.domain;
 import lombok.Getter;
 import org.nextrtc.signalingserver.api.dto.NextRTCConversation;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,21 +17,24 @@ public abstract class Conversation implements NextRTCConversation {
     protected static final ExecutorService parallel = Executors.newCachedThreadPool();
     protected final String id;
 
-    @Autowired
     private LeftConversation leftConversation;
+    protected MessageSender messageSender;
 
     public Conversation(String id) {
         this.id = id;
     }
 
-    public Conversation(String id, LeftConversation leftConversation) {
+    public Conversation(String id,
+                        LeftConversation leftConversation,
+                        MessageSender messageSender) {
         this.id = id;
         this.leftConversation = leftConversation;
+        this.messageSender = messageSender;
     }
 
     public abstract void join(Member sender);
 
-    public void left(Member sender) {
+    public synchronized void left(Member sender) {
         if (remove(sender) && isWithoutMember()) {
             leftConversation.destroy(this, sender);
         }
@@ -50,34 +53,41 @@ public abstract class Conversation implements NextRTCConversation {
     public abstract void exchangeSignals(InternalMessage message);
 
     protected void sendJoinedToConversation(Member sender, String id) {
-        InternalMessage.create()//
+        messageSender.send(InternalMessage.create()//
                 .to(sender)//
                 .content(id)//
                 .signal(Signal.JOINED)//
-                .build()//
-                .send();
+                .build());
     }
 
     protected void sendJoinedFrom(Member sender, Member member) {
-        InternalMessage.create()//
+        messageSender.send(InternalMessage.create()//
                 .from(sender)//
                 .to(member)//
                 .signal(Signal.NEW_JOINED)//
                 .content(sender.getId())
-                .build()//
-                .send();
+                .build());
     }
 
     protected void sendLeftMessage(Member leaving, Member recipient) {
-        InternalMessage.create()//
+        messageSender.send(InternalMessage.create()//
                 .from(leaving)//
                 .to(recipient)//
                 .signal(Signal.LEFT)//
-                .build()//
-                .send();
+                .build());
     }
 
     public abstract void broadcast(Member from, InternalMessage message);
+
+    @Inject
+    public void setLeftConversation(LeftConversation leftConversation) {
+        this.leftConversation = leftConversation;
+    }
+
+    @Inject
+    public void setMessageSender(MessageSender messageSender) {
+        this.messageSender = messageSender;
+    }
 
     @Override
     public String toString() {

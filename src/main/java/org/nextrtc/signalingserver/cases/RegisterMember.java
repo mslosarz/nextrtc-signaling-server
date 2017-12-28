@@ -2,6 +2,7 @@ package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.PingTask;
 import org.nextrtc.signalingserver.factory.MemberFactory;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
@@ -24,18 +25,21 @@ public class RegisterMember {
     private MemberRepository members;
     private ScheduledExecutorService scheduler;
     private MemberFactory factory;
+    private MessageSender sender;
 
     @Inject
     public RegisterMember(NextRTCEventBus eventBus,
                           NextRTCProperties properties,
                           MemberRepository members,
                           ScheduledExecutorService scheduler,
-                          MemberFactory factory) {
+                          MemberFactory factory,
+                          MessageSender sender) {
         this.eventBus = eventBus;
         this.properties = properties;
         this.members = members;
         this.scheduler = scheduler;
         this.factory = factory;
+        this.sender = sender;
     }
 
     public void incoming(Session session) {
@@ -45,7 +49,7 @@ public class RegisterMember {
     }
 
     private ScheduledFuture<?> ping(Session session) {
-        return scheduler.scheduleAtFixedRate(new PingTask(session), 0,
+        return scheduler.scheduleAtFixedRate(new PingTask(session, sender), 0,
                 properties.getPingPeriod(), TimeUnit.SECONDS);
     }
 

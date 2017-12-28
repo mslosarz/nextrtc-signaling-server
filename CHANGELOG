@@ -1,5 +1,8 @@
 v1.0.0-RC3:
-    - Introduce parallel model inside conversation
+    - When session is closed message will not be send through it
+    - Each send will try at least 3 times before failing
+===>- Introduced message sender instead of method send in InternalMessage
+    - Introduced parallel model inside conversation
     - Changed log level
     - Synchronization on join signal
     - Fixed version of dependencies

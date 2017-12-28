@@ -6,6 +6,7 @@ import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.*;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.Signals;
 import org.nextrtc.signalingserver.factory.ConversationFactory;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
@@ -80,8 +81,9 @@ public abstract class NextRTCSignals {
     @Singleton
     @IntoMap
     @StringKey(Signals.TEXT_HANDLER)
-    static SignalHandler TextMessage(NextRTCEventBus eventBus) {
-        return new TextMessage(eventBus);
+    static SignalHandler TextMessage(NextRTCEventBus eventBus,
+                                     MessageSender sender) {
+        return new TextMessage(eventBus, sender);
     }
 
 

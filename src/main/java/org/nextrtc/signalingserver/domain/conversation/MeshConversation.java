@@ -3,10 +3,7 @@ package org.nextrtc.signalingserver.domain.conversation;
 import com.google.common.collect.Sets;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.Signal;
+import org.nextrtc.signalingserver.domain.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +21,11 @@ public class MeshConversation extends Conversation {
         super(id);
     }
 
-    public MeshConversation(String id, LeftConversation left, ExchangeSignalsBetweenMembers exchange) {
-        super(id, left);
+    public MeshConversation(String id,
+                            LeftConversation left,
+                            MessageSender sender,
+                            ExchangeSignalsBetweenMembers exchange) {
+        super(id, left, sender);
         this.exchange = exchange;
     }
 
@@ -75,11 +75,11 @@ public class MeshConversation extends Conversation {
     public void broadcast(Member from, InternalMessage message) {
         members.stream()
                 .filter(member -> !member.equals(from))
-                .forEach(to -> message.copy()
+                .forEach(to -> messageSender.send(message.copy()
                         .from(from)
                         .to(to)
                         .build()
-                        .send());
+                ));
     }
 
     @Override
@@ -87,21 +87,23 @@ public class MeshConversation extends Conversation {
         boolean remove = members.remove(leaving);
         if (remove) {
             leaving.unassignConversation(this);
-            for (Member member : members) {
-                sendLeftMessage(leaving, member);
-            }
+            parallel.execute(() -> {
+                for (Member member : members) {
+                    sendLeftMessage(leaving, member);
+                }
+            });
         }
         return remove;
     }
 
     private void sendJoinedToFirst(Member sender, String id) {
-        InternalMessage.create()//
+        messageSender.send(InternalMessage.create()//
                 .to(sender)//
                 .signal(Signal.CREATED)//
                 .addCustom("type", "MESH")
                 .content(id)//
                 .build()//
-                .send();
+        );
     }
 
     @Inject

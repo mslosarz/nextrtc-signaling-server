@@ -3,6 +3,7 @@ package org.nextrtc.signalingserver.api;
 
 import lombok.extern.log4j.Log4j;
 import org.nextrtc.signalingserver.NextRTCComponent;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
 import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
 import org.nextrtc.signalingserver.property.ManualNextRTCProperties;
@@ -31,6 +32,10 @@ public class EndpointConfiguration {
 
     public ManualEventDispatcher eventDispatcher() {
         return component.manualEventDispatcher();
+    }
+
+    public MessageSender messageSender() {
+        return component.messageSender();
     }
 
 }
