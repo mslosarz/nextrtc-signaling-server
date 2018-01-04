@@ -11,12 +11,14 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.nextrtc.signalingserver.domain.Message;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static java.lang.String.format;
 import static java.util.Collections.synchronizedList;
 import static org.awaitility.Awaitility.await;
 import static org.nextrtc.signalingserver.domain.Message.create;
@@ -108,9 +110,12 @@ public class Peer {
     }
 
     public void createConv(String name) {
+        Map<String, String> custom = new HashMap<>();
+        custom.put("type", "BROADCAST");
         send(create()
                 .signal("create")
                 .content(name)
+                .custom(custom)
                 .build());
     }
 
@@ -150,7 +155,7 @@ public class Peer {
         service.submit(() -> {
             await().until(() -> getSession() != null);
             try {
-                session.getRemote().sendString(gson.toJson(message));
+                session.getRemote().sendStringByFuture(gson.toJson(message));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -159,5 +164,12 @@ public class Peer {
 
     private interface Action {
         void execute(Session session, Message message);
+    }
+
+    @Override
+    public String toString() {
+        return format("%s joinedTo %s, received information about joining from %s participant. " +
+                        "Received candidates from %s persons. Has %s errors",
+                name, getJoinedTo(), getJoined().size(), getCandidates().size(), errors.size());
     }
 }

@@ -1,4 +1,8 @@
 v1.0.0-RC3:
+    - Introduced performance tests
+    - Improved message sender (errors will be send only once whereas normal messages will be retried 3 times)
+    - In broadcast conversation participant will received newJoined signal with master data
+    - Ping will not start immediately after member is joined
     - When session is closed message will not be send through it
     - Each send will try at least 3 times before failing
 ===>- Introduced message sender instead of method send in InternalMessage

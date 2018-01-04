@@ -102,6 +102,7 @@ public abstract class BaseTest {
     }
 
     protected void createConversation(String conversationName, Member member) {
+        members.register(member);
         create.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
@@ -109,6 +110,7 @@ public abstract class BaseTest {
     }
 
     protected void createBroadcastConversation(String conversationName, Member member) {
+        members.register(member);
         create.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
@@ -117,6 +119,7 @@ public abstract class BaseTest {
     }
 
     protected void joinConversation(String conversationName, Member member) {
+        members.register(member);
         join.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//

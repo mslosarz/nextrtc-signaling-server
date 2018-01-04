@@ -114,6 +114,7 @@ public class BroadcastConversation extends Conversation {
             sendJoinedToBroadcaster(sender, id);
         } else {
             sendJoinedToConversation(sender, id);
+            sendJoinedFrom(broadcaster, sender);
         }
     }
 
