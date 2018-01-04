@@ -8,6 +8,7 @@ import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -31,7 +32,9 @@ public class TextMessageTest extends BaseTest {
         members.register(john);
         members.register(stan);
         createConversation("c", john);
+        await().until(() -> johnMatcher.has(m -> m.getSignal().equals("created")).check());
         joinConversation("c", stan);
+        await().until(() -> johnMatcher.has(m -> m.getSignal().equals("newJoined")).check());
         johnMatcher.reset();
         stanMatcher.reset();
 
@@ -67,8 +70,11 @@ public class TextMessageTest extends BaseTest {
         members.register(stan);
         members.register(mark);
         createConversation("c", john);
+        await().until(() -> johnMatcher.has(m -> m.getSignal().equals("created")).check());
         joinConversation("c", stan);
         joinConversation("c", mark);
+        await().until(() -> stanMatcher.has(m -> m.getSignal().equals("newJoined")).check());
+        await().until(() -> markMatcher.has(m -> m.getSignal().equals("newJoined")).check());
         johnMatcher.reset();
         stanMatcher.reset();
         markMatcher.reset();

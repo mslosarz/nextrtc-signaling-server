@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
@@ -23,6 +24,8 @@ public class ServerActorTest extends BaseTest {
     protected LocalStreamCreated2 eventLocalStream;
     @Autowired
     private Server server;
+    @Autowired
+    private MessageSender sender;
     @Autowired
     private JoinConversation joinConversation;
     @Autowired
@@ -39,8 +42,8 @@ public class ServerActorTest extends BaseTest {
         // when
         john.openSocket();
         john.create("AAA", "MESH");
-
         // then
+        await().until(() -> conversations.findBy("AAA").isPresent());
         assertTrue(conversations.findBy("AAA").isPresent());
         Conversation conversation = conversations.findBy("AAA").get();
         assertTrue(conversation.has(john.asMember()));
@@ -48,6 +51,7 @@ public class ServerActorTest extends BaseTest {
         // when
         bob.openSocket();
         bob.join("AAA");
+        await().until(() -> conversation.has(bob.asMember()));
 
         // then
         assertTrue(conversation.has(john.asMember()));
@@ -55,13 +59,14 @@ public class ServerActorTest extends BaseTest {
 
         // when
         bob.closeSocket();
+        await().until(() -> !conversation.has(bob.asMember()));
 
         // then
         assertFalse(conversation.has(bob.asMember()));
 
         // when
         john.closeSocket();
-
+        await().until(() -> !conversation.has(john.asMember()));
         // then
         assertFalse(conversation.has(john.asMember()));
         assertFalse(conversations.findBy("AAA").isPresent());
@@ -252,12 +257,13 @@ public class ServerActorTest extends BaseTest {
     @Test
     public void shouldBeAbleToHandleCustomSignal() throws Exception {
         // given
-        resolver.addCustomSignal(Signal.fromString("upperCase"), (message) -> InternalMessage.create()//
+        resolver.addCustomSignal(Signal.fromString("upperCase"), (message) ->
+                sender.send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
                 .build()
-                .send());
+                ));
 
         TestClientActor john = new TestClientActor("John", server);
         john.openSocket();
@@ -276,12 +282,13 @@ public class ServerActorTest extends BaseTest {
     @Test
     public void shouldOverrideExistingSignal() throws Exception {
         // given
-        resolver.addCustomSignal(Signal.fromString("join"), (message) -> InternalMessage.create()//
+        resolver.addCustomSignal(Signal.fromString("join"), (message) ->
+                sender.send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
                 .build()
-                .send());
+                ));
 
         TestClientActor john = new TestClientActor("John", server);
         john.openSocket();

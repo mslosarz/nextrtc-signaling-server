@@ -1,10 +1,7 @@
 package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
-import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.InternalMessage;
-import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.Signals;
+import org.nextrtc.signalingserver.domain.*;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -15,10 +12,13 @@ import static org.nextrtc.signalingserver.api.NextRTCEvents.TEXT;
 public class TextMessage implements SignalHandler {
 
     private NextRTCEventBus eventBus;
+    private MessageSender sender;
 
     @Inject
-    public TextMessage(NextRTCEventBus eventBus) {
+    public TextMessage(NextRTCEventBus eventBus,
+                       MessageSender sender) {
         this.eventBus = eventBus;
+        this.sender = sender;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class TextMessage implements SignalHandler {
             conversation.broadcast(from, message);
             eventBus.post(TEXT.basedOn(message));
         } else if (from.hasSameConversation(message.getTo())) {
-            message.send();
+            sender.send(message);
             eventBus.post(TEXT.basedOn(message));
         }
 

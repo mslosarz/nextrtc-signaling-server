@@ -14,6 +14,7 @@ import javax.websocket.Session;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -142,15 +143,24 @@ public class ServerTest extends BaseTest {
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s2);
-
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("created"))
+                .check());
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("offerRequest"))
+                .check());
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("joined"))
+                .check());
         // then
         assertThat(s1Matcher.getMessages().size(), is(3));
         assertMessage(s1Matcher, 0, EMPTY, "s1", "created", conversationKey);
         assertMessage(s1Matcher, 1, "s2", "s1", "newJoined", "s2");
         assertMessage(s1Matcher, 2, "s2", "s1", "offerRequest", EMPTY);
 
-        assertThat(s2Matcher.getMessages().size(), is(1));
+        assertThat(s2Matcher.getMessages().size(), is(2));
         assertMessage(s2Matcher, 0, EMPTY, "s2", "joined", conversationKey);
+        assertMessage(s2Matcher, 1, "s1", "s2", "newJoined", "s1");
     }
 
     @Test
@@ -166,11 +176,17 @@ public class ServerTest extends BaseTest {
         server.handle(Message.create()//
                 .signal("create")//
                 .build(), s1);
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("created"))
+                .check());
         String conversationKey = s1Matcher.getMessage().getContent();
         server.handle(Message.create()//
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s2);
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("joined"))
+                .check());
         s1Matcher.reset();
         s2Matcher.reset();
 
@@ -181,6 +197,9 @@ public class ServerTest extends BaseTest {
                 .signal("offerResponse")//
                 .content("s2 spd")//
                 .build(), s1);
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("answerRequest"))
+                .check());
 
         // then
         assertThat(s2Matcher.getMessages().size(), is(1));
@@ -206,14 +225,23 @@ public class ServerTest extends BaseTest {
                 .signal("create")//
                 .build(), s1);
         String conversationKey = s1Matcher.getMessage().getContent();
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("created"))
+                .check());
         server.handle(Message.create()//
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s2);
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("joined"))
+                .check());
         server.handle(Message.create()//
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s3);
+        await().until(() -> s3Matcher.has(m -> m.getSignal()
+                .equals("joined"))
+                .check());
         s1Matcher.reset();
         s2Matcher.reset();
         s3Matcher.reset();
@@ -224,12 +252,18 @@ public class ServerTest extends BaseTest {
                 .signal("offerResponse")//
                 .content("s2 spd")//
                 .build(), s2);
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("answerRequest"))
+                .check());
         // s3 has to create local stream
         server.handle(Message.create()//
                 .to("s1")//
                 .signal("offerResponse")//
                 .content("s3 spd")//
                 .build(), s3);
+        await().until(() -> s3Matcher.has(m -> m.getSignal()
+                .equals("answerRequest"))
+                .check());
 
         // then
         assertThat(s2Matcher.getMessages().size(), is(1));
@@ -260,12 +294,21 @@ public class ServerTest extends BaseTest {
                 .build(), s2);
         // -> joined
         // -> offerRequest
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("offerRequest"))
+                .check());
+
         server.handle(Message.create()//
                 .to("s1")//
                 .signal("offerResponse")//
                 .content("s2 spd")//
                 .build(), s2);
+
         // -> answerRequest
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("answerRequest"))
+                .check());
+
         s1Matcher.reset();
         s2Matcher.reset();
         // when
@@ -275,10 +318,13 @@ public class ServerTest extends BaseTest {
                 .content("s1 spd")//
                 .build(), s1);
 
+        await().until(() -> s1Matcher
+                .has(s -> s.getSignal().equals("finalize"))
+                .check());
+
         // then
         assertThat(s1Matcher.getMessages().size(), is(1));
         assertMessage(s1Matcher, 0, "s2", "s1", "finalize", "s1 spd");
-
         assertThat(s2Matcher.getMessages().size(), is(0));
     }
 
@@ -296,25 +342,41 @@ public class ServerTest extends BaseTest {
                 .signal("create")//
                 .build(), s1);
         // -> created
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("created"))
+                .check());
+
         String conversationKey = s1Matcher.getMessage().getContent();
         server.handle(Message.create()//
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s2);
         // -> joined
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("joined"))
+                .check());
         // -> offerRequest
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("offerRequest"))
+                .check());
         server.handle(Message.create()//
                 .to("s1")//
                 .signal("offerResponse")//
                 .content("s2 spd")//
                 .build(), s2);
         // -> answerRequest
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("answerRequest"))
+                .check());
         server.handle(Message.create()//
                 .to("s2")//
                 .signal("answerResponse")//
                 .content("s1 spd")//
                 .build(), s1);
         // -> finalize
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("finalize"))
+                .check());
         s1Matcher.reset();
         s2Matcher.reset();
         server.handle(Message.create()//
@@ -327,6 +389,12 @@ public class ServerTest extends BaseTest {
                 .signal("candidate")//
                 .content("candidate s1")//
                 .build(), s1);
+        await().until(() -> s1Matcher.has(m -> m.getSignal()
+                .equals("candidate"))
+                .check());
+        await().until(() -> s2Matcher.has(m -> m.getSignal()
+                .equals("candidate"))
+                .check());
         // when
 
         // then
@@ -347,20 +415,23 @@ public class ServerTest extends BaseTest {
         server.register(s1);
         server.register(s2);
 
+        // when
         server.handle(Message.create()//
                 .signal("create")//
                 .build(), s1);
         // -> created
+        await().until(() -> s1Matcher.has(m -> m.getSignal().equals("created")).check());
+
         String conversationKey = s1Matcher.getMessage().getContent();
         server.handle(Message.create()//
                 .signal("join")//
                 .content(conversationKey)//
                 .build(), s2);
+        await().until(() -> s2Matcher.has(m -> m.getSignal().equals("joined")).check());
         s1Matcher.reset();
         s2Matcher.reset();
         server.unregister(s1, mock(CloseReason.class));
-        // when
-
+        await().until(() -> s2Matcher.has(m -> m.getSignal().equals("left")).check());
         // then
         assertThat(s1Matcher.getMessages().size(), is(0));
         assertThat(s2Matcher.getMessages().size(), is(1));

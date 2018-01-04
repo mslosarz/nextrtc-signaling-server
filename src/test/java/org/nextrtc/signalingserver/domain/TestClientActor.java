@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TestClientActor {
     private Server server;
@@ -25,10 +24,29 @@ public class TestClientActor {
         Session session = mock(Session.class);
         this.client = new MockedClient(server, session);
         when(session.getId()).thenReturn(name);
+        when(session.isOpen()).thenReturn(true);
+        RemoteEndpoint.Async async = mockAsync(session);
+        RemoteEndpoint.Basic basic = mockBasic();
+        when(session.getAsyncRemote()).thenReturn(async);
+        when(session.getBasicRemote()).thenReturn(basic);
+        this.session = session;
+    }
+
+    private RemoteEndpoint.Async mockAsync(Session session) {
         RemoteEndpoint.Async async = mock(RemoteEndpoint.Async.class);
         when(async.sendObject(Mockito.argThat(client))).thenReturn(null);
         when(session.getAsyncRemote()).thenReturn(async);
-        this.session = session;
+        return async;
+    }
+
+    private RemoteEndpoint.Basic mockBasic() {
+        try {
+            RemoteEndpoint.Basic basic = mock(RemoteEndpoint.Basic.class);
+            doNothing().when(basic).sendObject(Mockito.argThat(client));
+            return basic;
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
     }
 
     @Override

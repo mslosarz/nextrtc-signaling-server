@@ -42,24 +42,36 @@ Then you have to create
 public class MyEndpoint extends NextRTCEndpoint {
 }
 ```
-And add to your configuration import to `NextRTCConfig` bean
+Add to your configuration import to `NextRTCConfig` bean. In configuration you have to define your endpoint as a bean and provides ServerEndpointExporter.   
 ```java
 @Configuration
 @Import(NextRTCConfig.class)
 public class EndpointConfig {
+        @Bean
+        public MyEndpoint myEndpoint() {
+            return new MyEndpoint();
+        }
+    
+        @Bean
+        public ServerEndpointExporter serverEndpointExporter() {
+            return new ServerEndpointExporter();
+        }
 }
 ```
 
-That is all what you need to make NextRTC up and running (from the back-end point of view)
+That is all what you need to make NextRTC up and running (from the back-end point of view).
+You can find working example [here](https://github.com/mslosarz/nextrtc-example-videochat).
 
 ### How to register own signal
 
-In configuration class what you have to do is autowire SignalResolver.
+In configuration class what you have to do is autowire SignalResolver and MessageSender (this one is required to send message to member).
 ```java
 @Configuration
 class Config {
     @Autowired
     private SignalResolver resolver;
+    @Autowired
+    private MessageSender sender;
 }
 ```
 Then in the same Config file you have to add bean which will add your handler to signal resolver. Handler has to implement interface `SignalHandler`. This interface has only one method with one parameter. This parameter has type `InternalMessage`. In parameter of this method you will always have `from` field with member that sent message. If your client provides in request destination member, field `to` will be filled with appropriate member.
@@ -72,12 +84,11 @@ class Config {
     public Signal addCustomNextRTCHandlers(){
         Signal upperCase = Signal.fromString("upperCase");
         resolver.addCustomHandler(upperCase, (msg)-> 
-            InternalMessage.create()
+            sender.send(InternalMessage.create()
                     .to(msg.getFrom())
                     .content(msg.getContent().toUpperCase())
                     .signal(upperCase)
-                    .build()
-                    .send()
+                    .build())
         );
         return upperCase;
     }
@@ -164,15 +175,15 @@ Configuration object provides you ability to modify properties `configuration.ne
  ```java
 class MyEndpoint implements NextRTCEndpoint {
     protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
-        EndpointConfiguration configuration = builder.createDefaultEndpoint();
+        final EndpointConfiguration configuration = builder.createDefaultEndpoint();
+        final MessageSender sender = configuration.messageSender();
         configuration.addCustomSignal(Signal.fromString("upperCase"), 
                     (msg)-> 
-                           InternalMessage.create()
+                           sender.send(InternalMessage.create()
                                    .to(msg.getFrom())
                                    .content(msg.getContent().toUpperCase())
                                    .signal(Signal.fromString("upperCase"))
-                                   .build()
-                                   .send());
+                                   .build()));
         return configuration;
     }
 }
@@ -214,20 +225,22 @@ class SomeClass {
     }
 }
 ```
-To be able to send a message to member you have to just create a `InternalMessage` and send it.
+To be able to send a message to member you have to autowire `MessageSender`, then create an `InternalMessage` and send it.
 ```java
 class SendMessage {
+    @Autowired
+    private MessageSender sender;
+    
     public void sendTo(Member to){
-        InternalMessage.create()
+        sender.send(InternalMessage.create()
             .to(to)
             .content("whatever you like")
             .signal(Signal.fromString("my_signal"))
-            .build()
-            .send(); // method send will send message asynchronously
+            .build()); // method send will send message synchronously
     }   
 }
 ```
-
+In standalone mode you have to do the same. You can find MessageSender in EndpointConfiguration bean.
 # Architecture of NextRTC - Overview
 
 NextRTC uses event bus to communicate with other components. Internally NextRTC is taking request object then based on signal field is looking for appropriate handler. When handler exists it code is executed. During execution NextRTC can send messages to client via websocket and can produce predefined events on what you can react in your application.

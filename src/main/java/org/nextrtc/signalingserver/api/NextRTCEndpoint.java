@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver.api;
 
-import com.google.common.collect.Sets;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j;
@@ -10,14 +9,12 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.websocket.*;
-import java.util.Objects;
-import java.util.Set;
 
 @Log4j
 @Component
 public class NextRTCEndpoint {
 
-    private static Set<NextRTCEndpoint> endpoints = Sets.newConcurrentHashSet();
+    private static NextRTCEndpoint INSTANCE;
 
     private static volatile NextRTCEndpoint staticManualEndpoint = null;
 
@@ -25,25 +22,27 @@ public class NextRTCEndpoint {
     private Server server;
 
     public NextRTCEndpoint() {
-        NextRTCEndpoint endpoint = getEndpoint();
-        endpoints.add(endpoint);
-        log.info("Created " + endpoint);
-        endpoints.stream()
-                .map(NextRTCEndpoint::getServer)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .ifPresent(this::setServer);
+        if (INSTANCE == null) {
+            synchronized (NextRTCEndpoint.class) {
+                if (INSTANCE == null && getEndpoint() != null) {
+                    INSTANCE = getEndpoint();
+                }
+            }
+        }
+        this.setServer(INSTANCE == null ? null : INSTANCE.getServer());
     }
 
-    private synchronized NextRTCEndpoint getEndpoint() {
-        if (staticManualEndpoint != null) {
-            return staticManualEndpoint;
+    private NextRTCEndpoint getEndpoint() {
+        synchronized (NextRTCEndpoint.class) {
+            if (staticManualEndpoint != null) {
+                return staticManualEndpoint;
+            }
+            EndpointConfiguration configuration = manualConfiguration(new ConfigurationBuilder());
+            if (configuration == null) {
+                return this;
+            }
+            return staticManualEndpoint = configuration.injectContext(this);
         }
-        EndpointConfiguration configuration = manualConfiguration(new ConfigurationBuilder());
-        if (configuration == null) {
-            return this;
-        }
-        return staticManualEndpoint = configuration.injectContext(this);
     }
 
     protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
@@ -58,7 +57,7 @@ public class NextRTCEndpoint {
 
     @OnMessage
     public void onMessage(Message message, Session session) {
-        log.info("Handling message from: " + session.getId());
+        log.debug("Handling message from: " + session.getId());
         server.handle(message, session);
     }
 
@@ -76,8 +75,11 @@ public class NextRTCEndpoint {
     }
 
     @Inject
-    public void setServer(Server server) {
+    public final void setServer(Server server) {
         log.info("Setted server: " + server + " to " + this);
+        if (INSTANCE != null && INSTANCE != this && INSTANCE.getServer() == null) {
+            INSTANCE.setServer(server);
+        }
         this.server = server;
     }
 }

@@ -5,6 +5,8 @@ import dagger.Module;
 import dagger.Provides;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.SignalHandler;
+import org.nextrtc.signalingserver.domain.DefaultMessageSender;
+import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.SignalResolver;
 import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
 import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
@@ -48,6 +50,10 @@ public abstract class NextRTCBeans {
 
     @Binds
     abstract SignalResolver signalResolver(ManualSignalResolver manualSignalResolver);
+
+    @Binds
+    abstract MessageSender messageSender(DefaultMessageSender messageSender);
+
 
     @Provides
     @Singleton

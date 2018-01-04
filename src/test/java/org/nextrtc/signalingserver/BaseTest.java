@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 import java.util.List;
@@ -23,8 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {TestConfig.class})
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -69,8 +69,11 @@ public abstract class BaseTest {
     protected Session mockSession(String id, ArgumentMatcher<Message> match) {
         Session s = mock(Session.class);
         when(s.getId()).thenReturn(id);
+        when(s.isOpen()).thenReturn(true);
         Async mockAsync = mockAsync(match);
+        RemoteEndpoint.Basic mockBasic = mockBasic(match);
         when(s.getAsyncRemote()).thenReturn(mockAsync);
+        when(s.getBasicRemote()).thenReturn(mockBasic);
         return s;
     }
 
@@ -78,6 +81,16 @@ public abstract class BaseTest {
         Async async = mock(Async.class);
         when(async.sendObject(Mockito.argThat(match))).thenReturn(null);
         return async;
+    }
+
+    protected RemoteEndpoint.Basic mockBasic(ArgumentMatcher<Message> match) {
+        try {
+            RemoteEndpoint.Basic basic = mock(RemoteEndpoint.Basic.class);
+            doNothing().when(basic).sendObject(Mockito.argThat(match));
+            return basic;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected Member mockMember(String string) {
@@ -89,6 +102,7 @@ public abstract class BaseTest {
     }
 
     protected void createConversation(String conversationName, Member member) {
+        members.register(member);
         create.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
@@ -96,6 +110,7 @@ public abstract class BaseTest {
     }
 
     protected void createBroadcastConversation(String conversationName, Member member) {
+        members.register(member);
         create.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
@@ -104,6 +119,7 @@ public abstract class BaseTest {
     }
 
     protected void joinConversation(String conversationName, Member member) {
+        members.register(member);
         join.execute(InternalMessage.create()//
                 .from(member)//
                 .content(conversationName)//
