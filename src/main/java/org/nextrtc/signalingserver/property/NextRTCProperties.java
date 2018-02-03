@@ -8,4 +8,6 @@ public interface NextRTCProperties {
     int getSchedulerPoolSize();
 
     boolean isJoinOnlyToExisting();
+
+    String getDefaultConversationType();
 }

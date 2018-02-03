@@ -5,6 +5,7 @@ import org.nextrtc.signalingserver.api.NextRTCEndpoint;
 import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
 import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
+import org.nextrtc.signalingserver.factory.ManualConversationFactory;
 import org.nextrtc.signalingserver.modules.*;
 import org.nextrtc.signalingserver.property.ManualNextRTCProperties;
 import org.nextrtc.signalingserver.repository.ConversationRepository;
@@ -25,6 +26,8 @@ public interface NextRTCComponent {
     ManualEventDispatcher manualEventDispatcher();
 
     ManualSignalResolver manualSignalResolver();
+
+    ManualConversationFactory manualConversationFactory();
 
     MessageSender messageSender();
 

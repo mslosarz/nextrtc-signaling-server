@@ -18,4 +18,6 @@ public class ManualNextRTCProperties implements NextRTCProperties {
     private int schedulerPoolSize = 10;
     @Builder.Default
     private boolean joinOnlyToExisting = false;
+    @Builder.Default
+    private String defaultConversationType = "MESH";
 }

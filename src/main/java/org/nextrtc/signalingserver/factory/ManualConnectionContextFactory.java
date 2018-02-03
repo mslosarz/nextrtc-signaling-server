@@ -21,6 +21,7 @@ public class ManualConnectionContextFactory implements ConnectionContextFactory 
         this.properties = properties;
         this.eventBus = eventBus;
         this.sender = sender;
+
     }
 
     @Override

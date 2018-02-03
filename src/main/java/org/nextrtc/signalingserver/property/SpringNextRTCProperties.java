@@ -20,4 +20,6 @@ public class SpringNextRTCProperties implements NextRTCProperties {
 
     @Value(Names.JOIN_ONLY_TO_EXISTING)
     private boolean joinOnlyToExisting;
+    @Value(Names.DEFAULT_CONVERSATION_TYPE)
+    private String defaultConversationType;
 }

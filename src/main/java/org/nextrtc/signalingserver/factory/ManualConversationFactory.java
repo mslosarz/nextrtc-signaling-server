@@ -6,6 +6,8 @@ import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.conversation.BroadcastConversation;
 import org.nextrtc.signalingserver.domain.conversation.MeshConversation;
+import org.nextrtc.signalingserver.domain.conversation.MeshWithMasterConversation;
+import org.nextrtc.signalingserver.property.NextRTCProperties;
 
 import javax.inject.Inject;
 
@@ -18,19 +20,26 @@ public class ManualConversationFactory extends AbstractConversationFactory {
     @Inject
     public ManualConversationFactory(LeftConversation leftConversation,
                                      ExchangeSignalsBetweenMembers exchange,
-                                     MessageSender sender) {
+                                     MessageSender sender,
+                                     NextRTCProperties properties) {
+        super(properties);
         this.leftConversation = leftConversation;
         this.exchange = exchange;
         this.sender = sender;
+        registerConversationType("MESH", this::createMesh);
+        registerConversationType("BROADCAST", this::createBroadcast);
+        registerConversationType("MESH_WITH_MASTER", this::createMeshWithMaster);
     }
 
-    @Override
-    protected Conversation createMesh(String conversationName) {
+    private Conversation createMesh(String conversationName) {
         return new MeshConversation(conversationName, leftConversation, sender, exchange);
     }
 
-    @Override
-    protected Conversation createBroadcast(String conversationName) {
+    private Conversation createMeshWithMaster(String conversationName) {
+        return new MeshWithMasterConversation(conversationName, leftConversation, sender, exchange);
+    }
+
+    private Conversation createBroadcast(String conversationName) {
         return new BroadcastConversation(conversationName, leftConversation, sender, exchange);
     }
 }

@@ -19,8 +19,9 @@ public abstract class NextRTCFactories {
     @Singleton
     static ManualConversationFactory ManualConversationFactory(LeftConversation left,
                                                                MessageSender sender,
-                                                               ExchangeSignalsBetweenMembers exchange) {
-        return new ManualConversationFactory(left, exchange, sender);
+                                                               ExchangeSignalsBetweenMembers exchange,
+                                                               NextRTCProperties properties) {
+        return new ManualConversationFactory(left, exchange, sender, properties);
     }
 
     @Provides
