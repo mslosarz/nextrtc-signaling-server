@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import javax.websocket.Session;
 
 @Component
 @Scope("singleton")
-@Log4j
+@Slf4j
 public class DefaultMessageSender implements MessageSender {
 
     private MemberRepository members;

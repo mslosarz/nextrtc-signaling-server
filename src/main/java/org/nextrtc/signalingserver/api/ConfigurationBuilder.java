@@ -1,9 +1,9 @@
 package org.nextrtc.signalingserver.api;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.DaggerNextRTCComponent;
 
-@Log4j
+@Slf4j
 public class ConfigurationBuilder {
 
     public EndpointConfiguration createDefaultEndpoint() {

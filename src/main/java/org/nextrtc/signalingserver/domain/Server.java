@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.RegisterMember;
@@ -21,7 +21,7 @@ import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
-@Log4j
+@Slf4j
 @Component
 public class Server {
 
