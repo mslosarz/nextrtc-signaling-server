@@ -1,3 +1,6 @@
+v1.0.0-RC4:
+    - Removed unnecessary log4j.properties file
+    - Log4j replaced with Slf4j
 v1.0.0-RC3:
     - Introduced performance tests
     - Improved message sender (errors will be send only once whereas normal messages will be retried 3 times)

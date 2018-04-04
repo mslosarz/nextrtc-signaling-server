@@ -1,13 +1,13 @@
 package org.nextrtc.signalingserver.api;
 
 import com.google.common.eventbus.EventBus;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Log4j
+@Slf4j
 @Service(Names.EVENT_BUS)
 @Scope("singleton")
 public class NextRTCEventBus {

@@ -2,7 +2,7 @@ package org.nextrtc.signalingserver.api;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.domain.Message;
 import org.nextrtc.signalingserver.domain.Server;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import javax.websocket.*;
 
-@Log4j
+@Slf4j
 @Component
 public class NextRTCEndpoint {
 
