@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.performance;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -24,14 +24,14 @@ import static org.junit.Assert.assertThat;
 
 
 @Ignore
-@Log4j
+@Slf4j
 @RunWith(Parameterized.class)
 public class PerformanceTest {
 
     @Parameters(name = "{0}: on url {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"Spring", uri("localhost:8090")}, {"Standalone", uri("localhost:8080")}
+               /* {"Spring", uri("localhost:8080")},*/ {"Standalone", uri("localhost:8090")}
         });
     }
 

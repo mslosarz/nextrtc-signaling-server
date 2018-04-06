@@ -2,14 +2,14 @@ package org.nextrtc.signalingserver.domain;
 
 import com.google.common.collect.Maps;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-@Log4j
+@Slf4j
 @Getter
 public class InternalMessage {
 

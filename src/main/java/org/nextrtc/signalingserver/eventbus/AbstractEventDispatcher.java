@@ -2,14 +2,14 @@ package org.nextrtc.signalingserver.eventbus;
 
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.NextRTCHandler;
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 
 import java.util.Collection;
 
-@Log4j
+@Slf4j
 public abstract class AbstractEventDispatcher implements EventDispatcher {
     @Override
     @Subscribe

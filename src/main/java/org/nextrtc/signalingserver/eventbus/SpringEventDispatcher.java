@@ -1,6 +1,6 @@
 package org.nextrtc.signalingserver.eventbus;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.Names;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.api.annotation.NextRTCEventListener;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.springframework.core.annotation.AnnotationUtils.getValue;
 
-@Log4j
+@Slf4j
 @Component(Names.EVENT_DISPATCHER)
 @Scope("singleton")
 @NextRTCEventListener
