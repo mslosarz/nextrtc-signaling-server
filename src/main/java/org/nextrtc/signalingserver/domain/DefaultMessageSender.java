@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
 
 @Component
 @Scope("singleton")
@@ -35,7 +33,7 @@ public class DefaultMessageSender implements MessageSender {
             return;
         }
         Member destination = message.getTo();
-        if (destination == null || !destination.getSession().isOpen()) {
+        if (destination == null || !destination.getConnection().isOpen()) {
             log.warn("Destination member is not set or session is closed! Message will not be send: " + message.transformToExternalMessage());
             return;
         }
@@ -46,9 +44,9 @@ public class DefaultMessageSender implements MessageSender {
 
     private void tryToSendErrorMessage(InternalMessage message) {
         try {
-            Session session = message.getTo().getSession();
-            synchronized (session) {
-                session.getBasicRemote().sendObject(message.transformToExternalMessage());
+            Connection connection = message.getTo().getConnection();
+            synchronized (connection) {
+                connection.sendObject(message.transformToExternalMessage());
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to send message: " + message.transformToExternalMessage(), e);
@@ -57,9 +55,9 @@ public class DefaultMessageSender implements MessageSender {
 
     private void lockAndRun(InternalMessage message, Member destination, int retry) {
         try {
-            RemoteEndpoint.Basic basic = destination.getSession().getBasicRemote();
+            Connection connection = destination.getConnection();
             synchronized (destination) {
-                basic.sendObject(message.transformToExternalMessage());
+                connection.sendObject(message.transformToExternalMessage());
             }
         } catch (Exception e) {
             if (retry >= 0) {

@@ -3,9 +3,6 @@ package org.nextrtc.signalingserver.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.Mockito;
 
-import javax.websocket.CloseReason;
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,37 +13,17 @@ public class TestClientActor {
     private Server server;
     private String name;
     private MockedClient client;
-    private Session session;
+    private Connection session;
 
     public TestClientActor(String name, Server server) {
         this.server = server;
         this.name = name;
-        Session session = mock(Session.class);
-        this.client = new MockedClient(server, session);
-        when(session.getId()).thenReturn(name);
-        when(session.isOpen()).thenReturn(true);
-        RemoteEndpoint.Async async = mockAsync(session);
-        RemoteEndpoint.Basic basic = mockBasic();
-        when(session.getAsyncRemote()).thenReturn(async);
-        when(session.getBasicRemote()).thenReturn(basic);
-        this.session = session;
-    }
-
-    private RemoteEndpoint.Async mockAsync(Session session) {
-        RemoteEndpoint.Async async = mock(RemoteEndpoint.Async.class);
-        when(async.sendObject(Mockito.argThat(client))).thenReturn(null);
-        when(session.getAsyncRemote()).thenReturn(async);
-        return async;
-    }
-
-    private RemoteEndpoint.Basic mockBasic() {
-        try {
-            RemoteEndpoint.Basic basic = mock(RemoteEndpoint.Basic.class);
-            doNothing().when(basic).sendObject(Mockito.argThat(client));
-            return basic;
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
+        Connection connection = mock(Connection.class);
+        this.client = new MockedClient(server, connection);
+        when(connection.getId()).thenReturn(name);
+        when(connection.isOpen()).thenReturn(true);
+        doNothing().when(connection).sendObject(Mockito.argThat(client));
+        this.session = connection;
     }
 
     @Override
@@ -59,7 +36,7 @@ public class TestClientActor {
     }
 
     public void closeSocket() {
-        server.unregister(session, new CloseReason(CloseReason.CloseCodes.NORMAL_CLOSURE, "Bye"));
+        server.unregister(session, "Bye");
     }
 
     public void create(String conversationName, String type) {

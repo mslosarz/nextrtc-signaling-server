@@ -2,12 +2,11 @@ package org.nextrtc.signalingserver.api;
 
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
+import org.nextrtc.signalingserver.domain.Connection;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.EventContext;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.exception.Exceptions;
-
-import javax.websocket.Session;
 
 public enum NextRTCEvents {
     SESSION_OPENED,
@@ -38,18 +37,18 @@ public enum NextRTCEvents {
                 .build();
     }
 
-    public NextRTCEvent occurFor(Session session, String reason) {
+    public NextRTCEvent occurFor(Connection connection, String reason) {
         return EventContext.builder()
-                .from(new InternalMember(session))
+                .from(new InternalMember(connection))
                 .type(this)
                 .reason(reason)
                 .build();
     }
 
-    public NextRTCEvent occurFor(Session session) {
+    public NextRTCEvent occurFor(Connection connection) {
         return EventContext.builder()
                 .type(this)
-                .from(new InternalMember(session))
+                .from(new InternalMember(connection))
                 .exception(Exceptions.UNKNOWN_ERROR.exception())
                 .build();
     }
@@ -66,23 +65,23 @@ public enum NextRTCEvents {
 
     private static class InternalMember implements NextRTCMember {
 
-        private final Session session;
+        private final Connection connection;
 
-        InternalMember(Session session) {
-            this.session = session;
+        InternalMember(Connection connection) {
+            this.connection = connection;
         }
 
         @Override
-        public Session getSession() {
-            return session;
+        public Connection getConnection() {
+            return connection;
         }
 
         @Override
         public String getId() {
-            if (session == null) {
+            if (connection == null) {
                 return null;
             }
-            return session.getId();
+            return connection.getId();
         }
 
         @Override

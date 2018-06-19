@@ -4,6 +4,7 @@ package org.nextrtc.signalingserver.api;
 import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.NextRTCComponent;
 import org.nextrtc.signalingserver.domain.MessageSender;
+import org.nextrtc.signalingserver.domain.Server;
 import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
 import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
 import org.nextrtc.signalingserver.property.ManualNextRTCProperties;
@@ -16,10 +17,8 @@ public class EndpointConfiguration {
         this.component = component;
     }
 
-    public NextRTCEndpoint injectContext(NextRTCEndpoint endpoint) {
-        log.info("Injecting dependencies...");
-        component.inject(endpoint);
-        return endpoint;
+    public Server nextRTCServer() {
+        return component.nextRTCServer();
     }
 
     public ManualNextRTCProperties nextRTCProperties() {

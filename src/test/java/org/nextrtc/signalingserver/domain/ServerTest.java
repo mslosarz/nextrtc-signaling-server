@@ -9,8 +9,6 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -40,10 +38,10 @@ public class ServerTest extends BaseTest {
     public void shouldSendExceptionMessageWhenMemberDoesntExists() throws Exception {
         // given
         MessageMatcher match = new MessageMatcher();
-        Session session = mockSession("s1", match);
+        Connection connection = mockConnection("s1", match);
 
         // when
-        server.handle(mock(Message.class), session);
+        server.handle(mock(Message.class), connection);
 
         // then
         assertThat(match.getMessage().getTo(), is("s1"));
@@ -56,11 +54,11 @@ public class ServerTest extends BaseTest {
     @Test
     public void shouldRegisterUserOnWebSocketConnection() throws Exception {
         // given
-        Session session = mock(Session.class);
-        when(session.getId()).thenReturn("s1");
+        Connection connection = mock(Connection.class);
+        when(connection.getId()).thenReturn("s1");
 
         // when
-        server.register(session);
+        server.register(connection);
 
         // then
         assertTrue(members.findBy("s1").isPresent());
@@ -70,13 +68,13 @@ public class ServerTest extends BaseTest {
     @Test
     public void shouldCreateConversationOnCreateSignal() throws Exception {
         // given
-        Session session = mockSession("s1");
-        server.register(session);
+        Connection connection = mockConnection("s1");
+        server.register(connection);
 
         // when
         server.handle(Message.create()//
                 .signal("create")//
-                .build(), session);
+                .build(), connection);
 
         // then
         List<NextRTCEvent> events = eventCheckerCall.getEvents();
@@ -87,13 +85,13 @@ public class ServerTest extends BaseTest {
     public void shouldCreateConversationOnJoinSignal_WhenConversationDoesntExists() throws Exception {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
-        Session session = mockSession("s1", s1Matcher);
-        server.register(session);
+        Connection connection = mockConnection("s1", s1Matcher);
+        server.register(connection);
 
         // when
         server.handle(Message.create()//
                 .signal("join")//
-                .build(), session);
+                .build(), connection);
 
         // then
         List<NextRTCEvent> events = eventCheckerCall.getEvents();
@@ -107,8 +105,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -128,8 +126,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -168,8 +166,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -214,9 +212,9 @@ public class ServerTest extends BaseTest {
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
         MessageMatcher s3Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
-        Session s3 = mockSession("s3", s3Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
+        Connection s3 = mockConnection("s3", s3Matcher);
         server.register(s1);
         server.register(s2);
         server.register(s3);
@@ -278,8 +276,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -333,8 +331,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -410,8 +408,8 @@ public class ServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -430,7 +428,7 @@ public class ServerTest extends BaseTest {
         await().until(() -> s2Matcher.has(m -> m.getSignal().equals("joined")).check());
         s1Matcher.reset();
         s2Matcher.reset();
-        server.unregister(s1, mock(CloseReason.class));
+        server.unregister(s1, "");
         await().until(() -> s2Matcher.has(m -> m.getSignal().equals("left")).check());
         // then
         assertThat(s1Matcher.getMessages().size(), is(0));

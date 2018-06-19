@@ -6,8 +6,6 @@ import org.nextrtc.signalingserver.MessageMatcher;
 import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.websocket.Session;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -30,7 +28,7 @@ public class PingTaskTest extends BaseTest {
 
 
         // when
-        new PingTask(member.getSession(), sender).run();
+        new PingTask(member.getConnection(), sender).run();
 
         // then
         assertThat(messages.getMessage().getSignal(), is(Signals.PING));
@@ -40,11 +38,11 @@ public class PingTaskTest extends BaseTest {
     public void shouldNotSendMessageWhenSessionIsEnded() {
         // given
         MessageMatcher messages = new MessageMatcher("");
-        Session session = mockSession("s1", messages);
-        when(session.isOpen()).thenReturn(false);
+        Connection connection = mockConnection("s1", messages);
+        when(connection.isOpen()).thenReturn(false);
 
         // when
-        new PingTask(session, sender).run();
+        new PingTask(connection, sender).run();
 
         // then
         assertThat(messages.getMessages(), hasSize(0));

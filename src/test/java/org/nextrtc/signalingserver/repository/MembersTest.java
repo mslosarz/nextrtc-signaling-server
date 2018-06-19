@@ -2,10 +2,10 @@ package org.nextrtc.signalingserver.repository;
 
 import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
+import org.nextrtc.signalingserver.domain.Connection;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.websocket.Session;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -54,13 +54,13 @@ public class MembersTest extends BaseTest {
     @Test
     public void shouldUnregisterMember() throws Exception {
         // given
-        Session session = mock(Session.class);
-        when(session.getId()).thenReturn("s1");
+        Connection connection = mock(Connection.class);
+        when(connection.getId()).thenReturn("s1");
         members.register(mockMember("s1"));
         assertTrue(members.findBy("s1").isPresent());
 
         // when
-        members.unregister(session.getId());
+        members.unregister(connection.getId());
 
         // then
         assertFalse(members.findBy("s1").isPresent());

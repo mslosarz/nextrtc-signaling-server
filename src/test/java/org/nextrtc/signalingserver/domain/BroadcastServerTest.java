@@ -12,15 +12,12 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 @ContextConfiguration(classes = {ServerEventCheck.class, LocalStreamCreated2.class})
 public class BroadcastServerTest extends BaseTest {
@@ -43,14 +40,14 @@ public class BroadcastServerTest extends BaseTest {
     @Test
     public void shouldCreateConversationOnCreateSignal() throws Exception {
         // given
-        Session session = mockSession("s1");
-        server.register(session);
+        Connection connection = mockConnection("s1");
+        server.register(connection);
 
         // when
         server.handle(Message.create()//
                 .signal("create")//
                 .custom(broadcast())
-                .build(), session);
+                .build(), connection);
 
         // then
         List<NextRTCEvent> events = eventCheckerCall.getEvents();
@@ -62,8 +59,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -84,8 +81,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -117,8 +114,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -155,9 +152,9 @@ public class BroadcastServerTest extends BaseTest {
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
         MessageMatcher s3Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
-        Session s3 = mockSession("s3", s3Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
+        Connection s3 = mockConnection("s3", s3Matcher);
         server.register(s1);
         server.register(s2);
         server.register(s3);
@@ -205,8 +202,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -249,8 +246,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session broadcaster = mockSession("broadcaster", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection broadcaster = mockConnection("broadcaster", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(broadcaster);
         server.register(s2);
 
@@ -304,8 +301,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -321,7 +318,7 @@ public class BroadcastServerTest extends BaseTest {
                 .build(), s2);
         s1Matcher.reset();
         s2Matcher.reset();
-        server.unregister(s1, mock(CloseReason.class));
+        server.unregister(s1, "");
         // when
 
         // then
@@ -335,8 +332,8 @@ public class BroadcastServerTest extends BaseTest {
         // given
         MessageMatcher s1Matcher = new MessageMatcher();
         MessageMatcher s2Matcher = new MessageMatcher();
-        Session s1 = mockSession("s1", s1Matcher);
-        Session s2 = mockSession("s2", s2Matcher);
+        Connection s1 = mockConnection("s1", s1Matcher);
+        Connection s2 = mockConnection("s2", s2Matcher);
         server.register(s1);
         server.register(s2);
 
@@ -352,7 +349,7 @@ public class BroadcastServerTest extends BaseTest {
                 .build(), s2);
         s1Matcher.reset();
         s2Matcher.reset();
-        server.unregister(s1, mock(CloseReason.class));
+        server.unregister(s1, "");
         // when
 
         // then

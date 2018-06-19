@@ -11,8 +11,6 @@ import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.websocket.CloseReason;
-import javax.websocket.Session;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.function.Consumer;
@@ -44,13 +42,13 @@ public class Server {
         this.sender = sender;
     }
 
-    public void register(Session s) {
+    public void register(Connection s) {
         doSaveExecution(s, session ->
                 register.incoming(session)
         );
     }
 
-    public void handle(Message external, Session s) {
+    public void handle(Message external, Connection s) {
         doSaveExecution(s, session -> {
             Pair<Signal, SignalHandler> resolve = resolver.resolve(external.getSignal());
             InternalMessage internalMessage = buildInternalMessage(external, resolve.getKey(), session);
@@ -65,9 +63,9 @@ public class Server {
         }
     }
 
-    private InternalMessage buildInternalMessage(Message message, Signal signal, Session session) {
+    private InternalMessage buildInternalMessage(Message message, Signal signal, Connection connection) {
         InternalMessageBuilder bld = InternalMessage.create()//
-                .from(findMember(session))//
+                .from(findMember(connection))//
                 .content(message.getContent())//
                 .signal(signal)//
                 .custom(message.getCustom());
@@ -75,37 +73,37 @@ public class Server {
         return bld.build();
     }
 
-    private Member findMember(Session session) {
-        return members.findBy(session.getId()).orElseThrow(() -> new SignalingException(MEMBER_NOT_FOUND));
+    private Member findMember(Connection connection) {
+        return members.findBy(connection.getId()).orElseThrow(() -> new SignalingException(MEMBER_NOT_FOUND));
     }
 
-    public void unregister(Session s, CloseReason reason) {
-        doSaveExecution(s, session -> {
+    public void unregister(Connection connection, String reason) {
+        doSaveExecution(connection, session -> {
                     members.unregister(session.getId());
-                    eventBus.post(SESSION_CLOSED.occurFor(session, reason.getReasonPhrase()));
+                    eventBus.post(SESSION_CLOSED.occurFor(session, reason));
                 }
         );
     }
 
 
-    public void handleError(Session s, Throwable exception) {
-        doSaveExecution(s, session -> {
+    public void handleError(Connection connection, Throwable exception) {
+        doSaveExecution(connection, session -> {
                     members.unregister(session.getId());
                     eventBus.post(UNEXPECTED_SITUATION.occurFor(session, exception.getMessage()));
                 }
         );
     }
 
-    private void doSaveExecution(Session session, Consumer<Session> action) {
+    private void doSaveExecution(Connection connection, Consumer<Connection> action) {
         try {
-            action.accept(session);
+            action.accept(connection);
         } catch (Exception e) {
             log.warn("Server will try to handle this exception and send information as normal message through websocket", e);
-            sendErrorOverWebSocket(session, e);
+            sendErrorOverWebSocket(connection, e);
         }
     }
 
-    private void sendErrorOverWebSocket(Session session, Exception e) {
+    private void sendErrorOverWebSocket(Connection session, Exception e) {
         try {
             sender.send(InternalMessage.create()
                     .to(new Member(session, null))

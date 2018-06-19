@@ -1,4 +1,5 @@
 v1.0.0-RC5:
+=x=>- Removed dependency to WebSocket JSR-356
     - New conversation type MESH_WITH_MASTER (when master leaves then conversation will be destroyed)
 v1.0.0-RC4:
     - Removed unnecessary log4j.properties file
@@ -8,7 +9,7 @@ v1.0.0-RC3:
     - Improved message sender (errors will be send only once whereas normal messages will be retried 3 times)
     - In broadcast conversation participant will received newJoined signal with master data
     - Ping will not start immediately after member is joined
-    - When session is closed message will not be send through it
+    - When connection is closed message will not be send through it
     - Each send will try at least 3 times before failing
 ===>- Introduced message sender instead of method send in InternalMessage
     - Introduced parallel model inside conversation
@@ -33,7 +34,7 @@ v1.0.0-RC1:
 v0.0.7:
     - Fixed problem with flushing server responses
 v0.0.6:
-    - PingTask will not send a messages when session is closed (now it could sometimes)
+    - PingTask will not send a messages when connection is closed (now it could sometimes)
     - EventDispatcher will catch all Exception, and allow to process rest of handlers (now handlers were executed to the first exception in chain)
     - Improved logging for unexpected situation, stacktrace will be in logs in DEBUG level
     - One member will be able to create or join to only one conversation

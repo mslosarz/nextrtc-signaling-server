@@ -1,8 +1,8 @@
 package org.nextrtc.signalingserver;
 
 import dagger.Component;
-import org.nextrtc.signalingserver.api.NextRTCEndpoint;
 import org.nextrtc.signalingserver.domain.MessageSender;
+import org.nextrtc.signalingserver.domain.Server;
 import org.nextrtc.signalingserver.domain.resolver.ManualSignalResolver;
 import org.nextrtc.signalingserver.eventbus.ManualEventDispatcher;
 import org.nextrtc.signalingserver.factory.ManualConversationFactory;
@@ -35,6 +35,6 @@ public interface NextRTCComponent {
 
     ConversationRepository conversationRepository();
 
-    void inject(NextRTCEndpoint endpoint);
+    Server nextRTCServer();
 
 }

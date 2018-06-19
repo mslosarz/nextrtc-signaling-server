@@ -1,11 +1,12 @@
 package org.nextrtc.signalingserver.api.dto;
 
-import javax.websocket.Session;
+
+import org.nextrtc.signalingserver.domain.Connection;
 
 public interface NextRTCMember {
     default String getId() {
-        return getSession().getId();
+        return getConnection().getId();
     }
 
-    Session getSession();
+    Connection getConnection();
 }

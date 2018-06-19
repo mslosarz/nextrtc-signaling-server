@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.cases;
 
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.domain.Connection;
 import org.nextrtc.signalingserver.domain.Member;
 import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.PingTask;
@@ -10,7 +11,6 @@ import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.websocket.Session;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -42,14 +42,14 @@ public class RegisterMember {
         this.sender = sender;
     }
 
-    public void incoming(Session session) {
-        Member newMember = factory.create(session, ping(session));
+    public void incoming(Connection connection) {
+        Member newMember = factory.create(connection, ping(connection));
         Member registered = members.register(newMember);
-        eventBus.post(SESSION_OPENED.occurFor(registered.getSession()));
+        eventBus.post(SESSION_OPENED.occurFor(registered.getConnection()));
     }
 
-    private ScheduledFuture<?> ping(Session session) {
-        return scheduler.scheduleAtFixedRate(new PingTask(session, sender), 1,
+    private ScheduledFuture<?> ping(Connection connection) {
+        return scheduler.scheduleAtFixedRate(new PingTask(connection, sender), 1,
                 properties.getPingPeriod(), TimeUnit.SECONDS);
     }
 

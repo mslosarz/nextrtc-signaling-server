@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import javax.websocket.Session;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 
@@ -23,16 +22,16 @@ import static org.nextrtc.signalingserver.domain.EventContext.builder;
 public class Member implements NextRTCMember {
 
     private String id;
-    private Session session;
+    private Connection connection;
     private Conversation conversation;
 
     private NextRTCEventBus eventBus;
 
     private ScheduledFuture<?> ping;
 
-    public Member(Session session, ScheduledFuture<?> ping) {
-        this.id = session.getId();
-        this.session = session;
+    public Member(Connection connection, ScheduledFuture<?> ping) {
+        this.id = connection.getId();
+        this.connection = connection;
         this.ping = ping;
     }
 
@@ -74,8 +73,8 @@ public class Member implements NextRTCMember {
         return String.format("%s", id);
     }
 
-    public synchronized Session getSession() {
-        return session;
+    public synchronized Connection getConnection() {
+        return connection;
     }
 
     @Override

@@ -62,21 +62,21 @@ public class ConnectionContext {
                 .to(master)//
                 .signal(Signal.FINALIZE)//
                 .build());
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getSession()));
-        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(master.getSession()));
-        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(slave.getSession()));
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(slave.getConnection()));
+        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(master.getConnection()));
+        bus.post(NextRTCEvents.MEDIA_STREAMING.occurFor(slave.getConnection()));
     }
 
 
     private void answerRequest(InternalMessage message) {
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getSession()));
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getConnection()));
         sender.send(message.copy()//
                 .from(master)//
                 .to(slave)//
                 .signal(Signal.ANSWER_REQUEST)//
                 .build()//
         );
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getSession()));
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(slave.getConnection()));
     }
 
     private boolean is(InternalMessage message, ConnectionState state) {
@@ -91,7 +91,7 @@ public class ConnectionContext {
                 .signal(Signal.OFFER_REQUEST)
                 .build()//
         );
-        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getSession()));
+        bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_REQUESTED.occurFor(master.getConnection()));
     }
 
     public boolean isCurrent() {

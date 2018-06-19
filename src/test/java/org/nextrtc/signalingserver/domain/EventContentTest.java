@@ -11,10 +11,6 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.websocket.CloseReason;
-import javax.websocket.CloseReason.CloseCodes;
-import javax.websocket.Session;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -45,14 +41,14 @@ public class EventContentTest extends BaseTest {
     @Test
     public void shouldPostSessionOpenedCloseAndExceptionEvent() throws Exception {
         // given
-        Session s1 = mockSession("s1");
-        Session s2 = mockSession("s2");
+        Connection s1 = mockConnection("s1");
+        Connection s2 = mockConnection("s2");
 
         // when
         server.register(s1);
         server.register(s2);
 
-        server.unregister(s1, new CloseReason(CloseCodes.NORMAL_CLOSURE, ""));
+        server.unregister(s1, "");
         server.handleError(s2, new RuntimeException());
 
         // then

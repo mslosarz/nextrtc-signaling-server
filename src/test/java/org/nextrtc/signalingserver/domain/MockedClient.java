@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.mockito.ArgumentMatcher;
 
-import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class MockedClient extends ArgumentMatcher<Message> {
     private Server server;
-    private Session session;
+    private Connection connection;
     private List<Message> messages = Lists.newLinkedList();
     private Map<String, AtomicInteger> candidates = new HashMap<>();
     private Map<String, Consumer<Message>> behavior = new HashMap<>();
@@ -26,37 +25,27 @@ public class MockedClient extends ArgumentMatcher<Message> {
         });
         behavior.put(Signals.LEFT, (message) -> {
         });
-        behavior.put(Signals.TEXT, (message) -> {
-            log.info("text message: " + message);
-        });
+        behavior.put(Signals.TEXT, (message) -> log.info("text message: " + message));
         behavior.put(Signals.END, (message) -> {
         });
-        behavior.put(Signals.ERROR, (message) -> {
-            log.warn("Received error!" + message);
-        });
+        behavior.put(Signals.ERROR, (message) -> log.warn("Received error!" + message));
         behavior.put(Signals.NEW_JOINED, (message) -> {
         });
-        behavior.put(Signals.OFFER_REQUEST, (message) -> {
-            server.handle(Message.create()
-                    .to(message.getFrom())
-                    .signal(Signals.OFFER_RESPONSE)
-                    .content("OFFER: " + session.getId())
-                    .build(), session);
-        });
-        behavior.put(Signals.ANSWER_REQUEST, (message) -> {
-            server.handle(Message.create()
-                    .to(message.getFrom())
-                    .signal(Signals.ANSWER_RESPONSE)
-                    .content("ANSWER: " + session.getId())
-                    .build(), session);
-        });
-        behavior.put(Signals.FINALIZE, (message) -> {
-            server.handle(Message.create()
-                    .to(message.getFrom())
-                    .signal(Signals.CANDIDATE)
-                    .content("CANDIDATE: " + session.getId() + " -> " + message.getFrom())
-                    .build(), session);
-        });
+        behavior.put(Signals.OFFER_REQUEST, (message) -> server.handle(Message.create()
+                .to(message.getFrom())
+                .signal(Signals.OFFER_RESPONSE)
+                .content("OFFER: " + connection.getId())
+                .build(), connection));
+        behavior.put(Signals.ANSWER_REQUEST, (message) -> server.handle(Message.create()
+                .to(message.getFrom())
+                .signal(Signals.ANSWER_RESPONSE)
+                .content("ANSWER: " + connection.getId())
+                .build(), connection));
+        behavior.put(Signals.FINALIZE, (message) -> server.handle(Message.create()
+                .to(message.getFrom())
+                .signal(Signals.CANDIDATE)
+                .content("CANDIDATE: " + connection.getId() + " -> " + message.getFrom())
+                .build(), connection));
         behavior.put(Signals.CANDIDATE, (message) -> {
             candidates.computeIfAbsent(message.getFrom(), k -> new AtomicInteger());
             AtomicInteger atomicInteger = candidates.get(message.getFrom());
@@ -64,17 +53,17 @@ public class MockedClient extends ArgumentMatcher<Message> {
                 server.handle(Message.create()
                         .to(message.getFrom())
                         .signal(Signals.CANDIDATE)
-                        .content("CANDIDATE: " + session.getId() + " -> " + message.getFrom())
-                        .build(), session);
+                        .content("CANDIDATE: " + connection.getId() + " -> " + message.getFrom())
+                        .build(), connection);
             }
         });
         behavior.put("upperCase", (message) -> {
         });
     }
 
-    public MockedClient(Server server, Session session) {
+    public MockedClient(Server server, Connection connection) {
         this.server = server;
-        this.session = session;
+        this.connection = connection;
     }
 
     @Override
