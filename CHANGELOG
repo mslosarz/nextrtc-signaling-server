@@ -1,4 +1,5 @@
 v1.0.0-RC5:
+    - Updated pom and readme
 =x=>- Removed dependency to WebSocket JSR-356
     - New conversation type MESH_WITH_MASTER (when master leaves then conversation will be destroyed)
 v1.0.0-RC4:

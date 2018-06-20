@@ -31,7 +31,8 @@ public class PerformanceTest {
     @Parameters(name = "{0}: on url {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {"RatPack", uri("localhost:5050")}//,{"Spring", uri("localhost:8080")}, {"Standalone", uri("localhost:8090")}
+                //{"RatPack", uri("localhost:5050")},
+                {"Spring", uri("localhost:8080")}//,{"Standalone", uri("localhost:8090")}
         });
     }
 

@@ -17,12 +17,6 @@ If you want to use NextRTC as a module of existing Spring based solution you hav
 ```xml
 <dependencies>
     <dependency>
-        <groupId>javax.websocket</groupId>
-        <artifactId>javax.websocket-api</artifactId>
-        <version>1.1</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
         <groupId>org.nextrtc.signalingserver</groupId>
         <artifactId>nextrtc-signaling-server</artifactId>
         <version>${current-version}</version>
@@ -33,29 +27,79 @@ If you want to use NextRTC as a module of existing Spring based solution you hav
     </dependency>
 </dependencies>
 ```
-Latests version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server).
-Then you have to create
-```java
-@ServerEndpoint(value = "/signaling",//
-    decoders = MessageDecoder.class,//
-    encoders = MessageEncoder.class)
-public class MyEndpoint extends NextRTCEndpoint {
-}
-```
-Add to your configuration import to `NextRTCConfig` bean. In configuration you have to define your endpoint as a bean and provides ServerEndpointExporter.   
+Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server).
+*TODO: update*
+Then you have to create a config where your endpoint will be defined
 ```java
 @Configuration
 @Import(NextRTCConfig.class)
-public class EndpointConfig {
-        @Bean
-        public MyEndpoint myEndpoint() {
-            return new MyEndpoint();
+public class MyWebSocketConfigurator implements WebSocketConfigurer {
+    @Autowired
+    private NextRTCServer server;
+
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(customEndpoint(), "/signaling").setAllowedOrigins("*");
+    }
+
+    @Bean
+    public MyEndpoint customEndpoint() {
+        return new MyEndpoint(server);
+    }
+}
+```
+And implement Spring WebSocket handler   
+```java
+public class MyEndpoint extends TextWebSocketHandler {
+    private static class SessionWrapper implements Connection {
+
+        private final WebSocketSession session;
+
+        public SessionWrapper(WebSocketSession session) {
+            this.session = session;
         }
-    
-        @Bean
-        public ServerEndpointExporter serverEndpointExporter() {
-            return new ServerEndpointExporter();
+
+        @Override
+        public String getId() {
+            return session.getId();
         }
+
+        @Override
+        public boolean isOpen() {
+            return session.isOpen();
+        }
+
+        @Override
+        public void sendObject(Object object) {
+            try {
+                session.sendMessage(new TextMessage(NextRTCServer.MessageEncoder.encode(object)));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private final NextRTCServer server;
+
+    @Inject
+    MyEndpoint(NextRTCServer server) {
+        this.server = server;
+    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        server.register(new SessionWrapper(session));
+    }
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        server.handle(NextRTCServer.MessageDecoder.decode(message.getPayload()), new SessionWrapper(session));
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        server.unregister(new SessionWrapper(session), status.getReason());
+    }
 }
 ```
 
@@ -117,6 +161,78 @@ If you want to use NextRTC in standalone mode you have to add it as a Maven depe
 ```xml
 <dependencies>
     <dependency>
+        <groupId>org.nextrtc.signalingserver</groupId>
+        <artifactId>nextrtc-signaling-server</artifactId>
+        <version>${current-version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+</dependencies>
+```
+Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server). Then you have to create NextRTCServer instance. And use it inside your WebSocket handler.
+Below there are examples of usage that can be found [here (ratpack)](https://github.com/mslosarz/nextrtc-example-ratpack) and [here (standalone tomcat)](https://github.com/mslosarz/nextrtc-example-wo-spring).
+```java
+// RatPack implementation
+public class RatPackWebSocketHandler implements WebSocketHandler<String> {
+    private final NextRTCServer server;
+    private RatPackConnection connection;
+
+    private static class RatPackConnection implements Connection {
+        private static final AtomicLong nextId = new AtomicLong(1);
+        private final WebSocket socket;
+        private String id;
+
+        private RatPackConnection(WebSocket socket) {
+            this.id = "0xx" + nextId.getAndIncrement();
+            this.socket = socket;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return socket.isOpen();
+        }
+
+        @Override
+        public void sendObject(Object object) {
+            socket.send(NextRTCServer.MessageEncoder.encode(object));
+        }
+    }
+
+    public RatPackWebSocketHandler(NextRTCServer server) {
+        this.server = server;
+    }
+
+    @Override
+    public String onOpen(WebSocket webSocket) throws Exception {
+        connection = new RatPackConnection(webSocket);
+        server.register(connection);
+        return null;
+    }
+
+    @Override
+    public void onClose(WebSocketClose<String> webSocketClose) throws Exception {
+        server.unregister(connection, webSocketClose.getOpenResult());
+    }
+
+    @Override
+    public void onMessage(WebSocketMessage<String> webSocketMessage) throws Exception {
+        server.handle(webSocketMessage.getText(), connection);
+    }
+}
+```
+When you're using tomcat as a servlet container you'll need to add two dependencies (websocket-api and servlet-api)
+```xml
+<dependencies>
+    <dependency>
         <groupId>javax.websocket</groupId>
         <artifactId>javax.websocket-api</artifactId>
         <version>1.1</version>
@@ -141,18 +257,6 @@ If you want to use NextRTC in standalone mode you have to add it as a Maven depe
     </dependency>
 </dependencies>
 ```
-Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server). Then you have to create Endpoint with @ServerEndpoint annotation (it comes from JSR 356), and implement method manualConfiguration. Builder provided in parameter has method to build up default implementation. But if you want to increase ping latency and so on, you should setup this values before you create endpoint.
-```java
-@ServerEndpoint(value = "/signaling",
-        decoders = MessageDecoder.class,
-        encoders = MessageEncoder.class)
-public class MyEndpoint extends NextRTCEndpoint {
-    protected EndpointConfiguration manualConfiguration(ConfigurationBuilder builder) {
-        return builder.createDefaultEndpoint();
-    }
-
-}
-```
 In standalone mode you probably have to add to your project directory `webapp/WEB-INF/web.xml` with content is similar to this provided below:
 ```xml
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
@@ -162,30 +266,102 @@ In standalone mode you probably have to add to your project directory `webapp/WE
          version="3.1">
 </web-app>
 ```
+And implement @ServerEndpoint as it was presented below
+```java
+@ServerEndpoint(value = "/signaling")
+public class MyEndpoint {
+
+    private static final Logger log = LoggerFactory.getLogger(MyEndpoint.class);
+    private static final NextRTCServer server = NextRTCServer.create(configuration -> {
+        configuration.nextRTCProperties().setPingPeriod(1);
+
+        configuration.signalResolver().addCustomSignal(Signal.fromString("upperCase"), (msg) ->
+                configuration.messageSender().send(InternalMessage.create()
+                        .to(msg.getFrom())
+                        .signal(Signal.fromString("upperCase"))
+                        .content(msg.getContent() == null ? "" : msg.getContent().toUpperCase())
+                        .build()));
+
+        configuration.eventDispatcher().addListener(new CustomHandler());
+        return configuration;
+    });
+
+    private static class SessionWrapper implements Connection {
+
+        private final Session session;
+
+        public SessionWrapper(Session session) {
+            this.session = session;
+        }
+
+        @Override
+        public String getId() {
+            return session.getId();
+        }
+
+        @Override
+        public boolean isOpen() {
+            return session.isOpen();
+        }
+
+        @Override
+        public void sendObject(Object object) {
+            try {
+                session.getBasicRemote().sendText(NextRTCServer.MessageEncoder.encode(object));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @OnOpen
+    public void onOpen(Session session, EndpointConfig config) {
+        server.register(new SessionWrapper(session));
+    }
+
+    @OnMessage
+    public void onMessage(String message, Session session) {
+        server.handle(NextRTCServer.MessageDecoder.decode(message), new SessionWrapper(session));
+    }
+
+    @OnClose
+    public void onClose(Session session, CloseReason reason) {
+        server.unregister(new SessionWrapper(session), reason.getReasonPhrase());
+    }
+
+    @OnError
+    public void onError(Session session, Throwable exception) {
+        server.handleError(new SessionWrapper(session), exception);
+    }
+}
+```
 Without `web.xml` servlet container sometimes doesn't scan classes and your Endpoint can be omitted during class loading.
 You can find working example [here](https://github.com/mslosarz/nextrtc-example-wo-spring).
 
 ### How to register own signal
 
-In manualConfiguration method you have to create context using builder provided as method parameter:
+In manualConfiguration method if you want to provide your own signal you have to register it during server creation.
 ```java
-EndpointConfiguration configuration = builder.createDefaultEndpoint();
+NextRTCServer server = NextRTCServer.create(configuration -> {
+    configuration.signalResolver().addCustomSignal(/* custom signal is going here */);
+    return configuration;
+});
 ```
 Configuration object provides you ability to modify properties `configuration.nextRTCProperties()`, and it also provides you `configuration.signalResolver()`. To add your own signal you have to just add to signal resolver your own signal
  ```java
-class MyEndpoint implements NextRTCEndpoint {
-    protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
-        final EndpointConfiguration configuration = builder.createDefaultEndpoint();
-        final MessageSender sender = configuration.messageSender();
-        configuration.addCustomSignal(Signal.fromString("upperCase"), 
-                    (msg)-> 
-                           sender.send(InternalMessage.create()
-                                   .to(msg.getFrom())
-                                   .content(msg.getContent().toUpperCase())
-                                   .signal(Signal.fromString("upperCase"))
-                                   .build()));
-        return configuration;
-    }
+private static final NextRTCServer server = NextRTCServer.create(configuration -> {
+    configuration.nextRTCProperties().setPingPeriod(1);
+
+    configuration.signalResolver().addCustomSignal(Signal.fromString("upperCase"), (msg) ->
+            configuration.messageSender().send(InternalMessage.create()
+                    .to(msg.getFrom())
+                    .signal(Signal.fromString("upperCase"))
+                    .content(msg.getContent() == null ? "" : msg.getContent().toUpperCase())
+                    .build()));
+
+    configuration.eventDispatcher().addListener(new CustomHandler());
+    return configuration;
+});
 }
 ```
 In this example new handler (upperCase) will take a content of incoming message and resend the content to sender with uppercase letters.
@@ -201,13 +377,11 @@ public class ExceptionHandler implements NextRTCHandler {
         log.error(nextRTCEvent);
     }
 }
-
-class MyEndpoint implements NextRTCEndpoint {
-    protected EndpointConfiguration manualConfiguration(final ConfigurationBuilder builder) {
-        EndpointConfiguration configuration = builder.createDefaultEndpoint();
-        configuration.eventDispatcher().addListener(new ExceptionHandler());
-        return configuration;
-    }
+...
+private static final NextRTCServer server = NextRTCServer.create(configuration -> {
+    configuration.eventDispatcher().addListener(new ExceptionHandler());
+    return configuration;
+});
 }
 ```
 
