@@ -3,6 +3,7 @@ package org.nextrtc.signalingserver.domain;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
+import org.nextrtc.signalingserver.api.NextRTCServer;
 import org.nextrtc.signalingserver.cases.RegisterMember;
 import org.nextrtc.signalingserver.cases.SignalHandler;
 import org.nextrtc.signalingserver.domain.InternalMessage.InternalMessageBuilder;
@@ -21,7 +22,7 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
 @Slf4j
 @Component
-public class Server {
+public class Server implements NextRTCServer {
 
     private NextRTCEventBus eventBus;
     private MemberRepository members;
