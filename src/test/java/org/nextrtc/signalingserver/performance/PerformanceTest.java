@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 
-@Ignore
+//@Ignore
 @Slf4j
 @RunWith(Parameterized.class)
 public class PerformanceTest {
@@ -31,7 +31,7 @@ public class PerformanceTest {
     @Parameters(name = "{0}: on url {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-               /* {"Spring", uri("localhost:8080")},*/ {"Standalone", uri("localhost:8090")}
+                {"RatPack", uri("localhost:5050")}//,{"Spring", uri("localhost:8080")}, {"Standalone", uri("localhost:8090")}
         });
     }
 
@@ -71,12 +71,12 @@ public class PerformanceTest {
         // then
         List<Peer> result = peers.stream().map(Tuple::getSocket).collect(toList());
         List<String> allNames = result.stream().map(Peer::getName).collect(toList());
-        result.forEach(p -> assertThat(p.getName() + ": Some members were missed", p.getJoined(), containsInAnyOrder(without(allNames, p.getName()))));
         peers.stream()
                 .map(Tuple::getSocket)
                 .forEach(p -> await()
                         .atMost(1, MINUTES)
                         .until(() -> p.getJoined().size() == size - 1));
+        result.forEach(p -> assertThat(p.getName() + ": Some members were missed", p.getJoined(), containsInAnyOrder(without(allNames, p.getName()))));
         result.forEach(p -> assertThat(p.getName() + " doesn't have all participant!", p.getJoined(), hasSize(size - 1)));
         result.forEach(p -> assertThat(p.getName() + " has joined to himself!", p.getJoined(), not(containsInAnyOrder(p.getName()))));
         result.forEach(p -> await()

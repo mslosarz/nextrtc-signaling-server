@@ -1,6 +1,5 @@
 package org.nextrtc.signalingserver;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.mockito.ArgumentMatcher;
 import org.nextrtc.signalingserver.domain.Message;
