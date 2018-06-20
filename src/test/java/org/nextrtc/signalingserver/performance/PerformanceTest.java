@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 
-//@Ignore
+@Ignore
 @Slf4j
 @RunWith(Parameterized.class)
 public class PerformanceTest {
