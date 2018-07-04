@@ -28,7 +28,7 @@ If you want to use NextRTC as a module of existing Spring based solution you hav
 </dependencies>
 ```
 Latest version of NextRTC can be found [here](https://mvnrepository.com/artifact/org.nextrtc.signalingserver/nextrtc-signaling-server).
-*TODO: update*
+
 Then you have to create a config where your endpoint will be defined
 ```java
 @Configuration
