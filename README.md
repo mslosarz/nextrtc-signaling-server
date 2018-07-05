@@ -12,6 +12,18 @@ NextRTC project use Lombok, so please be aware that you have to install Lombok p
 
 NextRTC can be used in two modes **Standalone** or as a **Spring module**. Details about frontend client can be found [here](https://github.com/mslosarz/nextrtc-js-client). Both mode setup is described below.
 
+## Code examples
+There are 5 project that can interest you:
+- Web chat using Spring (Spring WebSocket)
+  - [Example1](https://github.com/mslosarz/nextrtc-example-videochat)
+- Web chat using Tomcat (via Cargo plugin) without Spring but with websocket JSR-356 
+  - [Example2](https://github.com/mslosarz/nextrtc-example-wo-spring)
+- Web chat using RatPack without Spring with Netty WebSocket implementation
+  - [Example3](https://github.com/mslosarz/nextrtc-example-ratpack)
+- [NextRTC JS Client](https://github.com/mslosarz/nextrtc-js-client)
+- Sample js application that is used in the all examples 
+  - [JS Sample Webapp](https://github.com/mslosarz/nextrtc-sample-webapp)
+
 ## Spring module mode
 If you want to use NextRTC as a module of existing Spring based solution you have to add to you pom.xml file following entry:
 ```xml

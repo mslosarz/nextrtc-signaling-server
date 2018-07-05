@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Component
@@ -28,6 +30,7 @@ public class ConnectionContext {
 
     private Member master;
     private Member slave;
+    private List<InternalMessage> candidates = new ArrayList<>();
 
     public ConnectionContext(Member master, Member slave) {
         this.master = master;
@@ -36,15 +39,28 @@ public class ConnectionContext {
 
 
     public void process(InternalMessage message) {
+        if(message.getSignal() == Signal.CANDIDATE && !is(message, ConnectionState.EXCHANGE_CANDIDATES)){
+            recordCandidate(message);
+        }
         if (is(message, ConnectionState.OFFER_REQUESTED)) {
             setState(ConnectionState.ANSWER_REQUESTED);
             answerRequest(message);
         } else if (is(message, ConnectionState.ANSWER_REQUESTED)) {
             setState(ConnectionState.EXCHANGE_CANDIDATES);
             finalize(message);
+            sendCollectedCandidates();
         } else if (is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
             exchangeCandidates(message);
         }
+    }
+
+    private void sendCollectedCandidates() {
+        candidates.forEach(this::exchangeCandidates);
+        candidates.clear();
+    }
+
+    private void recordCandidate(InternalMessage message) {
+        candidates.add(message);
     }
 
 
