@@ -1,5 +1,7 @@
 package org.nextrtc.signalingserver.api.dto;
 
-public interface NextRTCConversation {
+import java.io.Closeable;
+
+public interface NextRTCConversation extends Closeable {
     String getId();
 }

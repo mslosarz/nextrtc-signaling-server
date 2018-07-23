@@ -1,3 +1,5 @@
+v1.0.0-RC6:
+    - Server will be closeable (all thread pools will be closed, and connection released)
 v1.0.0-RC5:
     - Updated pom and readme
 =x=>- Removed dependency to WebSocket JSR-356

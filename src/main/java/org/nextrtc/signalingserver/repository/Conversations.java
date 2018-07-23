@@ -5,6 +5,7 @@ import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -47,5 +48,10 @@ public class Conversations implements ConversationRepository {
     @Override
     public Collection<String> getAllIds() {
         return conversations.keySet();
+    }
+
+    @Override
+    public void close() throws IOException {
+
     }
 }

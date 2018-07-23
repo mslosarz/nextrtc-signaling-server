@@ -5,11 +5,12 @@ import com.google.gson.GsonBuilder;
 import org.nextrtc.signalingserver.domain.Connection;
 import org.nextrtc.signalingserver.domain.Message;
 
+import java.io.Closeable;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 
-public interface NextRTCServer {
+public interface NextRTCServer extends Closeable {
 
     void register(Connection connection);
 

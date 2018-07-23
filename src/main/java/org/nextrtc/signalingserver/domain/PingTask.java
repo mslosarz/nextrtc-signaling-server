@@ -12,6 +12,9 @@ public class PingTask implements Runnable {
 
     @Override
     public void run() {
+        if(Thread.interrupted()){
+            return;
+        }
         sender.send(InternalMessage.create()//
                 .to(to)//
                 .signal(Signal.PING)//

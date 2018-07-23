@@ -40,7 +40,7 @@ public class PerformanceTest {
 
     private static URI uri(String uri) {
         try {
-            return new URI(format("ws://%s/signaling", uri));
+            return new URI(format("wss://%s/signaling", uri));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

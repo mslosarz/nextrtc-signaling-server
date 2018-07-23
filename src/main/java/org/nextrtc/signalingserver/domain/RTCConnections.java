@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Scope("singleton")
-public class RTCConnections {
+public class RTCConnections implements Closeable{
     private static Table<Member, Member, ConnectionContext> connections = HashBasedTable.create();
 
     private ScheduledExecutorService scheduler;
@@ -53,4 +55,9 @@ public class RTCConnections {
         return Optional.ofNullable(connections.get(from, to));
     }
 
+
+    @Override
+    public void close() throws IOException {
+        connections.clear();
+    }
 }

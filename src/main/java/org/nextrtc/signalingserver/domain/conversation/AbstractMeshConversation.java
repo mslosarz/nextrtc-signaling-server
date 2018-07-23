@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.util.Set;
 
 @Component
@@ -107,6 +108,11 @@ public abstract class AbstractMeshConversation extends Conversation {
                 .content(id)//
                 .build()//
         );
+    }
+
+    @Override
+    public void close() throws IOException {
+        members.parallelStream().forEach(this::remove);
     }
 
     @Inject

@@ -12,8 +12,10 @@ import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
@@ -24,23 +26,26 @@ import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 @Component
 public class Server implements NextRTCServer {
 
-    private NextRTCEventBus eventBus;
-    private MemberRepository members;
-    private SignalResolver resolver;
-    private RegisterMember register;
-    private MessageSender sender;
+    private final CloseableContext context;
+    private final NextRTCEventBus eventBus;
+    private final MemberRepository members;
+    private final SignalResolver resolver;
+    private final RegisterMember register;
+    private final MessageSender sender;
 
     @Inject
     public Server(NextRTCEventBus eventBus,
                   MemberRepository members,
                   SignalResolver resolver,
                   RegisterMember register,
-                  MessageSender sender) {
+                  MessageSender sender,
+                  CloseableContext context) {
         this.eventBus = eventBus;
         this.members = members;
         this.resolver = resolver;
         this.register = register;
         this.sender = sender;
+        this.context = context;
     }
 
     public void register(Connection s) {
@@ -127,4 +132,8 @@ public class Server implements NextRTCServer {
         return e.getClass().getSimpleName() + " - " + e.getMessage();
     }
 
+    @Override
+    public void close() throws IOException {
+        context.close();
+    }
 }

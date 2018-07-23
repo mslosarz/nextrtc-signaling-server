@@ -6,4 +6,6 @@ public interface Connection {
     boolean isOpen();
 
     void sendObject(Object object);
+
+    void close();
 }
