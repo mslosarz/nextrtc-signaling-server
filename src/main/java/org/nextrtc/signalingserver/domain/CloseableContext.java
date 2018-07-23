@@ -1,5 +1,6 @@
 package org.nextrtc.signalingserver.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.repository.ConversationRepository;
 import org.nextrtc.signalingserver.repository.MemberRepository;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
+@Slf4j
 @Component
 class CloseableContext implements Closeable {
     private final ScheduledExecutorService scheduler;
@@ -30,9 +32,17 @@ class CloseableContext implements Closeable {
     @Override
     public void close() throws IOException {
         scheduler.shutdownNow();
-        conversations.close();
-        members.close();
-        connections.close();
+        closeQuietly(conversations);
+        closeQuietly(members);
+        closeQuietly(connections);
+    }
+
+    private void closeQuietly(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (Exception e) {
+            log.error("Problem during closing " + closeable, e);
+        }
     }
 
 

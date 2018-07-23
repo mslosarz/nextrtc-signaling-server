@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.repository;
 
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 public class Members implements MemberRepository {
 
@@ -46,7 +48,13 @@ public class Members implements MemberRepository {
 
     @Override
     public void close() throws IOException {
-        members.values().forEach(member -> member.getConnection().close());
+        for (Member member : members.values()) {
+            try {
+                member.getConnection().close();
+            } catch (Exception e) {
+                log.error("Problem during closing member connection " + member.getId(), e);
+            }
+        }
         members.clear();
     }
 }

@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.repository;
 
 import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.domain.Conversation;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.nextrtc.signalingserver.exception.Exceptions.CONVERSATION_NAME_OCCUPIED;
 
+@Slf4j
 @Repository
 public class Conversations implements ConversationRepository {
 
@@ -52,6 +54,12 @@ public class Conversations implements ConversationRepository {
 
     @Override
     public void close() throws IOException {
-
+        for (Conversation conversation : conversations.values()) {
+            try {
+                conversation.close();
+            } catch (Exception e) {
+                log.error("Problem during closing conversation " + conversation.getId(), e);
+            }
+        }
     }
 }

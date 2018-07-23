@@ -1,5 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
+import java.io.IOException;
+
 public interface Connection {
     String getId();
 
@@ -7,5 +9,5 @@ public interface Connection {
 
     void sendObject(Object object);
 
-    void close();
+    void close() throws IOException;
 }
