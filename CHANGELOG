@@ -1,5 +1,4 @@
 v1.0.0-RC6:
-    -
     - NextRTCConversation will expose information about creator and members
     - Close reason will not be returned in event
     - Content in event will not be Optional anymore (you'll get content or empty string)

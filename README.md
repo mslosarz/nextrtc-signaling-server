@@ -20,6 +20,8 @@ There are 5 project that can interest you:
   - [Example2](https://github.com/mslosarz/nextrtc-example-wo-spring)
 - Web chat using RatPack without Spring with Netty WebSocket implementation
   - [Example3](https://github.com/mslosarz/nextrtc-example-ratpack)
+- Web chat with Spring + SpringWebSocket + Spring Security
+  - [Example4](https://github.com/mslosarz/nextrtc-example-spring-auth)
 - [NextRTC JS Client](https://github.com/mslosarz/nextrtc-js-client)
 - Sample js application that is used in the all examples 
   - [JS Sample Webapp](https://github.com/mslosarz/nextrtc-sample-webapp)
