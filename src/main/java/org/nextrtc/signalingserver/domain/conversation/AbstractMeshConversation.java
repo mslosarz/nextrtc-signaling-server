@@ -1,8 +1,7 @@
 package org.nextrtc.signalingserver.domain.conversation;
 
 import com.google.common.collect.Sets;
-import lombok.AccessLevel;
-import lombok.Getter;
+import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.nextrtc.signalingserver.domain.*;
@@ -18,8 +17,23 @@ import java.util.Set;
 public abstract class AbstractMeshConversation extends Conversation {
     private ExchangeSignalsBetweenMembers exchange;
 
-    @Getter(AccessLevel.PROTECTED)
+
     private Set<Member> members = Sets.newConcurrentHashSet();
+    private Member creator;
+
+    @Override
+    public Set<NextRTCMember> getMembers() {
+        return Sets.newHashSet(members);
+    }
+
+    @Override
+    public Member getCreator() {
+        return creator;
+    }
+
+    protected Set<Member> members() {
+        return Sets.newHashSet(members);
+    }
 
     public AbstractMeshConversation(String id) {
         super(id);
@@ -58,6 +72,7 @@ public abstract class AbstractMeshConversation extends Conversation {
 
     private void informSenderThatHasBeenJoined(Member sender) {
         if (isWithoutMember()) {
+            this.creator = sender;
             sendJoinedToFirst(sender, id);
         } else {
             sendJoinedToConversation(sender, id);
@@ -96,6 +111,9 @@ public abstract class AbstractMeshConversation extends Conversation {
             for (Member member : members) {
                 parallel.execute(() -> sendLeftMessage(leaving, member));
             }
+        }
+        if (members.isEmpty()) {
+            creator = null;
         }
         return remove;
     }

@@ -39,8 +39,13 @@ public class MeshWithMasterConversation extends AbstractMeshConversation {
     public synchronized boolean remove(Member leaving) {
         boolean remove = super.remove(leaving);
         if(remove && owner.equals(leaving)){
-            new HashSet<>(getMembers()).forEach(super::remove);
+            new HashSet<>(members()).forEach(super::remove);
         }
         return remove;
+    }
+
+    @Override
+    public Member getCreator() {
+        return owner;
     }
 }

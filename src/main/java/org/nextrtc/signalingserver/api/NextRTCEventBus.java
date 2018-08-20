@@ -18,7 +18,9 @@ public class NextRTCEventBus {
     }
 
     public void post(NextRTCEvent event) {
-        log.info("POSTED EVENT: " + event);
+        if (event.type() != NextRTCEvents.MESSAGE) {
+            log.info("POSTED EVENT: " + event);
+        }
         eventBus.post(event);
     }
 

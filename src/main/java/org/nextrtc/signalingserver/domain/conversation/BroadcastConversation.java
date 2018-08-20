@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.domain.conversation;
 
 import com.google.common.collect.Sets;
+import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
 import org.nextrtc.signalingserver.domain.*;
@@ -144,5 +145,15 @@ public class BroadcastConversation extends Conversation {
     @Inject
     public void setExchange(ExchangeSignalsBetweenMembers exchange) {
         this.exchange = exchange;
+    }
+
+    @Override
+    public Member getCreator() {
+        return broadcaster;
+    }
+
+    @Override
+    public Set<NextRTCMember> getMembers() {
+        return Sets.newHashSet(audience);
     }
 }

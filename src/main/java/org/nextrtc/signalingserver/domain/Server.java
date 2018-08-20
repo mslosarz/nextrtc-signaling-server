@@ -15,11 +15,9 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
-import static org.nextrtc.signalingserver.api.NextRTCEvents.SESSION_CLOSED;
-import static org.nextrtc.signalingserver.api.NextRTCEvents.UNEXPECTED_SITUATION;
+import static org.nextrtc.signalingserver.api.NextRTCEvents.*;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
 @Slf4j
@@ -58,6 +56,7 @@ public class Server implements NextRTCServer {
         doSaveExecution(s, session -> {
             Pair<Signal, SignalHandler> resolve = resolver.resolve(external.getSignal());
             InternalMessage internalMessage = buildInternalMessage(external, resolve.getKey(), session);
+            eventBus.post(MESSAGE.basedOn(internalMessage));
             processMessage(resolve.getValue(), internalMessage);
         });
     }
