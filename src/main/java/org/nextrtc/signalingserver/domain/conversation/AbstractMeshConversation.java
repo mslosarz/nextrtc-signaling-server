@@ -4,7 +4,10 @@ import com.google.common.collect.Sets;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.nextrtc.signalingserver.domain.*;
+import org.nextrtc.signalingserver.domain.Conversation;
+import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -41,9 +44,8 @@ public abstract class AbstractMeshConversation extends Conversation {
 
     public AbstractMeshConversation(String id,
                                     LeftConversation left,
-                                    MessageSender sender,
                                     ExchangeSignalsBetweenMembers exchange) {
-        super(id, left, sender);
+        super(id, left);
         this.exchange = exchange;
     }
 
@@ -96,7 +98,7 @@ public abstract class AbstractMeshConversation extends Conversation {
     public void broadcast(Member from, InternalMessage message) {
         members.stream()
                 .filter(member -> !member.equals(from))
-                .forEach(to -> messageSender.send(message.copy()
+                .forEach(to -> to.send(message.copy()
                         .from(from)
                         .to(to)
                         .build()
@@ -119,7 +121,7 @@ public abstract class AbstractMeshConversation extends Conversation {
     }
 
     private void sendJoinedToFirst(Member sender, String id) {
-        messageSender.send(InternalMessage.create()//
+        sender.send(InternalMessage.create()//
                 .to(sender)//
                 .signal(Signal.CREATED)//
                 .addCustom("type", "MESH")

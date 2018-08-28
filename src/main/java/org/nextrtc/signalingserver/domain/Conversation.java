@@ -18,18 +18,15 @@ public abstract class Conversation implements NextRTCConversation {
     protected final String id;
 
     private LeftConversation leftConversation;
-    protected MessageSender messageSender;
 
     public Conversation(String id) {
         this.id = id;
     }
 
     public Conversation(String id,
-                        LeftConversation leftConversation,
-                        MessageSender messageSender) {
+                        LeftConversation leftConversation) {
         this.id = id;
         this.leftConversation = leftConversation;
-        this.messageSender = messageSender;
     }
 
     public abstract void join(Member sender);
@@ -53,7 +50,7 @@ public abstract class Conversation implements NextRTCConversation {
     public abstract void exchangeSignals(InternalMessage message);
 
     protected void sendJoinedToConversation(Member sender, String id) {
-        messageSender.send(InternalMessage.create()//
+        sender.send(InternalMessage.create()//
                 .to(sender)//
                 .content(id)//
                 .signal(Signal.JOINED)//
@@ -61,7 +58,7 @@ public abstract class Conversation implements NextRTCConversation {
     }
 
     protected void sendJoinedFrom(Member sender, Member member) {
-        messageSender.send(InternalMessage.create()//
+        member.send(InternalMessage.create()//
                 .from(sender)//
                 .to(member)//
                 .signal(Signal.NEW_JOINED)//
@@ -70,7 +67,7 @@ public abstract class Conversation implements NextRTCConversation {
     }
 
     protected void sendLeftMessage(Member leaving, Member recipient) {
-        messageSender.send(InternalMessage.create()//
+        recipient.send(InternalMessage.create()//
                 .from(leaving)//
                 .to(recipient)//
                 .signal(Signal.LEFT)//
@@ -82,11 +79,6 @@ public abstract class Conversation implements NextRTCConversation {
     @Inject
     public void setLeftConversation(LeftConversation leftConversation) {
         this.leftConversation = leftConversation;
-    }
-
-    @Inject
-    public void setMessageSender(MessageSender messageSender) {
-        this.messageSender = messageSender;
     }
 
     @Override

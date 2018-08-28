@@ -2,7 +2,6 @@ package org.nextrtc.signalingserver.domain.conversation;
 
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.nextrtc.signalingserver.domain.MessageSender;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +12,8 @@ public class MeshConversation extends AbstractMeshConversation {
         super(id);
     }
 
-    public MeshConversation(String id, LeftConversation left, MessageSender sender, ExchangeSignalsBetweenMembers exchange) {
-        super(id, left, sender, exchange);
+    public MeshConversation(String id, LeftConversation left, ExchangeSignalsBetweenMembers exchange) {
+        super(id, left, exchange);
     }
 
     @Override

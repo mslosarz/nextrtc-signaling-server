@@ -25,8 +25,6 @@ public class ServerActorTest extends BaseTest {
     @Autowired
     private Server server;
     @Autowired
-    private MessageSender sender;
-    @Autowired
     private JoinConversation joinConversation;
     @Autowired
     private Conversations conversations;
@@ -258,7 +256,7 @@ public class ServerActorTest extends BaseTest {
     public void shouldBeAbleToHandleCustomSignal() throws Exception {
         // given
         resolver.addCustomSignal(Signal.fromString("upperCase"), (message) ->
-                sender.send(InternalMessage.create()//
+                message.getFrom().send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))
@@ -283,7 +281,7 @@ public class ServerActorTest extends BaseTest {
     public void shouldOverrideExistingSignal() throws Exception {
         // given
         resolver.addCustomSignal(Signal.fromString("join"), (message) ->
-                sender.send(InternalMessage.create()//
+                message.getFrom().send(InternalMessage.create()//
                 .to(message.getFrom())
                 .content(message.getContent().toUpperCase())
                 .signal(Signal.fromString("upperCase"))

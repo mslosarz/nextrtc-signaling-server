@@ -6,11 +6,11 @@ import dagger.Provides;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.factory.*;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
 
 import javax.inject.Singleton;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Module
 public abstract class NextRTCFactories {
@@ -18,25 +18,25 @@ public abstract class NextRTCFactories {
     @Provides
     @Singleton
     static ManualConversationFactory ManualConversationFactory(LeftConversation left,
-                                                               MessageSender sender,
                                                                ExchangeSignalsBetweenMembers exchange,
                                                                NextRTCProperties properties) {
-        return new ManualConversationFactory(left, exchange, sender, properties);
+        return new ManualConversationFactory(left, exchange, properties);
     }
 
     @Provides
     @Singleton
-    static ManualMemberFactory ManualMemberFactory(NextRTCEventBus eventBus) {
-        return new ManualMemberFactory(eventBus);
+    static ManualMemberFactory ManualMemberFactory(NextRTCProperties properties,
+                                                   ScheduledExecutorService scheduler,
+                                                   NextRTCEventBus eventBus) {
+        return new ManualMemberFactory(properties, scheduler, eventBus);
     }
 
     @Provides
     @Singleton
     static ManualConnectionContextFactory ManualConnectionContextFactory(
             NextRTCProperties properties,
-            NextRTCEventBus eventBus,
-            MessageSender sender) {
-        return new ManualConnectionContextFactory(properties, eventBus, sender);
+            NextRTCEventBus eventBus) {
+        return new ManualConnectionContextFactory(properties, eventBus);
     }
 
     @Binds

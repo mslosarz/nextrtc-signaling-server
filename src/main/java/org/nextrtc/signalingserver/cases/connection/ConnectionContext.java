@@ -5,7 +5,6 @@ import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCEvents;
 import org.nextrtc.signalingserver.domain.InternalMessage;
 import org.nextrtc.signalingserver.domain.Member;
-import org.nextrtc.signalingserver.domain.MessageSender;
 import org.nextrtc.signalingserver.domain.Signal;
 import org.nextrtc.signalingserver.property.NextRTCProperties;
 import org.springframework.context.annotation.Scope;
@@ -26,7 +25,6 @@ public class ConnectionContext {
 
     private NextRTCProperties properties;
     private NextRTCEventBus bus;
-    private MessageSender sender;
 
     private Member master;
     private Member slave;
@@ -39,7 +37,7 @@ public class ConnectionContext {
 
 
     public void process(InternalMessage message) {
-        if(message.getSignal() == Signal.CANDIDATE && !is(message, ConnectionState.EXCHANGE_CANDIDATES)){
+        if (message.getSignal() == Signal.CANDIDATE && !is(message, ConnectionState.EXCHANGE_CANDIDATES)) {
             recordCandidate(message);
         }
         if (is(message, ConnectionState.OFFER_REQUESTED)) {
@@ -65,7 +63,7 @@ public class ConnectionContext {
 
 
     private void exchangeCandidates(InternalMessage message) {
-        sender.send(message.copy()
+        message.getTo().send(message.copy()
                 .signal(Signal.CANDIDATE)
                 .build()
         );
@@ -73,7 +71,7 @@ public class ConnectionContext {
 
 
     private void finalize(InternalMessage message) {
-        sender.send(message.copy()//
+        master.send(message.copy()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.FINALIZE)//
@@ -86,7 +84,7 @@ public class ConnectionContext {
 
     private void answerRequest(InternalMessage message) {
         bus.post(NextRTCEvents.MEDIA_LOCAL_STREAM_CREATED.occurFor(master.getConnection()));
-        sender.send(message.copy()//
+        slave.send(message.copy()//
                 .from(master)//
                 .to(slave)//
                 .signal(Signal.ANSWER_REQUEST)//
@@ -101,7 +99,7 @@ public class ConnectionContext {
 
     public void begin() {
         setState(ConnectionState.OFFER_REQUESTED);
-        sender.send(InternalMessage.create()//
+        master.send(InternalMessage.create()//
                 .from(slave)//
                 .to(master)//
                 .signal(Signal.OFFER_REQUEST)
@@ -129,8 +127,4 @@ public class ConnectionContext {
         this.properties = properties;
     }
 
-    @Inject
-    public void setSender(MessageSender sender) {
-        this.sender = sender;
-    }
 }

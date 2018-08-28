@@ -14,9 +14,6 @@ import static org.mockito.Mockito.when;
 public class PingTaskTest extends BaseTest {
 
     @Autowired
-    private MessageSender sender;
-
-    @Autowired
     private MemberRepository members;
 
     @Test
@@ -28,7 +25,7 @@ public class PingTaskTest extends BaseTest {
 
 
         // when
-        new PingTask(member.getConnection(), sender).run();
+        new PingTask(member.getConnection()).run();
 
         // then
         assertThat(messages.getMessage().getSignal(), is(Signals.PING));
@@ -42,7 +39,7 @@ public class PingTaskTest extends BaseTest {
         when(connection.isOpen()).thenReturn(false);
 
         // when
-        new PingTask(connection, sender).run();
+        new PingTask(connection).run();
 
         // then
         assertThat(messages.getMessages(), hasSize(0));

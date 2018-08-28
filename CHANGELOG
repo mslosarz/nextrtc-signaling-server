@@ -1,3 +1,6 @@
+v1.0.0-RC7:
+    - Get rid of MessageSender - it was really bad idea to add it :(
+    - Migrate to Reactive java
 v1.0.0-RC6:
     - NextRTCConversation will expose information about creator and members
     - Close reason will not be returned in event

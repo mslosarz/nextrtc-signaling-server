@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.domain;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
@@ -19,6 +20,7 @@ import static org.nextrtc.signalingserver.domain.EventContext.builder;
 @Getter
 @Component
 @Scope("prototype")
+@Slf4j
 public class Member implements NextRTCMember {
 
     private String id;
@@ -75,6 +77,11 @@ public class Member implements NextRTCMember {
 
     public synchronized Connection getConnection() {
         return connection;
+    }
+
+    @Override
+    public void send(InternalMessage message) {
+        new SendMessage(getConnection(), message, 3).send();
     }
 
     @Override

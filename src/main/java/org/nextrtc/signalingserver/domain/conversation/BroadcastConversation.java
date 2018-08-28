@@ -4,7 +4,10 @@ import com.google.common.collect.Sets;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
 import org.nextrtc.signalingserver.cases.ExchangeSignalsBetweenMembers;
 import org.nextrtc.signalingserver.cases.LeftConversation;
-import org.nextrtc.signalingserver.domain.*;
+import org.nextrtc.signalingserver.domain.Conversation;
+import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.domain.Member;
+import org.nextrtc.signalingserver.domain.Signal;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +29,8 @@ public class BroadcastConversation extends Conversation {
 
     public BroadcastConversation(String id,
                                  LeftConversation left,
-                                 MessageSender sender,
                                  ExchangeSignalsBetweenMembers exchange) {
-        super(id, left, sender);
+        super(id, left);
         this.exchange = exchange;
     }
 
@@ -67,7 +69,7 @@ public class BroadcastConversation extends Conversation {
     }
 
     private void sendEndMessage(Member leaving, Member recipient) {
-        messageSender.send(InternalMessage.create()//
+        recipient.send(InternalMessage.create()//
                 .from(leaving)//
                 .to(recipient)//
                 .signal(Signal.END)//
@@ -96,13 +98,13 @@ public class BroadcastConversation extends Conversation {
     public void broadcast(Member from, InternalMessage message) {
         audience.stream()
                 .filter(member -> !member.equals(from))
-                .forEach(to -> messageSender.send(message.copy()
+                .forEach(to -> to.send(message.copy()
                         .from(from)
                         .to(to)
                         .build()
                 ));
         if (from != broadcaster) {
-            messageSender.send(message.copy()
+            broadcaster.send(message.copy()
                     .from(from)
                     .to(broadcaster)
                     .build()
@@ -128,7 +130,7 @@ public class BroadcastConversation extends Conversation {
     }
 
     private void sendJoinedToBroadcaster(Member sender, String id) {
-        messageSender.send(InternalMessage.create()//
+        sender.send(InternalMessage.create()//
                 .to(sender)//
                 .signal(Signal.CREATED)//
                 .addCustom("type", "BROADCAST")

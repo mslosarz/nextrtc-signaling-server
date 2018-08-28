@@ -2,10 +2,7 @@ package org.nextrtc.signalingserver.api;
 
 import org.nextrtc.signalingserver.api.dto.NextRTCEvent;
 import org.nextrtc.signalingserver.api.dto.NextRTCMember;
-import org.nextrtc.signalingserver.domain.Connection;
-import org.nextrtc.signalingserver.domain.Conversation;
-import org.nextrtc.signalingserver.domain.EventContext;
-import org.nextrtc.signalingserver.domain.InternalMessage;
+import org.nextrtc.signalingserver.domain.*;
 import org.nextrtc.signalingserver.exception.Exceptions;
 
 public enum NextRTCEvents {
@@ -77,6 +74,11 @@ public enum NextRTCEvents {
         @Override
         public Connection getConnection() {
             return connection;
+        }
+
+        @Override
+        public void send(InternalMessage build) {
+            new SendMessage(connection, build, 3).send();
         }
 
         @Override
