@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 public class TestClientActor {
     private Server server;
     private String name;
-    private MockedClient client;
+    private final MockedClient client;
     private Connection session;
 
     public TestClientActor(String name, Server server) {

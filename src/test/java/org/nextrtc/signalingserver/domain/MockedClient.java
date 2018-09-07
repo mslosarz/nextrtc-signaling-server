@@ -1,12 +1,9 @@
 package org.nextrtc.signalingserver.domain;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.mockito.ArgumentMatcher;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -14,7 +11,7 @@ import java.util.function.Consumer;
 public class MockedClient extends ArgumentMatcher<Message> {
     private Server server;
     private Connection connection;
-    private List<Message> messages = Lists.newLinkedList();
+    private final List<Message> messages = Collections.synchronizedList(new LinkedList<>());
     private Map<String, AtomicInteger> candidates = new HashMap<>();
     private Map<String, Consumer<Message>> behavior = new HashMap<>();
 

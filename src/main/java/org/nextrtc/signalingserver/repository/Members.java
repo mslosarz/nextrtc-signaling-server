@@ -1,6 +1,7 @@
 package org.nextrtc.signalingserver.repository;
 
 import com.google.common.collect.Maps;
+import io.reactivex.Observable;
 import lombok.extern.slf4j.Slf4j;
 import org.nextrtc.signalingserver.domain.Member;
 import org.springframework.stereotype.Repository;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -22,28 +22,31 @@ public class Members implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findBy(String id) {
-        if (id == null) {
-            return Optional.empty();
+    public Observable<Member> findBy(String id) {
+        if (id == null || !members.containsKey(id)) {
+            return Observable.empty();
         }
-        return Optional.ofNullable(members.get(id));
+        return Observable.just(members.get(id));
     }
 
     @Override
-    public Member register(Member member) {
-        if (!members.containsKey(member.getId())) {
-            members.put(member.getId(), member);
-        }
-        return member;
+    public Observable<Member> register(Member member) {
+        return Observable.just(member)
+                .filter(m -> !members.containsKey(m.getId()))
+                .doOnNext(m -> members.put(m.getId(), m));
     }
 
     @Override
-    public void unregister(String id) {
-        findBy(id).ifPresent(Member::markLeft);
-        Member removed = members.remove(id);
-        if (removed != null) {
-            removed.getConversation().ifPresent(c -> c.left(removed));
-        }
+    public Observable<Member> unregister(String id) {
+        return findBy(id)
+                .doOnNext(Member::markLeft)
+                .doOnNext(this::removeMemberFromConversation)
+                .map(Member::getId)
+                .map(members::remove);
+    }
+
+    private void removeMemberFromConversation(Member m) {
+        m.getConversation().ifPresent(c -> c.left(m));
     }
 
     @Override

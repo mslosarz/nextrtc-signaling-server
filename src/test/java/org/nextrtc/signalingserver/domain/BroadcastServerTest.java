@@ -12,6 +12,7 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -366,8 +367,9 @@ public class BroadcastServerTest extends BaseTest {
     }
 
     @Before
-    public void resetObjects() {
+    public void resetObjects() throws IOException {
         eventCheckerCall.reset();
         eventLocalStream.reset();
+        members.close();
     }
 }

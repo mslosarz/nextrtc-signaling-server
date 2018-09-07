@@ -141,7 +141,9 @@ public class BroadcastConversation extends Conversation {
 
     @Override
     public void close() throws IOException {
-        remove(broadcaster);
+        if (broadcaster != null) {
+            remove(broadcaster);
+        }
     }
 
     @Inject

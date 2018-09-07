@@ -31,6 +31,9 @@ public class Member implements NextRTCMember {
 
     private ScheduledFuture<?> ping;
 
+    private Member() {
+    }
+
     public Member(Connection connection, ScheduledFuture<?> ping) {
         this.id = connection.getId();
         this.connection = connection;
@@ -101,4 +104,6 @@ public class Member implements NextRTCMember {
                 .append(id)//
                 .build();
     }
+
+    public static final Member EMPTY = new Member();
 }

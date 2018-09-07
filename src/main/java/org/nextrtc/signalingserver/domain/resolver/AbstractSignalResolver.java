@@ -18,8 +18,7 @@ public abstract class AbstractSignalResolver implements SignalResolver {
     private final Map<Signal, SignalHandler> customHandlers = new ConcurrentHashMap<>();
 
     public AbstractSignalResolver(Map<String, SignalHandler> handlers) {
-        customHandlers.put(Signal.EMPTY, (msg) -> {
-        });
+        customHandlers.put(SignalResolver.EMPTY.getKey(), SignalResolver.EMPTY.getValue());
         Map<Signal, SignalHandler> collect = handlers.entrySet().stream().collect(Collectors.toMap(k -> Signal.byHandlerName(k.getKey()), Map.Entry::getValue));
         customHandlers.putAll(collect);
     }

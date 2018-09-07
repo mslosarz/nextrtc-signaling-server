@@ -67,12 +67,16 @@ public class InternalMessage {
         }
 
         public InternalMessage.InternalMessageBuilder from(Member from) {
-            this.from = from;
+            if (from != Member.EMPTY) {
+                this.from = from;
+            }
             return this;
         }
 
         public InternalMessage.InternalMessageBuilder to(Member to) {
-            this.to = to;
+            if (to != Member.EMPTY) {
+                this.to = to;
+            }
             return this;
         }
 

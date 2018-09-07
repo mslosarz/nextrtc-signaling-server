@@ -1,18 +1,18 @@
 package org.nextrtc.signalingserver.repository;
 
+import io.reactivex.Observable;
 import org.nextrtc.signalingserver.domain.Member;
 
 import java.io.Closeable;
 import java.util.Collection;
-import java.util.Optional;
 
 public interface MemberRepository extends Closeable{
     Collection<String> getAllIds();
 
-    Optional<Member> findBy(String id);
+    Observable<Member> findBy(String id);
 
-    Member register(Member member);
+    Observable<Member> register(Member member);
 
-    void unregister(String id);
+    Observable<Member> unregister(String id);
 
 }

@@ -2,7 +2,6 @@ package org.nextrtc.signalingserver.domain;
 
 import io.reactivex.Observable;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.nextrtc.signalingserver.api.NextRTCEventBus;
 import org.nextrtc.signalingserver.api.NextRTCServer;
@@ -17,9 +16,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Optional;
-import java.util.function.Consumer;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.nextrtc.signalingserver.api.NextRTCEvents.*;
 import static org.nextrtc.signalingserver.exception.Exceptions.MEMBER_NOT_FOUND;
 
@@ -49,7 +47,7 @@ public class Server implements NextRTCServer {
     public void register(Connection c) {
         Observable.just(c)
                 .map(memberFactory::create)
-                .map(members::register)
+                .switchMap(members::register)
                 .map(NextRTCMember::getConnection)
                 .map(SESSION_OPENED::occurFor)
                 .subscribe(
@@ -60,36 +58,45 @@ public class Server implements NextRTCServer {
 
     public void handle(Message message, Connection connection) {
         Observable<Pair<Signal, SignalHandler>> handlers = Observable.just(message)
+                .filter(m -> isNotBlank(m.getSignal()))
                 .map(Message::getSignal)
-                .filter(StringUtils::isNotBlank)
                 .map(resolver::resolve)
-                .filter(p -> p.getValue() != null);
+                .filter(p -> p.getValue() != null)
+                .defaultIfEmpty(SignalResolver.EMPTY);
 
         Observable<Member> sender = Observable.just(connection)
+                .filter(c -> isNotBlank(c.getId()))
                 .map(Connection::getId)
-                .map(members::findBy)
-                .map(m -> m.orElseThrow(() -> new SignalingException(MEMBER_NOT_FOUND)));
+                .switchMap(members::findBy)
+                .defaultIfEmpty(Member.EMPTY);
 
         Observable<Member> recipient = Observable.just(message)
+                .filter(m -> isNotBlank(m.getTo()))
                 .map(Message::getTo)
-                .map(members::findBy)
-                .filter(Optional::isPresent)
-                .map(Optional::get);
+                .switchMap(members::findBy)
+                .defaultIfEmpty(Member.EMPTY);
 
-        Observable<InternalMessage> internalMessage = Observable.zip(handlers, sender, recipient, (h, s, r) ->
-                InternalMessage.create()
-                        .from(s)
-                        .to(r)
-                        .content(message.getContent())
-                        .custom(message.getCustom())
-                        .signal(h.getKey())
-                        .build()
-        );
+        Observable<InternalMessage> internalMessage = Observable.zip(
+                handlers.map(Pair::getKey),
+                sender,
+                recipient,
+                (signal, s, r) ->
+                        InternalMessage.create()
+                                .to(r)
+                                .from(s)
+                                .content(message.getContent())
+                                .custom(message.getCustom())
+                                .signal(signal)
+                                .build())
+                .doOnNext(m -> log.debug("Incoming: " + m));
 
-        Observable.zip(internalMessage, handlers,
-                (im, h) -> {
-                    log.debug("Incoming: " + message);
-                    h.getValue().execute(im);
+        Observable.zip(
+                internalMessage,
+                handlers.map(Pair::getValue),
+                (im, handler) -> {
+                    if (im.getFrom() == null)
+                        throw new SignalingException(MEMBER_NOT_FOUND);
+                    handler.execute(im);
                     return im;
                 })
                 .map(MESSAGE::basedOn)
@@ -100,29 +107,30 @@ public class Server implements NextRTCServer {
     }
 
     public void unregister(Connection connection, String reason) {
-        doSaveExecution(connection, session -> {
-                    members.unregister(session.getId());
-                    eventBus.post(SESSION_CLOSED.occurFor(session, reason));
-                }
-        );
+        Observable.just(connection)
+                .filter(c -> isNotBlank(c.getId()))
+                .map(Connection::getId)
+                .switchMap(members::unregister)
+                .map(Member::getConnection)
+                .map(conn -> SESSION_CLOSED.occurFor(conn, reason))
+                .subscribe(
+                        eventBus::post,
+                        error -> sendErrorOverWebSocket(connection, error)
+                );
     }
 
 
     public void handleError(Connection connection, Throwable exception) {
-        doSaveExecution(connection, session -> {
-                    members.unregister(session.getId());
-                    eventBus.post(UNEXPECTED_SITUATION.occurFor(session, exception.getMessage()));
-                }
-        );
-    }
-
-    private void doSaveExecution(Connection connection, Consumer<Connection> action) {
-        try {
-            action.accept(connection);
-        } catch (Exception e) {
-            log.warn("Server will try to handle this exception and send information as normal message through websocket", e);
-            sendErrorOverWebSocket(connection, e);
-        }
+        Observable.just(connection)
+                .filter(c -> isNotBlank(c.getId()))
+                .map(Connection::getId)
+                .switchMap(members::unregister)
+                .map(Member::getConnection)
+                .map(conn -> UNEXPECTED_SITUATION.occurFor(conn, exception.getMessage()))
+                .subscribe(
+                        eventBus::post,
+                        error -> sendErrorOverWebSocket(connection, error)
+                );
     }
 
     private void sendErrorOverWebSocket(Connection connection, Throwable e) {

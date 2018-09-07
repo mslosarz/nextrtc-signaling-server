@@ -6,9 +6,11 @@ import org.junit.Test;
 import org.nextrtc.signalingserver.BaseTest;
 import org.nextrtc.signalingserver.cases.JoinConversation;
 import org.nextrtc.signalingserver.repository.Conversations;
+import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.awaitility.Awaitility.await;
@@ -30,6 +32,8 @@ public class ServerActorTest extends BaseTest {
     private Conversations conversations;
     @Autowired
     private SignalResolver resolver;
+    @Autowired
+    private Members members;
 
     @Test
     public void shouldExchangeSignalsBetweenActors() throws Exception {
@@ -313,8 +317,9 @@ public class ServerActorTest extends BaseTest {
 
 
     @Before
-    public void resetObjects() {
+    public void resetObjects() throws IOException {
         eventCheckerCall.reset();
         eventLocalStream.reset();
+        members.close();
     }
 }

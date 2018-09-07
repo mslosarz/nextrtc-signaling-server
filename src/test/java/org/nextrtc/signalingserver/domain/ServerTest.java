@@ -9,6 +9,7 @@ import org.nextrtc.signalingserver.repository.Members;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -61,8 +62,10 @@ public class ServerTest extends BaseTest {
         server.register(connection);
 
         // then
-        assertTrue(members.findBy("s1").isPresent());
-
+        members.findBy("s1").subscribe(
+                m -> assertThat(m.getId(), is("s1")),
+                err -> assertTrue(false)
+        );
     }
 
     @Test
@@ -437,8 +440,9 @@ public class ServerTest extends BaseTest {
     }
 
     @Before
-    public void resetObjects() {
+    public void resetObjects() throws IOException {
         eventCheckerCall.reset();
         eventLocalStream.reset();
+        members.close();
     }
 }
